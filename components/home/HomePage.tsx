@@ -1,7 +1,7 @@
 import { FounderSection } from "./sections/FounderSection";
 import { Footer } from "@/components/layout/Footer";
 import { FaqSection } from "./sections/FaqSection";
-import { Header } from "@/components/layout/Header";
+import { Header } from "@/components/layout/HeaderCms";
 import { Hero } from "./sections/Hero";
 import { HowItWorksSection } from "./sections/HowItWorksSection";
 import { ModulesSection } from "./sections/ModulesSection";

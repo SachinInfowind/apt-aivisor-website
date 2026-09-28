@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { aboutMegaMenu, navLinks } from "./aboutMenu";
+import { aboutMegaMenu, navLinks as defaultNavLinks } from "./aboutMenu";
 import { AboutMenuIcon } from "./AboutMenuIcons";
 import { homeAssets } from "../ui/assets";
 import { layout } from "../ui/type";
@@ -156,7 +156,17 @@ function AboutMegaMenu({ onNavigate }: { onNavigate: () => void }) {
   );
 }
 
-export function Header() {
+export interface HeaderNavLink {
+  label: string;
+  href: string;
+  mega?: boolean | null;
+}
+
+export function HeaderView({
+  navLinks = defaultNavLinks,
+}: {
+  navLinks?: readonly HeaderNavLink[];
+}) {
   const pathname = usePathname();
   const [openAbout, setOpenAbout] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -203,7 +213,7 @@ export function Header() {
 
         <ul className="hidden items-center gap-5 xl:flex">
           {navLinks.map((link) => {
-            if ("mega" in link && link.mega) {
+            if (link.mega) {
               return (
                 <li
                   key={link.label}
@@ -310,7 +320,7 @@ export function Header() {
         >
           <ul className="flex flex-col">
             {navLinks.map((link) => {
-              if ("mega" in link && link.mega) {
+              if (link.mega) {
                 return (
                   <li key={link.label} className="border-b border-line last:border-b-0">
                     <button

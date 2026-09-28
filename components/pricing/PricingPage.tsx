@@ -1,16 +1,11 @@
-"use client";
-
-import { useState } from "react";
 import { FaqSection } from "@/components/home/sections/FaqSection";
 import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
-import { PricingHero, type BillingPeriod } from "./PricingHero";
+import { Header } from "@/components/layout/HeaderCms";
 import { WaitlistSection } from "@/components/home/sections/WaitlistSection";
 import { WaitlistTrustBar } from "@/components/home/sections/WaitlistTrustBar";
-import { EnterprisePlan } from "./EnterprisePlan";
 import { PlatformRoi } from "./PlatformRoi";
 import { PricingAddOns } from "./PricingAddOns";
-import { PricingPlans } from "./PricingPlans";
+import { PricingBillingSection } from "./PricingBillingSection";
 import { layout } from "@/components/ui/type";
 import { findSection } from "@/lib/cms/utils";
 import type {
@@ -31,7 +26,6 @@ import type {
  * and ROI tabs stay in code. FAQ and Waitlist are CMS-driven too.
  */
 export default function PricingPage({ sections }: { sections: PageSection[] }) {
-  const [billing, setBilling] = useState<BillingPeriod>("monthly");
   const faq = findSection<FaqSectionData>(sections, "sections.faq");
   const waitlist = findSection<WaitlistSectionData>(sections, "sections.waitlist");
   const catalog = findSection<PricingCatalogSection>(
@@ -48,25 +42,10 @@ export default function PricingPage({ sections }: { sections: PageSection[] }) {
       <Header />
       <main className="w-full pb-0">
         <div className="bg-platform-card">
-          <PricingHero
-            billing={billing}
-            onBillingChange={setBilling}
+          <PricingBillingSection
+            plans={catalog?.plans}
             yearlyDiscountPercent={yearlyDiscountPercent}
           />
-
-          {/* Plans + Enterprise — same content width as FAQ / footer */}
-          <div className={`${layout.sectionX} pt-8 sm:pt-10 md:pt-12`}>
-            <div
-              className={`${layout.inner} flex flex-col gap-8 sm:gap-10 md:gap-[6.25rem]`}
-            >
-              <PricingPlans
-                billing={billing}
-                plans={catalog?.plans}
-                yearlyDiscountPercent={yearlyDiscountPercent}
-              />
-              <EnterprisePlan />
-            </div>
-          </div>
 
           {/* Add-ons — full-bleed white (Frame 205) */}
           <PricingAddOns addons={catalog?.addons} />

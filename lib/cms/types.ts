@@ -14,6 +14,13 @@ export interface Seo {
 export interface Link {
   label: string;
   href: string;
+  badge?: string | null;
+}
+
+export interface NavLink {
+  label: string;
+  href: string;
+  mega?: boolean | null;
 }
 
 export interface FooterColumn {
@@ -653,7 +660,9 @@ export interface CmsPage {
 export interface CmsGlobal {
   id: number;
   siteName: string;
-  navLinks: Link[];
+  footerTagline?: string | null;
+  copyrightText?: string | null;
+  navLinks: NavLink[];
   footerColumns: FooterColumn[];
   socialLinks: Link[];
   seo?: Seo;

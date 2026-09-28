@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Header } from "@/components/layout/Header";
+import { Header } from "@/components/layout/HeaderCms";
 import { Footer } from "@/components/layout/Footer";
 import { SectionRenderer } from "@/components/cms/SectionRenderer";
 import { homeSans, homeSerif } from "@/components/ui/fonts";

@@ -2,30 +2,35 @@ import Image from "next/image";
 import Link from "next/link";
 import { homeAssets } from "../ui/assets";
 import { layout } from "../ui/type";
+import { getGlobal } from "@/lib/cms/queries";
+import type { FooterColumn, Link as CmsLink } from "@/lib/cms/types";
 
-const columns = [
+const defaultTagline =
+  "AI-powered contract intelligence for technology buyers and sellers. Built by ex-AWS deal pricing executives.";
+
+const defaultCopyright =
+  "© 2026 aptAI Solutions Group LLC · Austin, Texas, USA. All rights reserved";
+
+const defaultColumns: FooterColumn[] = [
   {
-    title: "Company",
+    heading: "Company",
     links: [
       { label: "About us", href: "#about" },
-      { label: "Our team", href: "/team" },
       { label: "Careers", href: "/career" },
       { label: "Blog", href: "#blog" },
       { label: "Design Partners", href: "#design-partner" },
-      { label: "Contact", href: "/contact" },
     ],
   },
   {
-    title: "Product",
+    heading: "Product",
     links: [
       { label: "Solutions", href: "/solutions", badge: "New" },
       { label: "Demo", href: "#demo" },
       { label: "Pricing", href: "/pricing" },
-      { label: "FAQ", href: "#faq" },
     ],
   },
   {
-    title: "Social",
+    heading: "Social",
     links: [
       { label: "LinkedIn", href: "#" },
       { label: "Facebook", href: "#" },
@@ -34,18 +39,46 @@ const columns = [
     ],
   },
   {
-    title: "Legal",
+    heading: "Legal",
     links: [
       { label: "Terms", href: "/terms" },
-      { label: "Privacy", href: "/privacy" },
       { label: "Trust & Security", href: "/trust" },
       { label: "Cookies", href: "/cookies" },
       { label: "Contact", href: "/contact" },
     ],
   },
-] as const;
+];
 
-export function Footer() {
+const defaultSocialLinks: CmsLink[] = [
+  { label: "LinkedIn", href: "#" },
+  { label: "Facebook", href: "#" },
+  { label: "X", href: "#" },
+  { label: "Youtube", href: "#" },
+];
+
+const socialIconByLabel: Record<string, string> = {
+  linkedin: homeAssets.footer.social.linkedin,
+  facebook: homeAssets.footer.social.facebook,
+  x: homeAssets.footer.social.x,
+  twitter: homeAssets.footer.social.x,
+  youtube: homeAssets.footer.social.youtube,
+};
+
+function socialIconFor(label: string) {
+  return socialIconByLabel[label.toLowerCase()] ?? null;
+}
+
+export async function Footer() {
+  const global = await getGlobal();
+
+  const tagline = global?.footerTagline || defaultTagline;
+  const copyright = global?.copyrightText || defaultCopyright;
+  const columns =
+    global?.footerColumns?.length && global.footerColumns.every((col) => col.links?.length)
+      ? global.footerColumns
+      : defaultColumns;
+  const socialLinks = global?.socialLinks?.length ? global.socialLinks : defaultSocialLinks;
+
   return (
     <footer
       className={`bg-brand-wash ${layout.sectionX} pb-7 pt-12`}
@@ -72,17 +105,14 @@ export function Footer() {
                 className="h-10 w-auto object-contain"
               />
             </Link>
-            <p className="mt-3.5 max-w-70 text-body-sm text-ink">
-              AI-powered contract intelligence for technology buyers and
-              sellers. Built by ex-AWS deal pricing executives.
-            </p>
+            <p className="mt-3.5 max-w-70 text-body-sm text-ink">{tagline}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4">
             {columns.map((col) => (
-              <div key={col.title}>
+              <div key={col.heading}>
                 <p className="text-caption font-medium uppercase tracking-[0.06em] text-faint">
-                  {col.title}
+                  {col.heading}
                 </p>
                 <ul className="mt-3.5 space-y-2.5">
                   {col.links.map((link) => (
@@ -92,7 +122,7 @@ export function Footer() {
                         className="inline-flex items-center gap-2 text-body-sm font-semibold text-navy transition-colors hover:text-brand"
                       >
                         {link.label}
-                        {"badge" in link && link.badge ? (
+                        {link.badge ? (
                           <span className="rounded-pill bg-success-bg px-2 py-0.5 text-micro font-semibold text-success-fg">
                             {link.badge}
                           </span>
@@ -114,21 +144,22 @@ export function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-body-xs text-muted">
-            © 2026 aptAI Solutions Group LLC · Austin, Texas, USA. All rights
-            reserved
-          </p>
-          <div className="flex gap-3.5 text-body-xs font-medium text-subtle">
-            {["in", "f", "𝕏", "▶"].map((icon) => (
-              <a
-                key={icon}
-                href="#"
-                className="transition-colors hover:text-brand"
-                aria-label="Social"
-              >
-                {icon}
-              </a>
-            ))}
+          <p className="text-body-xs text-muted">{copyright}</p>
+          <div className="flex items-center gap-3.5">
+            {socialLinks.map((link) => {
+              const icon = socialIconFor(link.label);
+              if (!icon) return null;
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="opacity-70 transition-opacity hover:opacity-100"
+                  aria-label={link.label}
+                >
+                  <Image src={icon} alt="" width={24} height={24} />
+                </a>
+              );
+            })}
           </div>
         </div>
       </div>

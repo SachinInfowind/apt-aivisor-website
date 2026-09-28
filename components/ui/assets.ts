@@ -62,6 +62,12 @@ export const homeAssets = {
   },
   footer: {
     clouds: "/assets/footer-clouds.png",
+    social: {
+      linkedin: "/assets/footer-social-linkedin.svg",
+      facebook: "/assets/footer-social-facebook.svg",
+      x: "/assets/footer-social-x.svg",
+      youtube: "/assets/footer-social-youtube.svg",
+    },
   },
   who: {
     /** Figma quote mark (24336:222337) — fill #4F8DFF */
