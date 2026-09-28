@@ -11,12 +11,17 @@ import {
   SPEND_OPTIONS,
   SPEND_PLACEHOLDER,
 } from "@/components/waitlist/formOptions";
+import {
+  validateWaitlistForm,
+  type WaitlistFormErrors,
+} from "@/lib/validation/waitlistForm";
 import type { WaitlistFormSectionData } from "@/lib/cms/types";
 
 const inputClass =
   "w-full rounded-lg border border-line-strong bg-white px-3.5 py-2.5 text-base leading-6 text-heading shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none placeholder:text-subtle transition-shadow focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,66,187,0.12)]";
 
 const labelClass = "text-sm font-medium leading-5 text-ink";
+const errorClass = "text-sm leading-5 text-danger";
 
 type Interest = "buyer" | "seller" | "both";
 
@@ -75,6 +80,8 @@ const INTEREST_OPTIONS: {
 /**
  * Waitlist signup form — Figma Frame 206 (26281:29834).
  * “Reserve your spot” card on blue gradient.
+ * Submits to `/api/waitlist`, which validates and forwards to the CMS, then
+ * redirects to `successHref` only once that save is confirmed.
  */
 export function WaitlistFormSection({
   heading,
@@ -94,7 +101,20 @@ export function WaitlistFormSection({
   const [spend, setSpend] = useState("");
   const [notes, setNotes] = useState("");
   const [agreed, setAgreed] = useState(false);
+  // Honeypot — left empty by real users, invisible to them.
+  const [companyWebsite, setCompanyWebsite] = useState("");
 
+  const [errors, setErrors] = useState<WaitlistFormErrors>({});
+  const [status, setStatus] = useState<"idle" | "submitting" | "error">(
+    "idle",
+  );
+  const [serverError, setServerError] = useState<string | null>(null);
+
+  const clearError = (key: keyof WaitlistFormErrors) =>
+    setErrors((prev) => ({ ...prev, [key]: undefined }));
+
+  // Cheap presence check for the button's disabled look — the real,
+  // shape-checking validation (email format, etc.) runs in `onSubmit`.
   const canSubmit = useMemo(
     () =>
       Boolean(
@@ -108,10 +128,56 @@ export function WaitlistFormSection({
     [fullName, email, company, role, interest, agreed],
   );
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!canSubmit) return;
-    router.push(successHref || "/thank-you");
+    setServerError(null);
+
+    const result = validateWaitlistForm({
+      fullName,
+      email,
+      company,
+      role,
+      interest,
+      spend,
+      notes,
+      agreedToTerms: agreed,
+      companyWebsite,
+    });
+
+    if (!result.success) {
+      setErrors(result.errors);
+      return;
+    }
+
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result.data),
+      });
+
+      if (!res.ok) {
+        const payload = (await res.json().catch(() => ({}))) as {
+          message?: string;
+          errors?: WaitlistFormErrors;
+        };
+        if (payload.errors) setErrors(payload.errors);
+        setServerError(
+          payload.message ??
+            "We couldn't reserve your spot right now — please try again shortly.",
+        );
+        setStatus("error");
+        return;
+      }
+
+      router.push(successHref || "/thank-you");
+    } catch {
+      setServerError(
+        "We couldn't reserve your spot right now — please try again shortly.",
+      );
+      setStatus("error");
+    }
   };
 
   return (
@@ -125,7 +191,7 @@ export function WaitlistFormSection({
         <form
           onSubmit={onSubmit}
           className="flex w-full flex-col overflow-hidden rounded-3xl border border-[rgba(226,232,240,0.9)] bg-white"
-          noValidate={false}
+          noValidate
         >
           <div className="flex flex-col gap-6 px-5 pb-2 pt-10 sm:px-8 md:px-10 md:pt-10">
             <div className="flex flex-col gap-1">
@@ -146,26 +212,38 @@ export function WaitlistFormSection({
                   <input
                     name="fullName"
                     type="text"
-                    required
                     autoComplete="name"
                     placeholder="Enter full name"
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onChange={(e) => {
+                      setFullName(e.target.value);
+                      clearError("fullName");
+                    }}
+                    aria-invalid={Boolean(errors.fullName)}
                     className={inputClass}
                   />
+                  {errors.fullName ? (
+                    <span className={errorClass}>{errors.fullName}</span>
+                  ) : null}
                 </label>
                 <label className="flex flex-col gap-1.5">
                   <span className={labelClass}>Work email *</span>
                   <input
                     name="email"
                     type="email"
-                    required
                     autoComplete="email"
                     placeholder="Enter work email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      clearError("email");
+                    }}
+                    aria-invalid={Boolean(errors.email)}
                     className={inputClass}
                   />
+                  {errors.email ? (
+                    <span className={errorClass}>{errors.email}</span>
+                  ) : null}
                 </label>
               </div>
 
@@ -175,23 +253,37 @@ export function WaitlistFormSection({
                   <input
                     name="company"
                     type="text"
-                    required
                     autoComplete="organization"
                     placeholder="Acme Corp"
                     value={company}
-                    onChange={(e) => setCompany(e.target.value)}
+                    onChange={(e) => {
+                      setCompany(e.target.value);
+                      clearError("company");
+                    }}
+                    aria-invalid={Boolean(errors.company)}
                     className={inputClass}
                   />
+                  {errors.company ? (
+                    <span className={errorClass}>{errors.company}</span>
+                  ) : null}
                 </label>
-                <SelectDropdown
-                  name="role"
-                  label="Title / Role"
-                  placeholder={ROLE_PLACEHOLDER}
-                  options={ROLE_OPTIONS}
-                  value={role}
-                  onChange={setRole}
-                  required
-                />
+                <div className="flex flex-col gap-1.5">
+                  <SelectDropdown
+                    name="role"
+                    label="Title / Role"
+                    placeholder={ROLE_PLACEHOLDER}
+                    options={ROLE_OPTIONS}
+                    value={role}
+                    onChange={(v) => {
+                      setRole(v);
+                      clearError("role");
+                    }}
+                    required
+                  />
+                  {errors.role ? (
+                    <span className={errorClass}>{errors.role}</span>
+                  ) : null}
+                </div>
               </div>
 
               <fieldset className="flex flex-col gap-1.5 border-0 p-0">
@@ -204,7 +296,10 @@ export function WaitlistFormSection({
                         key={opt.id}
                         type="button"
                         aria-pressed={selected}
-                        onClick={() => setInterest(opt.id)}
+                        onClick={() => {
+                          setInterest(opt.id);
+                          clearError("interest");
+                        }}
                         className={`inline-flex h-11 flex-1 items-center justify-center gap-1 rounded-lg border text-xs font-semibold leading-[1.125rem] transition-colors ${
                           selected
                             ? "border-brand bg-brand-soft text-brand-deep"
@@ -223,16 +318,9 @@ export function WaitlistFormSection({
                     );
                   })}
                 </div>
-                <input
-                  type="text"
-                  name="interest"
-                  value={interest}
-                  required
-                  readOnly
-                  tabIndex={-1}
-                  aria-hidden
-                  className="pointer-events-none absolute h-0 w-0 opacity-0"
-                />
+                {errors.interest ? (
+                  <span className={errorClass}>{errors.interest}</span>
+                ) : null}
               </fieldset>
 
               <SelectDropdown
@@ -258,13 +346,30 @@ export function WaitlistFormSection({
                 />
               </label>
 
+              {/* Honeypot — hidden from real users via CSS, not `display:none`
+                  (some bots skip fields that are display:none/hidden). */}
+              <label className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0">
+                Company website
+                <input
+                  name="companyWebsite"
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={companyWebsite}
+                  onChange={(e) => setCompanyWebsite(e.target.value)}
+                />
+              </label>
+
               <label className="flex items-start gap-3">
                 <input
                   name="terms"
                   type="checkbox"
-                  required
                   checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
+                  onChange={(e) => {
+                    setAgreed(e.target.checked);
+                    clearError("agreedToTerms");
+                  }}
+                  aria-invalid={Boolean(errors.agreedToTerms)}
                   className="mt-0.5 h-5 w-5 shrink-0 rounded border border-line-strong text-brand accent-brand"
                 />
                 <span className="text-base leading-6 text-nav">
@@ -294,20 +399,31 @@ export function WaitlistFormSection({
                   and related updates.
                 </span>
               </label>
+              {errors.agreedToTerms ? (
+                <span className={`-mt-4 ${errorClass}`}>
+                  {errors.agreedToTerms}
+                </span>
+              ) : null}
             </div>
           </div>
+
+          {serverError ? (
+            <p className="mx-5 rounded-lg border border-danger bg-danger-bg px-4 py-3 text-center text-sm font-medium text-danger-fg sm:mx-8 md:mx-10">
+              {serverError}
+            </p>
+          ) : null}
 
           <div className="mt-6 flex flex-col items-stretch justify-between gap-4 border-t border-[#E2E8F0] px-5 py-8 sm:flex-row sm:items-center sm:px-8 md:px-10 md:py-10">
             <button
               type="submit"
-              disabled={!canSubmit}
+              disabled={!canSubmit || status === "submitting"}
               className={`inline-flex h-12 items-center justify-center gap-2 rounded-pill border px-[1.125rem] text-base font-semibold leading-6 shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-all ${
-                canSubmit
+                canSubmit && status !== "submitting"
                   ? "border-brand bg-brand text-white hover:bg-brand-hover active:scale-[0.98]"
                   : "cursor-not-allowed border-line-muted bg-surface-muted text-faint"
               }`}
             >
-              {ctaLabel}
+              {status === "submitting" ? "Reserving…" : ctaLabel}
               <svg
                 width="20"
                 height="20"

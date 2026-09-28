@@ -1,19 +1,69 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import Link from "next/link";
 import { homeSerif } from "../ui/fonts";
 import { layout } from "../ui/type";
+import {
+  validateNewsletterForm,
+  type NewsletterFormErrors,
+} from "@/lib/validation/newsletterForm";
 
 /**
  * Newsletter CTA — Figma "Newsletter CTA section" (26281:26980).
  * Horizontal card: copy left, email capture right. Shown below the contact form.
+ * Submits to `/api/newsletter`, which validates and forwards to the CMS.
  */
 export function NewsletterCtaSection() {
-  const [status, setStatus] = useState<"idle" | "ok">("idle");
+  const [email, setEmail] = useState("");
+  // Honeypot — left empty by real users, invisible to them.
+  const [companyWebsite, setCompanyWebsite] = useState("");
+  const [errors, setErrors] = useState<NewsletterFormErrors>({});
+  const [status, setStatus] = useState<"idle" | "submitting" | "ok" | "error">(
+    "idle",
+  );
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus("ok");
+    setServerError(null);
+
+    const result = validateNewsletterForm({ email, companyWebsite });
+    if (!result.success) {
+      setErrors(result.errors);
+      return;
+    }
+
+    setStatus("submitting");
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result.data),
+      });
+
+      if (!res.ok) {
+        const payload = (await res.json().catch(() => ({}))) as {
+          message?: string;
+          errors?: NewsletterFormErrors;
+        };
+        if (payload.errors) setErrors(payload.errors);
+        setServerError(
+          payload.message ??
+            "We couldn't subscribe you right now — please try again shortly.",
+        );
+        setStatus("error");
+        return;
+      }
+
+      setStatus("ok");
+      setEmail("");
+    } catch {
+      setServerError(
+        "We couldn't subscribe you right now — please try again shortly.",
+      );
+      setStatus("error");
+    }
   };
 
   return (
@@ -34,6 +84,7 @@ export function NewsletterCtaSection() {
           <form
             onSubmit={onSubmit}
             className="flex w-full max-w-[30rem] shrink-0 flex-col gap-4 md:w-[30rem]"
+            noValidate
           >
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-4">
               <label className="sr-only" htmlFor="newsletter-email">
@@ -44,28 +95,57 @@ export function NewsletterCtaSection() {
                   id="newsletter-email"
                   name="email"
                   type="email"
-                  required
                   autoComplete="email"
                   placeholder="Enter your email"
-                  className="w-full rounded-pill border border-line-strong bg-white px-3.5 py-3 text-base leading-6 text-heading shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none placeholder:text-subtle transition-shadow focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,66,187,0.12)]"
+                  value={email}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setErrors((prev) => ({ ...prev, email: undefined }));
+                  }}
+                  aria-invalid={Boolean(errors.email)}
+                  className={`w-full rounded-pill border bg-white px-3.5 py-3 text-base leading-6 text-heading shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none placeholder:text-subtle transition-shadow focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,66,187,0.12)] ${
+                    errors.email ? "border-danger" : "border-line-strong"
+                  }`}
                 />
-                <p className="text-sm leading-5 text-nav">
-                  We care about your data in our{" "}
-                  <a
-                    href="/privacy"
-                    className="underline underline-offset-2 transition-colors hover:text-brand"
-                  >
-                    privacy policy
-                  </a>
-                </p>
+                {/* Honeypot — hidden from real users via CSS, not
+                    `display:none` (some bots skip fields that are
+                    display:none/hidden). */}
+                <label className="pointer-events-none absolute left-[-9999px] h-0 w-0 overflow-hidden opacity-0">
+                  Company website
+                  <input
+                    name="companyWebsite"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={companyWebsite}
+                    onChange={(e) => setCompanyWebsite(e.target.value)}
+                  />
+                </label>
+                {errors.email ? (
+                  <p className="text-sm leading-5 text-danger">{errors.email}</p>
+                ) : (
+                  <p className="text-sm leading-5 text-nav">
+                    We care about your data in our{" "}
+                    <Link
+                      href="/privacy"
+                      className="underline underline-offset-2 transition-colors hover:text-brand"
+                    >
+                      privacy policy
+                    </Link>
+                  </p>
+                )}
               </div>
               <button
                 type="submit"
-                className="inline-flex shrink-0 items-center justify-center rounded-pill border border-brand bg-brand px-[1.125rem] py-3 text-base font-semibold leading-6 text-white shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors hover:bg-brand-hover active:scale-[0.98]"
+                disabled={status === "submitting"}
+                className="inline-flex shrink-0 items-center justify-center rounded-pill border border-brand bg-brand px-[1.125rem] py-3 text-base font-semibold leading-6 text-white shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors hover:bg-brand-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
               >
-                Subscribe
+                {status === "submitting" ? "Subscribing…" : "Subscribe"}
               </button>
             </div>
+            {serverError ? (
+              <p className="text-sm font-medium text-danger-fg">{serverError}</p>
+            ) : null}
             {status === "ok" ? (
               <p className="text-sm font-medium text-heading">
                 You&apos;re subscribed — thanks!
