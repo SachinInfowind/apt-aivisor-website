@@ -9,6 +9,17 @@ export const PUBLIC_ROUTES = [
   '/login',
   '/register',
   '/about',
+  '/trust',
+  '/privacy',
+  '/terms',
+  '/cookies',
+  '/solutions',
+  '/team',
+  '/career',
+  '/pricing',
+  '/contact',
+  '/thank-you',
+  '/waitlist',
   '/ssr-example', // Added SSR Example as public for demonstration
 ];
 

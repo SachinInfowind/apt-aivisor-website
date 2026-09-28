@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "../store/StoreProvider";
+import { PreviewBanner } from "@/components/cms/PreviewBanner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,11 +24,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">
+      {/* suppressHydrationWarning: browser extensions (e.g. ColorZilla) inject body attrs */}
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         {/* We wrap the entire application in our Redux StoreProvider */}
         {/* It's important to put this here so all components can access Redux state */}
         <StoreProvider>
+          <PreviewBanner />
           {children}
         </StoreProvider>
       </body>

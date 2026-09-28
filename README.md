@@ -52,6 +52,22 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Strapi CMS (sibling project)
+
+Content is managed in the sibling repo **`aptaivisor-cms`** (not inside this
+app). Run both locally:
+
+```bash
+# terminal 1 — CMS
+cd ../aptaivisor-cms && npm run develop   # http://localhost:1337
+
+# terminal 2 — Next
+npm run dev                              # http://localhost:3000
+```
+
+Copy `.env.example` → `.env` and set `STRAPI_URL=http://localhost:1337` (plus
+tokens if you use authenticated API / preview / revalidate).
+
 ## 📁 Key File Structure Highlights
 
 - **`app/layout.tsx`**: The Root Layout wrapping the whole application. The `StoreProvider` is initialized here to provide Redux state.
