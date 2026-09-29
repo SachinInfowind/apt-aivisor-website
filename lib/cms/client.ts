@@ -7,8 +7,16 @@ export { toAbsoluteMediaUrl };
 const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
+interface StrapiPagination {
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  total: number;
+}
+
 interface StrapiListResponse<T> {
   data: T[];
+  meta?: { pagination: StrapiPagination };
 }
 
 interface StrapiSingleResponse<T> {
@@ -73,7 +81,27 @@ export async function fetchList<T>(path: string, options?: CmsFetchOptions): Pro
   return json?.data ?? [];
 }
 
+export async function fetchPaginatedList<T>(
+  path: string,
+  options?: CmsFetchOptions,
+): Promise<{ data: T[]; pagination: StrapiPagination }> {
+  const json = await cmsFetch<StrapiListResponse<T>>(path, options);
+  return {
+    data: json?.data ?? [],
+    pagination: json?.meta?.pagination ?? { page: 1, pageSize: 0, pageCount: 1, total: 0 },
+  };
+}
+
 export async function fetchSingle<T>(path: string, options?: CmsFetchOptions): Promise<T | null> {
   const json = await cmsFetch<StrapiSingleResponse<T>>(path, options);
   return json?.data ?? null;
+}
+
+/** Fire-and-forget POST — used for view counting, never blocks or throws. */
+export async function cmsPost(path: string): Promise<void> {
+  try {
+    await fetch(`${STRAPI_URL}${path}`, { method: "POST", cache: "no-store" });
+  } catch (err) {
+    console.warn(`[cms] post failed ${path}:`, err instanceof Error ? err.message : err);
+  }
 }

@@ -11,6 +11,47 @@ export interface Seo {
   ogImage?: StrapiImage | null;
 }
 
+export interface BlockNode {
+  type: string;
+  level?: number;
+  format?: "ordered" | "unordered";
+  url?: string;
+  image?: StrapiImage;
+  children?: BlockNode[];
+  text?: string;
+  bold?: boolean;
+  italic?: boolean;
+}
+
+export interface BlogCategory {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface BlogAuthor {
+  id: number;
+  name: string;
+  role?: string | null;
+  avatar?: StrapiImage | null;
+  linkedinUrl?: string | null;
+}
+
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  coverImage?: StrapiImage | null;
+  category?: BlogCategory | null;
+  author?: BlogAuthor | null;
+  readingTimeMinutes?: number | null;
+  views?: number | null;
+  content?: BlockNode[];
+  seo?: Seo;
+  publishedAt?: string;
+}
+
 export interface Link {
   label: string;
   href: string;
@@ -21,6 +62,37 @@ export interface NavLink {
   label: string;
   href: string;
   mega?: boolean | null;
+}
+
+export interface MegaMenuItem {
+  label: string;
+  href: string;
+  description?: string | null;
+  icon?: "flag" | "people" | "book" | "play" | null;
+  badge?: string | null;
+}
+
+export interface MegaMenuColumn {
+  title: string;
+  items: MegaMenuItem[];
+}
+
+export interface MegaMenuFeatured {
+  title?: string | null;
+  thumbLine1?: string | null;
+  thumbLine2?: string | null;
+  heading?: string | null;
+  body?: string | null;
+  watchHref?: string | null;
+  watchLabel?: string | null;
+  allHref?: string | null;
+  allLabel?: string | null;
+}
+
+export interface MegaMenu {
+  company: MegaMenuColumn;
+  resources: MegaMenuColumn;
+  featured: MegaMenuFeatured;
 }
 
 export interface FooterColumn {
@@ -663,6 +735,7 @@ export interface CmsGlobal {
   footerTagline?: string | null;
   copyrightText?: string | null;
   navLinks: NavLink[];
+  aboutMegaMenu?: MegaMenu | null;
   footerColumns: FooterColumn[];
   socialLinks: Link[];
   seo?: Seo;

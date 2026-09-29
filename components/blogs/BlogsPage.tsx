@@ -1,0 +1,89 @@
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/HeaderCms";
+import { HeroGlowAccent } from "@/components/ui/HeroGlowAccent";
+import { homeSerif } from "@/components/ui/fonts";
+import { layout } from "@/components/ui/type";
+import { BlogCard } from "./BlogCard";
+import { BlogWaitlistCta } from "./BlogWaitlistCta";
+import { NewsletterForm } from "./NewsletterForm";
+import { Pagination } from "./Pagination";
+import type { BlogPost } from "@/lib/cms/types";
+
+export default function BlogsPage({
+  posts,
+  page,
+  pageCount,
+}: {
+  posts: BlogPost[];
+  page: number;
+  pageCount: number;
+}) {
+  return (
+    <div
+      id="top"
+      className="relative min-h-screen w-full overflow-x-clip bg-white font-body antialiased"
+    >
+      <Header />
+      <main className="w-full">
+        <section className={`relative overflow-hidden ${layout.sectionX} pb-16 pt-32 sm:pt-40`}>
+          <HeroGlowAccent />
+          <div className={`${layout.inner} relative flex flex-col items-center gap-9 text-center`}>
+            <div className="flex flex-col items-center gap-4">
+              <h1
+                className={`${homeSerif.className} text-[clamp(2.5rem,6vw,4.5rem)] italic leading-[1.05] tracking-[-0.02em] text-navy`}
+              >
+                Resource <span className="text-brand">Library</span>
+              </h1>
+              <p className="max-w-xl text-body-lg text-ink">
+                Subscribe to learn about new product features, the latest in
+                technology, solutions, and updates.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center gap-2">
+              <NewsletterForm />
+              <p className="text-body-sm text-subtle">
+                We care about your data in our{" "}
+                <a href="/privacy" className="underline underline-offset-2">
+                  privacy policy
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className={`${layout.sectionX} pb-24`}>
+          <div className={`${layout.inner} flex flex-col items-center gap-16`}>
+            {posts.length > 0 ? (
+              <div className="flex w-full max-w-[76rem] flex-col items-center gap-16">
+                {page === 1 ? (
+                  <BlogCard post={posts[0]!} variant="featured" />
+                ) : null}
+
+                {(page === 1 ? posts.slice(1) : posts).length > 0 ? (
+                  <div className="grid w-full grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                    {(page === 1 ? posts.slice(1) : posts).map((post) => (
+                      <BlogCard key={post.id} post={post} variant="grid" />
+                    ))}
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <p className="text-body text-subtle">
+                No posts published yet — check back soon.
+              </p>
+            )}
+
+            <div className="w-full max-w-[76rem]">
+              <Pagination page={page} pageCount={pageCount} />
+            </div>
+          </div>
+        </section>
+
+        <BlogWaitlistCta />
+      </main>
+      <Footer />
+    </div>
+  );
+}

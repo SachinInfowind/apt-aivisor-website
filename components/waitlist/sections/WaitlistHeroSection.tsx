@@ -1,4 +1,5 @@
 import { homeSerif } from "../../ui/fonts";
+import { HeroGlowAccent } from "../../ui/HeroGlowAccent";
 import { layout } from "../../ui/type";
 import type { WaitlistHeroSection as WaitlistHeroSectionData } from "@/lib/cms/types";
 
@@ -20,6 +21,7 @@ export function WaitlistHeroSection({
     <section
       className={`relative flex min-h-[min(100svh,54.25rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(2.5rem,12svh,10rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:pb-[clamp(2.5rem,14svh,10rem)] xl:pt-[clamp(9.5rem,18svh,13.75rem)]`}
     >
+      <HeroGlowAccent />
       <div className="relative z-[1] flex w-full flex-col items-center gap-6 text-center sm:gap-8 md:gap-9">
         {eyebrow ? (
           <div className="inline-flex items-center gap-1.5 rounded-lg border border-line-strong bg-white px-2.5 py-1 text-[0.875rem] font-medium leading-5 text-ink shadow-[0_1px_2px_0_rgba(16,24,40,0.05)]">
