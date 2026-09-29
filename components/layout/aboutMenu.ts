@@ -30,7 +30,7 @@ export const aboutMegaMenu = {
     items: [
       {
         label: "Blog",
-        href: "#blog",
+        href: "/blogs",
         description: "The latest industry news, updates and info.",
         icon: "book" as const,
       },

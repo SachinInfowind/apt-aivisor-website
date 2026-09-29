@@ -1,7 +1,7 @@
 import "server-only";
 import qs from "qs";
-import { fetchList, fetchSingle } from "./client";
-import type { CmsGlobal, CmsPage } from "./types";
+import { fetchList, fetchSingle, fetchPaginatedList, cmsPost } from "./client";
+import type { CmsGlobal, CmsPage, BlogPost } from "./types";
 
 const SECTIONS_POPULATE = {
   on: {
@@ -85,94 +85,6 @@ export async function getPageBySlug(slug: string): Promise<CmsPage | null> {
 
   const page = pages[0] ?? null;
 
-  // TEMPORARY: Inject missing sections for the Home page
-  if (page && slug === "home") {
-    const statsSection: any = {
-      id: 8881,
-      __component: "sections.stats",
-      heading: "See Why Customer Love Us",
-      items: [
-        { value: "20%", label: "Of technology contracts never negotiated" },
-        { value: "21%", label: "Avg vendor cost reduction with intelligence" },
-        { value: "$36k+", label: "Entry price for enterprise procurement tools" },
-        { value: "$0", label: "Institutional deal knowledge most startups have" }
-      ]
-    };
-    
-    const problemGridSection: any = {
-      id: 8882,
-      __component: "sections.problem-grid",
-      badgeLabel: "The Problem",
-      heading: "Your vendors know exactly what you should pay.",
-      headingAccent: "You don't.",
-      subheading: "Most startups and mid-market companies sign technology contracts without knowing what the market pays, what terms are negotiable, or what risks are buried in the fine print.",
-      items: [
-        { title: "No price transparency", description: "Vendors hide discounts behind NDAs. You never know if you're getting a good deal." },
-        { title: "Hidden risks", description: "Auto-renewals and predatory terms are buried in MSAs." },
-        { title: "Wasted time", description: "Weeks spent negotiating terms that vendors standardly concede." },
-        { title: "Siloed knowledge", description: "Institutional deal knowledge leaves when your procurement lead does." }
-      ]
-    };
-
-    const founderSpotlightSection: any = {
-      id: 8883,
-      __component: "sections.founder-spotlight",
-      badgeLabel: "Build by the builders who've on both sides",
-      heading: "30+ years pricing the world's",
-      headingAccent: "largest technology deals",
-      intro: "We spent over 30 combined years at AWS and other hyperscalers at the center of complex technology deal-making structuring multi-billion dollar custom technology",
-      introMore: "deals and strategic collaborations for digital transformations across industry verticals, public sector, mid-market and startups.\n\nWe are now democratizing the deal intelligence. The institutional deal intelligence that made those large deals work is now available to every company not just the ones with enterprise procurement and deal teams.",
-      founderName: "Pratt Dey",
-      founderTitle: "Founder, CEO, aptAI Solutions Group",
-      quote: "The biggest friction in enterprise technology isn't the product — it's the contract. Pricing is opaque. Negotiation is asymmetric. Most companies are signing agreements with no idea what the market actually pays.",
-      ctaLabel: "See More",
-      ctaHref: "#about",
-      highlights: [
-        { value: "30+ years", label: "At Hyperscale deal pricing and partner strategy" },
-        { value: "$100B+", label: "In cloud/AI/SaaS Marketplace commit" },
-        { value: "Global", label: "Strategic collaboration and equity investment" }
-      ],
-      partnersNote: "Complex cloud/AI, tech OEM pricing, and datacenter finance"
-    };
-    
-    // Reconstruct the page sections in the correct order
-    const newSections = [];
-    const hero = page.sections.find((s: any) => s.__component === "sections.home-hero");
-    if (hero) newSections.push(hero);
-    
-    newSections.push(statsSection);
-    newSections.push(problemGridSection);
-    
-    const who = page.sections.find((s: any) => s.__component === "sections.who-it-is-for");
-    if (who) newSections.push(who);
-    
-    newSections.push(founderSpotlightSection);
-    
-    const pricing = page.sections.find((s: any) => s.__component === "sections.feature-table");
-    if (pricing) newSections.push(pricing);
-    
-    const faq = page.sections.find((s: any) => s.__component === "sections.faq");
-    if (faq) newSections.push(faq);
-    
-    const waitlistSection: any = {
-      id: 9999,
-      __component: "sections.waitlist",
-      heading: "Your next technology contract should cost less.",
-      subhead: "Join the aptAIvisor waitlist. Be first to access pricing benchmarks, contract intelligence, and negotiation playbooks for your vendor stack. Launching in Q1 2027.",
-      joinLabel: "Join the waitlist",
-      joinHref: "/waitlist"
-    };
-
-    const waitlist = page.sections.find((s: any) => s.__component === "sections.waitlist");
-    if (waitlist) {
-      newSections.push({ ...waitlistSection, ...waitlist });
-    } else {
-      newSections.push(waitlistSection);
-    }
-    
-    page.sections = newSections;
-  }
-
   return page;
 }
 
@@ -189,6 +101,13 @@ export async function getGlobal(): Promise<CmsGlobal | null> {
     {
       populate: {
         navLinks: true,
+        aboutMegaMenu: {
+          populate: {
+            company: { populate: ["items"] },
+            resources: { populate: ["items"] },
+            featured: true,
+          },
+        },
         footerColumns: { populate: ["links"] },
         socialLinks: true,
         demoModal: { populate: ["logo"] },
@@ -199,4 +118,81 @@ export async function getGlobal(): Promise<CmsGlobal | null> {
   );
 
   return fetchSingle<CmsGlobal>(`/api/global?${query}`, { tags: ["global"] });
+}
+
+const BLOG_POSTS_PAGE_SIZE = 10;
+
+export async function getBlogPosts(page = 1): Promise<{
+  posts: BlogPost[];
+  page: number;
+  pageCount: number;
+}> {
+  const query = qs.stringify(
+    {
+      populate: {
+        coverImage: true,
+        category: true,
+        author: { populate: ["avatar"] },
+      },
+      sort: ["publishedAt:desc"],
+      pagination: { page, pageSize: BLOG_POSTS_PAGE_SIZE },
+    },
+    { encodeValuesOnly: true },
+  );
+
+  const { data, pagination } = await fetchPaginatedList<BlogPost>(
+    `/api/blog-posts?${query}`,
+    { tags: ["blog-posts"] },
+  );
+
+  return { posts: data, page: pagination.page, pageCount: pagination.pageCount };
+}
+
+export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> {
+  const query = qs.stringify(
+    {
+      filters: { slug: { $eq: slug } },
+      populate: {
+        coverImage: true,
+        category: true,
+        author: { populate: ["avatar"] },
+        seo: { populate: ["ogImage"] },
+      },
+    },
+    { encodeValuesOnly: true },
+  );
+
+  const posts = await fetchList<BlogPost>(`/api/blog-posts?${query}`, {
+    tags: [`blog-post:${slug}`],
+  });
+
+  return posts[0] ?? null;
+}
+
+export async function getRelatedBlogPosts(
+  excludeSlug: string,
+  limit = 3,
+): Promise<BlogPost[]> {
+  const query = qs.stringify(
+    {
+      filters: { slug: { $ne: excludeSlug } },
+      populate: {
+        coverImage: true,
+        category: true,
+        author: { populate: ["avatar"] },
+      },
+      sort: ["publishedAt:desc"],
+      pagination: { page: 1, pageSize: limit },
+    },
+    { encodeValuesOnly: true },
+  );
+
+  return fetchList<BlogPost>(`/api/blog-posts?${query}`, {
+    tags: ["blog-posts"],
+  });
+}
+
+/** Fire-and-forget — increments the post's view count server-side. */
+export async function incrementBlogPostView(slug: string): Promise<void> {
+  await cmsPost(`/api/blog-posts/${encodeURIComponent(slug)}/view`);
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { homeSerif } from "../ui/fonts";
+import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 
 /**
  * Pricing page hero — Figma Pricing (1:7620) top band.
@@ -21,8 +22,9 @@ export function PricingHero({
   const yearly = billing === "yearly";
 
   return (
-    <header className="flex w-full flex-col items-center gap-8 px-4 pt-[clamp(9.5rem,18vw,15rem)] text-center sm:gap-10 sm:px-6 md:gap-12">
-      <div className="flex w-full max-w-[51.125rem] flex-col items-center gap-6 sm:gap-8 md:gap-[2.625rem]">
+    <header className="relative flex w-full flex-col items-center gap-8 overflow-hidden px-4 pt-[clamp(9.5rem,18vw,15rem)] text-center sm:gap-10 sm:px-6 md:gap-12">
+      <HeroGlowAccent />
+      <div className="relative flex w-full max-w-[51.125rem] flex-col items-center gap-6 sm:gap-8 md:gap-[2.625rem]">
         <h1
           className={`${homeSerif.className} flex w-full flex-col items-center tracking-[-0.02em]`}
         >

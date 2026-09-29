@@ -9,6 +9,7 @@ import { HeaderView } from "./Header";
 export async function Header() {
   const global = await getGlobal();
   const navLinks = global?.navLinks?.length ? global.navLinks : undefined;
+  const aboutMegaMenu = global?.aboutMegaMenu ?? undefined;
 
-  return <HeaderView navLinks={navLinks} />;
+  return <HeaderView navLinks={navLinks} aboutMegaMenu={aboutMegaMenu} />;
 }
