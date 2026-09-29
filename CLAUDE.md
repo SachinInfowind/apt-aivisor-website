@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run dev` / `npm run build` / `npm start` — standard Next.js (v16, React 19, Tailwind 4). Node is pinned to 26.10.0 (`.nvmrc`, `engines`).
 - `npm run lint` — ESLint (flat config, `eslint.config.mjs`).
 - There is no test runner configured.
-- Env vars: copy `.env.example`. `STRAPI_URL` (default `http://localhost:1337`), `STRAPI_API_TOKEN`, `STRAPI_REVALIDATE_SECRET`, `PREVIEW_SECRET`, `STRAPI_MEDIA_HOSTNAME`. The Strapi backend is a sibling project (`../aptaivisor-cms`, seeded from its `src/index.ts`).
+- Env vars: copy `.env.example`. `STRAPI_URL` (default `http://localhost:1337`), `STRAPI_API_TOKEN`, `STRAPI_REVALIDATE_SECRET`, `PREVIEW_SECRET`, `STRAPI_MEDIA_HOSTNAME`. The Strapi backend is a sibling project (`../apt-cms`, seeded from its `src/index.ts`; `.env.example` still says `aptaivisor-cms`, which is stale).
 - Root-level `*.js` files (`add_cms_components.js`, `query_cms.js`, `update_api.js`, …) are one-off scripts, not part of the app.
 
 ## Architecture
