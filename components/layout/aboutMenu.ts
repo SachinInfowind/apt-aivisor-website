@@ -6,7 +6,7 @@ export const aboutMegaMenu = {
     items: [
       {
         label: "About us",
-        href: "#about",
+        href: "/about",
         description: "Learn about our story and our mission statement.",
         icon: "flag" as const,
       },
@@ -59,7 +59,7 @@ export const aboutMegaMenu = {
 export const navLinks = [
   { label: "Solutions", href: "/solutions" },
   { label: "Pricing", href: "/pricing" },
-  { label: "Design Partner", href: "#design-partner" },
-  { label: "About", href: "#about", mega: true },
+  { label: "Design Partner", href: "/design-partner" },
+  { label: "About", href: "/about", mega: true },
   { label: "Trust & Security", href: "/trust" },
 ] as const;

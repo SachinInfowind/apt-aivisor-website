@@ -19,6 +19,8 @@ const EXPLICIT_ROUTE_SLUGS = new Set([
   "trust",
   "team",
   "waitlist",
+  "design-partner",
+  "about",
 ]);
 
 /**

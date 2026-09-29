@@ -45,6 +45,22 @@ const SECTIONS_POPULATE = {
     "sections.solutions-cta": { populate: ["image"] },
     "sections.legal-hero": true,
     "sections.legal-body": { populate: ["blocks"] },
+    "sections.about-hero": true,
+    "sections.about-foresight": {
+      populate: { quoteLogo: true, items: { populate: ["icon"] } },
+    },
+    "sections.about-name": { populate: { tiles: { populate: ["image"] } } },
+    "sections.about-ethos": { populate: { items: { populate: ["icon"] } } },
+    "sections.design-partner-hero": true,
+    "sections.design-partner-audience": {
+      populate: { tabs: { populate: ["points", "image"] } },
+    },
+    "sections.design-partner-cards": { populate: { items: { populate: ["icon"] } } },
+    "sections.design-partner-checklist": { populate: ["items"] },
+    "sections.design-partner-timeline": { populate: { steps: { populate: ["image"] } } },
+    "sections.design-partner-form": {
+      populate: { options: { populate: ["icon"] }, fields: true },
+    },
     "sections.team-roster": {
       populate: { members: { populate: ["photo", "brands"] } },
     },
@@ -175,6 +191,7 @@ export async function getGlobal(): Promise<CmsGlobal | null> {
         navLinks: true,
         footerColumns: { populate: ["links"] },
         socialLinks: true,
+        demoModal: { populate: ["logo"] },
         seo: { populate: ["ogImage"] },
       },
     },

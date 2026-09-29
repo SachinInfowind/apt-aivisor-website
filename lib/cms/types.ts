@@ -43,6 +43,8 @@ export interface CardItem {
   description?: string;
   meta?: string;
   icon?: StrapiImage | null;
+  /** design-partner benefit cards: colour of the `meta` badge */
+  badgeColor?: "purple" | "orange" | "blue" | "green" | "pink" | "yellow" | null;
 }
 
 export interface TeamMember {
@@ -114,9 +116,13 @@ export interface CtaSection {
   __component: "sections.cta";
   id: number;
   heading: string;
+  /** Rendered after `heading` in the accent colour (panel variant). */
+  headingAccent?: string | null;
   subheading?: string;
   ctaLabel?: string;
   ctaHref?: string;
+  /** `panel` = rounded grey card with serif heading (design-partner NDA). */
+  variant?: "default" | "panel" | null;
 }
 
 export interface RichTextSection {
@@ -608,6 +614,202 @@ export interface TeamRosterSection {
   members: TeamProfile[];
 }
 
+export interface BulletPoint {
+  id?: number;
+  text: string;
+}
+
+export interface AudienceTab {
+  id?: number;
+  tabLabel: string;
+  heading: string;
+  body?: string;
+  image?: StrapiImage | null;
+  points?: BulletPoint[];
+}
+
+export interface DesignPartnerHeroSection {
+  __component: "sections.design-partner-hero";
+  id: number;
+  badgeLabel?: string;
+  heading: string;
+  headingAccent?: string;
+  headingAfter?: string;
+  subhead?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+}
+
+export interface DesignPartnerAudienceSection {
+  __component: "sections.design-partner-audience";
+  id: number;
+  badgeLabel?: string;
+  heading: string;
+  headingAccent?: string;
+  body?: string;
+  tabs: AudienceTab[];
+}
+
+export interface DesignPartnerCardsSection {
+  __component: "sections.design-partner-cards";
+  id: number;
+  variant: "benefits" | "security" | "commitment";
+  badgeLabel?: string;
+  heading?: string;
+  headingAccent?: string;
+  subheading?: string;
+  items: CardItem[];
+}
+
+export interface DesignPartnerChecklistSection {
+  __component: "sections.design-partner-checklist";
+  id: number;
+  badgeLabel?: string;
+  heading: string;
+  headingAccent?: string;
+  subheading?: string;
+  items: BulletPoint[];
+}
+
+export interface TimelineStep {
+  id?: number;
+  number: string;
+  title: string;
+  description?: string;
+  image?: StrapiImage | null;
+}
+
+export interface DesignPartnerTimelineSection {
+  __component: "sections.design-partner-timeline";
+  id: number;
+  badgeLabel?: string;
+  heading: string;
+  headingAccent?: string;
+  steps: TimelineStep[];
+}
+
+export interface FormOption {
+  id?: number;
+  group: string;
+  key: string;
+  label: string;
+  icon?: StrapiImage | null;
+}
+
+export interface FormFieldCopy {
+  id?: number;
+  key: string;
+  label?: string | null;
+  placeholder?: string | null;
+  hint?: string | null;
+  prefix?: string | null;
+}
+
+export interface DesignPartnerFormSectionData {
+  __component: "sections.design-partner-form";
+  id: number;
+  badgeLabel?: string;
+  heading: string;
+  subhead?: string;
+  successHref?: string;
+  // Wizard copy — all editable in Strapi (sections.design-partner-form).
+  /** Dropdown / chip / buyer-seller options. `group` = field name, `key` = submitted value. */
+  options?: FormOption[];
+  /** Per-field label, placeholder, hint (and prefix) — keyed by field name. */
+  fields?: FormFieldCopy[];
+  stepPrefix?: string | null;
+  step1Label?: string | null;
+  step2Label?: string | null;
+  step3Label?: string | null;
+  personalTitle?: string | null;
+  personalSubtitle?: string | null;
+  companyTitle?: string | null;
+  companySubtitle?: string | null;
+  noticeTitle?: string | null;
+  noticeBody?: string | null;
+  vendorsTitle?: string | null;
+  vendorsSubtitle?: string | null;
+  categoriesTitle?: string | null;
+  categoriesSubtitle?: string | null;
+  categoriesPrompt?: string | null;
+  economicsTitle?: string | null;
+  economicsSubtitle?: string | null;
+  continueToStep2Label?: string | null;
+  continueToStep3Label?: string | null;
+  backLabel?: string | null;
+  submitLabel?: string | null;
+  submittingLabel?: string | null;
+  termsPrefix?: string | null;
+  termsLinkLabel?: string | null;
+  termsHref?: string | null;
+  privacyLinkLabel?: string | null;
+  privacyHref?: string | null;
+  termsSuffix?: string | null;
+  ndaText?: string | null;
+  ndaLinkLabel?: string | null;
+  ndaLinkHref?: string | null;
+  consentText?: string | null;
+  footerNote?: string | null;
+  successTitle?: string | null;
+  successBody?: string | null;
+}
+
+export interface AboutHeroSection {
+  __component: "sections.about-hero";
+  id: number;
+  heading: string;
+  headingAccent?: string;
+  /** Wrap words in **double asterisks** to render them bold. */
+  intro?: string;
+}
+
+export interface AboutForesightSection {
+  __component: "sections.about-foresight";
+  id: number;
+  heading: string;
+  headingAccent?: string;
+  intro?: string;
+  readMoreLabel?: string;
+  readMoreHref?: string;
+  quoteBefore?: string;
+  quoteAccent?: string;
+  quoteAfter?: string;
+  quoteLogo?: StrapiImage | null;
+  items: CardItem[];
+}
+
+export interface AboutNameTile {
+  id?: number;
+  name: string;
+  script?: string;
+  label?: string;
+  description?: string;
+  image?: StrapiImage | null;
+}
+
+export interface AboutNameSection {
+  __component: "sections.about-name";
+  id: number;
+  anchorId?: string;
+  badgeLabel?: string;
+  word?: string;
+  wordScript?: string;
+  meaningPrefix?: string;
+  meaning?: string;
+  tiles: AboutNameTile[];
+}
+
+export interface AboutEthosSection {
+  __component: "sections.about-ethos";
+  id: number;
+  badgeLabel?: string;
+  heading: string;
+  headingAccent?: string;
+  headingAfter?: string;
+  subheading?: string;
+  items: CardItem[];
+}
+
 export type PageSection =
   | HeroSection
   | StatsSection
@@ -647,7 +849,17 @@ export type PageSection =
   | SolutionsSecuritySection
   | SolutionsCtaSection
   | LegalHeroSection
-  | LegalBodySection;
+  | LegalBodySection
+  | DesignPartnerHeroSection
+  | DesignPartnerAudienceSection
+  | DesignPartnerCardsSection
+  | DesignPartnerChecklistSection
+  | DesignPartnerTimelineSection
+  | DesignPartnerFormSectionData
+  | AboutHeroSection
+  | AboutForesightSection
+  | AboutNameSection
+  | AboutEthosSection;
 
 export interface CmsPage {
   id: number;
@@ -655,6 +867,30 @@ export interface CmsPage {
   slug: string;
   seo?: Seo;
   sections: PageSection[];
+}
+
+/** Copy + links for the "See aptAIvisor in action" modal (Global singleton). */
+export interface DemoModalCopy {
+  logo?: StrapiImage | null;
+  closeLabel?: string | null;
+  introTitle?: string | null;
+  introBody?: string | null;
+  requestLabel?: string | null;
+  requestHref?: string | null;
+  exploreLabel?: string | null;
+  exploreHref?: string | null;
+  notifyLabel?: string | null;
+  emailTitle?: string | null;
+  emailBody?: string | null;
+  emailFieldLabel?: string | null;
+  emailPlaceholder?: string | null;
+  cancelLabel?: string | null;
+  submitLabel?: string | null;
+  submittingLabel?: string | null;
+  thanksTitle?: string | null;
+  thanksBody?: string | null;
+  homeLabel?: string | null;
+  homeHref?: string | null;
 }
 
 export interface CmsGlobal {
@@ -665,5 +901,6 @@ export interface CmsGlobal {
   navLinks: NavLink[];
   footerColumns: FooterColumn[];
   socialLinks: Link[];
+  demoModal?: DemoModalCopy | null;
   seo?: Seo;
 }

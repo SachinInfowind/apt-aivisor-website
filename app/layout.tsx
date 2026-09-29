@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "../store/StoreProvider";
 import { PreviewBanner } from "@/components/cms/PreviewBanner";
+import { DemoModalRoot } from "@/components/demo/DemoModalRoot";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <StoreProvider>
           <PreviewBanner />
           {children}
+          <DemoModalRoot />
         </StoreProvider>
       </body>
     </html>

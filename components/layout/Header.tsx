@@ -168,6 +168,8 @@ export function HeaderView({
   navLinks?: readonly HeaderNavLink[];
 }) {
   const pathname = usePathname();
+  // "About" is a menu, not a page: highlight it on any of its destinations.
+  const aboutActive = aboutMegaMenu.company.items.some((item) => item.href === pathname);
   const [openAbout, setOpenAbout] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
@@ -223,7 +225,7 @@ export function HeaderView({
                   <button
                     type="button"
                     className={`inline-flex items-center gap-1.5 text-body font-semibold leading-6 transition-colors ${
-                      openAbout ? "text-brand" : "text-nav hover:text-brand"
+                      openAbout || aboutActive ? "text-brand" : "text-nav hover:text-brand"
                     }`}
                     aria-expanded={openAbout}
                     aria-haspopup="menu"

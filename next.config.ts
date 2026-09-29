@@ -5,7 +5,11 @@ const nextConfig: NextConfig = {
   images: {
     // Strapi runs on localhost in dev; harmless here since it's the same
     // machine, but never enable this against an untrusted/production host.
-    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
+    // Set ALLOW_LOCAL_IMAGES=true (at build time) only to preview a
+    // production build against a local Strapi; leave unset when deploying.
+    dangerouslyAllowLocalIP:
+      process.env.NODE_ENV !== "production" ||
+      process.env.ALLOW_LOCAL_IMAGES === "true",
     remotePatterns: [
       {
         protocol: "http",

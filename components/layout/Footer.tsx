@@ -15,10 +15,10 @@ const defaultColumns: FooterColumn[] = [
   {
     heading: "Company",
     links: [
-      { label: "About us", href: "#about" },
+      { label: "About us", href: "/about" },
       { label: "Careers", href: "/career" },
       { label: "Blog", href: "#blog" },
-      { label: "Design Partners", href: "#design-partner" },
+      { label: "Design Partners", href: "/design-partner" },
     ],
   },
   {

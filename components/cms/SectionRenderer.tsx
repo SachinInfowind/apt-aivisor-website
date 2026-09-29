@@ -37,6 +37,16 @@ import { SolutionsCta } from "@/components/solutions/SolutionsCta";
 import { LegalHero } from "@/components/legal/LegalHero";
 import { LegalContent } from "@/components/legal/LegalContent";
 import { CtaSection } from "@/components/cms/sections/CtaSection";
+import { AboutHero } from "@/components/about/sections/AboutHero";
+import { AboutForesight } from "@/components/about/sections/AboutForesight";
+import { AboutName } from "@/components/about/sections/AboutName";
+import { AboutEthos } from "@/components/about/sections/AboutEthos";
+import { DesignPartnerHero } from "@/components/design-partner/sections/DesignPartnerHero";
+import { AudienceSection } from "@/components/design-partner/sections/AudienceSection";
+import { DesignPartnerCardsSection } from "@/components/design-partner/sections/DesignPartnerCardsSection";
+import { ChecklistSection } from "@/components/design-partner/sections/ChecklistSection";
+import { TimelineSection } from "@/components/design-partner/sections/TimelineSection";
+import { DesignPartnerFormSection } from "@/components/design-partner/sections/DesignPartnerFormSection";
 import type { PageSection } from "@/lib/cms/types";
 
 /**
@@ -127,6 +137,26 @@ export function SectionRenderer({ sections }: { sections: PageSection[] }) {
             return <LegalContent key={key} {...section} />;
           case "sections.cta":
             return <CtaSection key={key} {...section} />;
+          case "sections.about-hero":
+            return <AboutHero key={key} {...section} />;
+          case "sections.about-foresight":
+            return <AboutForesight key={key} {...section} />;
+          case "sections.about-name":
+            return <AboutName key={key} {...section} />;
+          case "sections.about-ethos":
+            return <AboutEthos key={key} {...section} />;
+          case "sections.design-partner-hero":
+            return <DesignPartnerHero key={key} {...section} />;
+          case "sections.design-partner-audience":
+            return <AudienceSection key={key} {...section} />;
+          case "sections.design-partner-cards":
+            return <DesignPartnerCardsSection key={key} {...section} />;
+          case "sections.design-partner-checklist":
+            return <ChecklistSection key={key} {...section} />;
+          case "sections.design-partner-timeline":
+            return <TimelineSection key={key} {...section} />;
+          case "sections.design-partner-form":
+            return <DesignPartnerFormSection key={key} {...section} />;
           case "sections.contact-hero":
             return (
               <div key={key}>

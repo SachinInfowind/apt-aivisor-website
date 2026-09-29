@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 /**
  * APT AI Visor design tokens (from Figma).
@@ -46,6 +47,17 @@ const config = {
           "avatar-2": "#D6E4FF",
           "avatar-3": "#AED0FF",
           "avatar-4": "#7AADFF",
+          light: "#82AEFF",
+          vivid: "#1F6DFF",
+          fade: "#AFCBFF",
+        },
+        paper: { DEFAULT: "#FEFEFD", cool: "#FCFDFD" },
+        "ink-black": "#0C111D",
+        info: {
+          DEFAULT: "#2E90FA",
+          fg: "#175CD3",
+          bg: "#EFF8FF",
+          edge: "#B2DDFF",
         },
         navy: "#182230",
         heading: "#101828",
@@ -59,6 +71,8 @@ const config = {
           soft: "#D7E0F0",
           strong: "#D0D5DD",
           muted: "#EAECF0",
+          faint: "#F1F5F9",
+          frost: "rgba(226, 232, 240, 0.9)",
         },
         metric: "#17B26A",
         "ink-deep": "#1A1A2E",
@@ -67,14 +81,34 @@ const config = {
           fg: "#027A48",
           bg: "#DCFAE6",
           soft: "#E7F8EF",
+          strong: "#079455",
         },
         chip: {
           success: { fg: "#067647", bg: "#ECFDF3", edge: "#ABEFC6" },
-          orange: { fg: "#B93815", bg: "#FEF6EE", edge: "#F9DBAF" },
-          pink: { fg: "#C11574", bg: "#FDF2FA", edge: "#FCCEEE" },
+          orange: {
+            fg: "#B93815",
+            bg: "#FEF6EE",
+            edge: "#F9DBAF",
+            strong: "#E04F16",
+            dot: "#EF6820",
+          },
+          pink: {
+            fg: "#C11574",
+            bg: "#FDF2FA",
+            edge: "#FCCEEE",
+            dot: "#EE46BC",
+          },
+          purple: { fg: "#5925DC", edge: "#6938EF", dot: "#7A5AF8" },
+          yellow: {
+            fg: "#B54708",
+            bg: "#FFFAEB",
+            edge: "#FEDF89",
+            dot: "#F79009",
+          },
         },
         danger: {
           DEFAULT: "#F04438",
+          solid: "#D92D20",
           fg: "#B42318",
           bg: "#FEE4E2",
         },
@@ -91,6 +125,31 @@ const config = {
         form: "520px",
         narrow: "620px",
         who: "760px",
+        container: "80rem",
+        copy: "31.5rem",
+        modal: "min(49.8125rem, calc(100vw - 3rem))",
+        intro: "42.75rem",
+      },
+      width: {
+        rail: "19rem",
+        "rail-lg": "21rem",
+        "rail-xl": "21.875rem",
+        panel: "336px",
+        feature: "18.75rem",
+        "quote-card": "40.6875rem",
+        "title-col": "28.5rem",
+        modal: "min(49.8125rem, calc(100vw - 3rem))",
+        glow: "min(36vw, 33rem)",
+      },
+      minWidth: { menu: "8rem" },
+      minHeight: { hero: "min(100svh, 56rem)", "hero-about": "min(100svh, 47.375rem)", tile: "8.8125rem", cell: "6.5rem", block: "18rem" },
+      borderWidth: { 1.5: "1.5px" },
+      letterSpacing: { heading: "-0.02em" },
+      lineHeight: {
+        title: "2.375rem",
+        "title-sm": "1.875rem",
+        heading: "1.2",
+        cap: "1.125rem",
       },
       spacing: {
         "section-x": "80px",
@@ -122,6 +181,8 @@ const config = {
         "5xl": "32px",
         card: "20px",
         chip: "18px",
+        field: "10px",
+        tile: "14px",
       },
       fontSize: {
         // Scales with both viewport width AND height (svh term) — a width-only
@@ -169,10 +230,15 @@ const config = {
           "clamp(2.5rem, 1.9rem + 2.5vw, 4rem)",
           { lineHeight: "1.05" },
         ],
+        "quote-md": [
+          "clamp(1.5rem, 2.5vw, 2.25rem)",
+          { lineHeight: "1.2222", letterSpacing: "-0.02em" },
+        ],
         quote: [
           "clamp(1.25rem, 1.1rem + 0.6vw, 1.75rem)",
           { lineHeight: "1.35" },
         ],
+        title: "1.875rem",
         "body-lg": ["20px", { lineHeight: "30px" }],
         "body-md": ["18px", { lineHeight: "28px" }],
         body: ["16px", { lineHeight: "24px" }],
@@ -212,8 +278,24 @@ const config = {
         badge: "0 4px 16px rgba(47, 91, 255, 0.08)",
         soft: "0 8px 20px rgba(15, 40, 90, 0.06)",
         "focus-ring": "0 0 0 4px rgba(255, 255, 255, 0.35)",
+        field: "0 1px 2px 0 rgba(16, 24, 40, 0.05)",
+        "field-focus":
+          "0 1px 2px 0 rgba(16, 24, 40, 0.05), 0 0 0 4px rgba(181, 207, 255, 0.24)",
+        "ring-accent": "0 0 0 4px rgba(79, 141, 255, 0.24)",
+        modal:
+          "0 20px 24px -4px rgba(16, 24, 40, 0.08), 0 8px 8px -4px rgba(16, 24, 40, 0.03)",
+        "modal-sm":
+          "0 7px 9px -2px rgba(16, 24, 40, 0.08), 0 2px 3px -1px rgba(16, 24, 40, 0.03)",
+        panel: "0 20px 40px rgba(52, 64, 84, 0.12)",
+        "panel-far": "100px 100px 150px 0 rgba(52, 64, 84, 0.12)",
       },
+      dropShadow: { hero: "0 24px 48px rgba(16, 24, 40, 0.18)" },
       height: {
+        glow: "min(36vw, 33rem)",
+        scroll: "350vh",
+        media: "21.875rem",
+        feature: "31.5625rem",
+        "feature-media": "18.0625rem",
         nav: "72px",
         btn: "44px",
         "btn-lg": "52px",
@@ -221,6 +303,18 @@ const config = {
       },
     },
   },
+  plugins: [
+    plugin(({ addUtilities, theme }) => {
+      addUtilities({
+        ".text-stroke-brand": {
+          "-webkit-text-stroke": `1px ${theme("colors.brand.DEFAULT")}`,
+        },
+        ".text-stroke-navy": {
+          "-webkit-text-stroke": `1px ${theme("colors.navy")}`,
+        },
+      });
+    }),
+  ],
 } satisfies Config;
 
 export default config;
