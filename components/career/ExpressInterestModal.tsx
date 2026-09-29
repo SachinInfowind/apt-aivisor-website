@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
 import { AboutMenuIcon } from "../layout/AboutMenuIcons";
+import { homeAssets } from "../ui/assets";
 import {
   RESUME_ACCEPT,
   validateCareerApplication,
@@ -227,7 +229,11 @@ export function ExpressInterestModal({
             if (e.target === e.currentTarget) resetAndClose();
           }}
         >
-          <div className="relative flex w-full max-w-[40rem] flex-col overflow-hidden rounded-xl bg-white pb-5 shadow-[0_20px_24px_-4px_rgba(16,24,40,0.08),0_8px_8px_-4px_rgba(16,24,40,0.03)]">
+          <div
+            className={`relative flex w-full flex-col overflow-hidden rounded-xl bg-white shadow-[0_20px_24px_-4px_rgba(16,24,40,0.08),0_8px_8px_-4px_rgba(16,24,40,0.03)] ${
+              status === "success" ? "max-w-[25rem]" : "max-w-[40rem] pb-5"
+            }`}
+          >
             <DecorativeCircles />
 
             <button
@@ -240,31 +246,31 @@ export function ExpressInterestModal({
             </button>
 
             {status === "success" ? (
-              <div className="relative z-[1] flex flex-col items-center gap-4 px-6 py-16 text-center">
-                <span className="grid h-12 w-12 place-items-center rounded-full bg-success-bg text-success-fg">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
-                    <path
-                      d="M20 6L9 17L4 12"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
+              <div className="relative z-[1] flex flex-col items-start gap-4 px-6 pb-6 pt-6">
+                <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#F2F4F7]">
+                  <Image
+                    src={homeAssets.brand.mark}
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="h-8 w-8 object-contain"
+                  />
                 </span>
-                <h2 className="text-lg font-semibold text-[#101828]">
-                  Thanks for your interest!
-                </h2>
-                <p className="max-w-[26rem] text-sm text-[#475467]">
-                  We&apos;ve got your details and will reach out when a relevant opportunity
-                  opens up.
-                </p>
+                <div className="flex flex-col gap-1">
+                  <h2 className="text-lg font-semibold leading-7 text-[#101828]">
+                    Thanks for your interest!
+                  </h2>
+                  <p className="text-sm leading-5 text-[#475467]">
+                    We&apos;ve received your details and will reach out when a relevant
+                    opportunity opens.
+                  </p>
+                </div>
                 <button
                   type="button"
                   onClick={resetAndClose}
-                  className="mt-2 inline-flex items-center justify-center rounded-pill border border-[#0042BB] bg-[#0042BB] px-4 py-2.5 text-base font-semibold text-white transition-colors hover:bg-brand-hover"
+                  className="mt-8 inline-flex w-full items-center justify-center rounded-pill border border-[#0042BB] bg-[#0042BB] px-4 py-2.5 text-base font-semibold text-white shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors hover:bg-brand-hover"
                 >
-                  Close
+                  Back to Careers
                 </button>
               </div>
             ) : (
