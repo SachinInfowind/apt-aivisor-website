@@ -21,7 +21,7 @@ export function NewsletterForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          data: { email: email.trim(), source: "blog" },
+          data: { email: email.trim(), sourcePath: "/blogs" },
         }),
       });
 
