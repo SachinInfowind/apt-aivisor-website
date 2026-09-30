@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { homeSerif } from "@/components/ui/fonts";
 import { toAbsoluteMediaUrl } from "@/lib/cms/media";
 import type { SolutionsFounderSection } from "@/lib/cms/types";
@@ -51,6 +52,13 @@ export function SolutionsFounder({
 
   const currentTab = tabs[activeTab];
   const imageUrl = currentTab.image?.url ? toAbsoluteMediaUrl(currentTab.image.url) : "";
+  // Always route to the Design Partner page's application form with the
+  // matching Buyer/Seller tab pre-selected, regardless of whatever URL is
+  // configured in the CMS `ctaHref` field for this tab.
+  const currentTabParticipant = currentTab.title.toLowerCase().includes("buyer")
+    ? "buyer"
+    : "seller";
+  const applyHref = `/design-partner?type=${currentTabParticipant}#apply`;
 
   return (
     <section className="relative flex w-full flex-col bg-[#F9FAFB] px-5 py-12 md:px-[80px] md:py-[100px]">
@@ -140,13 +148,13 @@ export function SolutionsFounder({
               </div>
 
               {currentTab.ctaLabel ? (
-                <a
-                  href={currentTab.ctaHref || "#"}
+                <Link
+                  href={applyHref}
                   className="mt-2 flex w-full sm:w-auto items-center justify-center gap-1.5 rounded-full border border-[#0042BB] bg-[#0042BB] px-4 py-2 md:px-4 md:py-2.5 text-[14px] md:text-[16px] font-semibold leading-[24px] text-white shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors hover:bg-[#003699]"
                 >
                   {currentTab.ctaLabel}
                   <ArrowUpRightIcon />
-                </a>
+                </Link>
               ) : null}
             </div>
             </div>
