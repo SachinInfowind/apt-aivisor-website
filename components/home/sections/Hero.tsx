@@ -2,6 +2,7 @@ import { homeSerif } from "../../ui/fonts";
 import { HeroGlowAccent } from "../../ui/HeroGlowAccent";
 import { layout } from "../../ui/type";
 import type { HomeHeroSection } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /**
  * Hero — Figma Frame 127 (26193:18318, 1440×896).
@@ -35,7 +36,7 @@ export function Hero({
       // from Header.tsx's h-14/16/nav-h + pt-4/6/8/nav-top) at every
       // breakpoint, or the badge renders tucked behind/under the header on
       // viewports short enough that the vh term alone undershoots it.
-      className={`relative flex min-h-[min(100svh,56rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(2.5rem,12svh,10.9375rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:min-h-[min(100svh,67.5rem)] xl:pb-[clamp(2.5rem,16svh,13.75rem)] xl:pt-[clamp(9.5rem,18svh,15rem)]`}
+      className={`relative flex min-h-[min(100svh,56rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:min-h-[min(100svh,67.5rem)] xl:pb-[clamp(2.5rem,16svh,13.75rem)] xl:pt-[clamp(9.5rem,18svh,15rem)]`}
     >
       <HeroGlowAccent />
       {/* Figma groups this as 3 nested levels with 3 different gaps — badge↔
@@ -86,6 +87,8 @@ export function Hero({
           </a>
         )}
       </div>
+
+      <CloudBand priority variant="edge" />
     </section>
   );
 }

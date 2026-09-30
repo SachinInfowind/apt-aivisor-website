@@ -5,6 +5,7 @@ import { homeSerif } from "../../ui/fonts";
 import { layout } from "../../ui/type";
 import { toAbsoluteMediaUrl } from "@/lib/cms/media";
 import type { TrustHeroSection as TrustHeroSectionData } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /** Half of card row (~235px) — mesh stops here so cards straddle hero / white. */
 const MESH_END_FROM_BOTTOM = "7.375rem";
@@ -30,9 +31,11 @@ export function TrustHeroSection({
       {/* Full-bleed mesh stops at mid-card — bottom half sits on page white */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 bg-hero-mesh"
+        className="pointer-events-none absolute inset-x-0 top-0 overflow-hidden bg-hero-mesh"
         style={{ bottom: MESH_END_FROM_BOTTOM }}
-      />
+      >
+        <CloudBand priority variant="edge" />
+      </div>
       <div
         aria-hidden
         className="pointer-events-none absolute -left-[8rem] -top-[10rem] h-[33rem] w-[33rem] rounded-full bg-platform-to opacity-70 blur-[150px]"

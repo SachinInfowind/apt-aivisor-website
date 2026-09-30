@@ -1,5 +1,7 @@
+"use client";
+
 import { CmsImage } from "./CmsImage";
-import { getGlobal } from "@/lib/cms/queries";
+import { useCloudArt } from "./CloudsContext";
 
 /**
  * Reusable decorative cloud edge (Figma "cloude", 1630×404 on a 1440 canvas).
@@ -14,8 +16,9 @@ import { getGlobal } from "@/lib/cms/queries";
 
 /**
  * The artwork comes from the CMS Global record (`cloudBand` for the 1630px band,
- * `cloudEdge` for the full-width edge with its own blue glow, Figma export 1426×292).
- * Server component — use it from server-rendered sections.
+ * `cloudEdge` for the full-width edge with its own blue glow, Figma export 1426×292),
+ * provided app-wide by `CloudsProvider` in the root layout — usable from server or client
+ * components.
  */
 
 type CloudBandProps = {
@@ -27,13 +30,13 @@ type CloudBandProps = {
   variant?: "band" | "edge";
 };
 
-export async function CloudBand({
+export function CloudBand({
   edge = "bottom",
   className = "",
   priority = false,
   variant = "band",
 }: CloudBandProps) {
-  const global = await getGlobal();
+  const clouds = useCloudArt();
   const anchor = edge === "bottom" ? "bottom-0" : "top-0 -scale-y-100";
   if (variant === "edge") {
     return (
@@ -42,7 +45,7 @@ export async function CloudBand({
         className={`pointer-events-none absolute inset-x-0 z-0 overflow-hidden ${anchor} ${className}`}
       >
         <CmsImage
-          image={global?.cloudEdge}
+          image={clouds.edge}
           width={1426}
           height={292}
           sizes="100vw"
@@ -62,7 +65,7 @@ export async function CloudBand({
           viewport width. */}
       <div className="relative left-1/2 aspect-[1630/404] w-[max(113.2%,60rem)] -translate-x-1/2">
         <CmsImage
-          image={global?.cloudBand}
+          image={clouds.band}
           width={1568}
           height={320}
           sizes="120vw"

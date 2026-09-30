@@ -1,6 +1,8 @@
 "use client";
 
+import { CloudBand } from "../ui/CloudBand";
 import { CmsImage } from "../ui/CmsImage";
+import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import { homeSerif } from "../ui/fonts";
 import { layout } from "../ui/type";
 import type { ContactHeroSection, StrapiImage } from "@/lib/cms/types";
@@ -68,13 +70,13 @@ export function ContactContent({
   flagImage,
 }: ContactHeroSection) {
   return (
-    <section
-      className={`relative w-full bg-white ${layout.sectionX} pb-16 pt-[clamp(9.5rem,18vw,15rem)] sm:pb-20 md:pb-24`}
-    >
-      <div
-        className={`${layout.inner} flex max-w-[80rem] flex-col items-center gap-12 sm:gap-16 md:gap-20`}
+    <>
+      {/* Hero band — mesh + cloud edge, same treatment as the other page heroes */}
+      <section
+        className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(9.5rem,18vw,15rem)]`}
       >
-        {/* Hero */}
+        <HeroGlowAccent />
+        <div className={`${layout.inner} relative z-[1] flex max-w-[80rem] flex-col items-center`}>
         <div className="flex w-full max-w-[56.5625rem] flex-col items-center gap-6 text-center sm:gap-8 md:gap-9">
           {badgeLabel && (
             <div className="inline-flex items-center gap-1.5 rounded-lg border border-line-strong bg-white px-2.5 py-1 text-[0.875rem] font-medium leading-5 text-ink shadow-sm">
@@ -103,6 +105,14 @@ export function ContactContent({
           </div>
         </div>
 
+        </div>
+        <CloudBand priority variant="edge" />
+      </section>
+
+      <section className={`relative w-full bg-white ${layout.sectionX} pb-16 sm:pb-20 md:pb-24`}>
+        <div
+          className={`${layout.inner} flex max-w-[80rem] flex-col items-center gap-12 sm:gap-16 md:gap-20`}
+        >
         {/* Map + contact methods */}
         <div className="flex w-full flex-col items-center gap-10 sm:gap-12 md:gap-16">
           <div className="relative w-full max-w-[64rem]">
@@ -141,7 +151,8 @@ export function ContactContent({
             ))}
           </ul>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

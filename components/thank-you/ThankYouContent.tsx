@@ -3,6 +3,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { homeSerif } from "../ui/fonts";
+import { CloudBand } from "../ui/CloudBand";
+import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import { layout } from "../ui/type";
 import type { ConfirmationSection } from "@/lib/cms/types";
 
@@ -70,19 +72,13 @@ export function ThankYouContent({
   ctaHref,
 }: ConfirmationSection) {
   return (
-    <section
-      className={`relative overflow-hidden bg-brand-soft ${layout.sectionX} pb-16 pt-[clamp(9.5rem,18vw,15rem)] sm:pb-20 md:pb-24`}
-    >
-      {/* Soft brand orb — Figma blur circle */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-[12.5rem] -top-[7.5rem] h-[33rem] w-[33rem] rounded-full bg-platform-to opacity-70 blur-[150px]"
-      />
-
-      <div
-        className={`${layout.inner} relative z-[1] flex max-w-[80rem] flex-col items-center gap-8 sm:gap-10 md:gap-12`}
+    <>
+      {/* Hero band — mesh + cloud edge, same treatment as the other page heroes */}
+      <section
+        className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(9.5rem,18vw,15rem)]`}
       >
-        <div className="flex w-full flex-col items-center gap-6 text-center sm:gap-8 md:gap-12">
+        <HeroGlowAccent />
+        <div className={`${layout.inner} relative z-[1] flex max-w-[80rem] flex-col items-center text-center`}>
           <div className="flex w-full flex-col items-center gap-4 sm:gap-6">
             <h1
               className={`${homeSerif.className} text-display-italic leading-none tracking-[-0.02em]`}
@@ -104,12 +100,15 @@ export function ThankYouContent({
             )}
           </div>
 
-          <div
-            aria-hidden
-            className="h-px w-full max-w-[35.75rem] bg-line-strong"
-          />
+        </div>
+        <CloudBand priority variant="edge" />
+      </section>
 
-          <div className="flex w-full flex-col items-center gap-8 sm:gap-10 md:gap-12">
+      <section className={`relative bg-white ${layout.sectionX} pb-16 sm:pb-20 md:pb-24`}>
+        <div
+          className={`${layout.inner} flex max-w-[80rem] flex-col items-center gap-8 sm:gap-10 md:gap-12`}
+        >
+          <div className="flex w-full flex-col items-center gap-8 text-center sm:gap-10 md:gap-12">
             {stepsHeading && (
               <h2
                 className={`${homeSerif.className} text-hero-display w-full text-h2 leading-[1.25] tracking-[-0.02em]`}
@@ -136,17 +135,17 @@ export function ThankYouContent({
               ))}
             </ul>
           </div>
-        </div>
 
-        {ctaLabel && ctaHref && (
+          {ctaLabel && ctaHref && (
           <Link
             href={ctaHref}
             className="inline-flex min-w-[13.125rem] items-center justify-center rounded-pill border border-brand bg-brand px-[1.375rem] py-4 text-lg font-semibold leading-7 text-white shadow-[0_20px_24px_-4px_rgba(16,24,40,0.08),0_8px_8px_-4px_rgba(16,24,40,0.03)] transition-colors hover:bg-brand-hover active:scale-[0.98]"
           >
             {ctaLabel}
           </Link>
-        )}
-      </div>
-    </section>
+          )}
+        </div>
+      </section>
+    </>
   );
 }

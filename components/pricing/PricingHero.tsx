@@ -3,6 +3,7 @@
 import { homeSerif } from "../ui/fonts";
 import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import type { PricingHeroSection } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /**
  * Pricing page hero — Figma Pricing (1:7620) top band.
@@ -26,9 +27,9 @@ export function PricingHero({
   const yearly = billing === "yearly";
 
   return (
-    <header className="relative flex w-full flex-col items-center gap-8 overflow-hidden px-4 pt-[clamp(9.5rem,18vw,15rem)] text-center sm:gap-10 sm:px-6 md:gap-12">
+    <header className="relative flex w-full flex-col items-center gap-8 overflow-hidden px-4 pb-[clamp(5rem,16vw,13rem)] pt-[clamp(9.5rem,18vw,15rem)] text-center sm:gap-10 sm:px-6 md:gap-12">
       <HeroGlowAccent />
-      <div className="relative flex w-full max-w-[51.125rem] flex-col items-center gap-6 sm:gap-8 md:gap-[2.625rem]">
+      <div className="relative z-[1] flex w-full max-w-[51.125rem] flex-col items-center gap-6 sm:gap-8 md:gap-[2.625rem]">
         <h1
           className={`${homeSerif.className} flex w-full flex-col items-center tracking-[-0.02em]`}
         >
@@ -44,7 +45,7 @@ export function PricingHero({
         </p>
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+      <div className="relative z-[1] flex flex-wrap items-center justify-center gap-2 sm:gap-3">
         <span
           className={`text-sm font-medium leading-[1.5] tracking-[-0.02em] ${
             yearly ? "text-[#446278]" : "text-[#001C2E]"
@@ -82,6 +83,7 @@ export function PricingHero({
           {(hero?.saveLabel ?? "").replace("{percent}", String(yearlyDiscountPercent))}
         </span>
       </div>
+      <CloudBand priority variant="edge" />
     </header>
   );
 }

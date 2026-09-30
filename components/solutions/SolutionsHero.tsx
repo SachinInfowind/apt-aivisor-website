@@ -7,6 +7,7 @@ import type {
   SolutionsAudienceKey,
   SolutionsHeroSection,
 } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /**
  * Solutions hero — Figma Frame 1261154244 (26281:28584, 1440×896).
@@ -83,7 +84,7 @@ export function SolutionsHero({
 
   return (
     <section
-      className={`relative flex min-h-[min(100svh,56rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(2.5rem,12svh,8rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:min-h-[min(100svh,56rem)] xl:pt-[clamp(9.5rem,18svh,15rem)]`}
+      className={`relative flex min-h-[min(100svh,56rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:min-h-[min(100svh,56rem)] xl:pt-[clamp(9.5rem,18svh,15rem)]`}
     >
       <div
         aria-hidden
@@ -148,6 +149,8 @@ export function SolutionsHero({
         </div>
         ) : null}
       </div>
+
+      <CloudBand priority variant="edge" />
     </section>
   );
 }

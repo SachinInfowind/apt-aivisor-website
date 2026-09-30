@@ -8,6 +8,7 @@ import { BlogWaitlistCta } from "./BlogWaitlistCta";
 import { NewsletterForm } from "./NewsletterForm";
 import { Pagination } from "./Pagination";
 import type { BlogHeroSection, BlogPost } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 export default function BlogsPage({
   posts,
@@ -27,9 +28,9 @@ export default function BlogsPage({
     >
       <Header />
       <main className="w-full">
-        <section className={`relative overflow-hidden ${layout.sectionX} pb-16 pt-32 sm:pt-40`}>
+        <section className={`relative overflow-hidden ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-32 sm:pt-40`}>
           <HeroGlowAccent />
-          <div className={`${layout.inner} relative flex flex-col items-center gap-9 text-center`}>
+          <div className={`${layout.inner} relative z-[1] flex flex-col items-center gap-9 text-center`}>
             <div className="flex flex-col items-center gap-4">
               <h1
                 className={`${homeSerif.className} text-[clamp(2.5rem,6vw,4.5rem)] italic leading-[1.05] tracking-[-0.02em] text-navy`}
@@ -56,6 +57,7 @@ export default function BlogsPage({
               </p>
             </div>
           </div>
+          <CloudBand priority variant="edge" />
         </section>
 
         <section className={`${layout.sectionX} pb-24`}>

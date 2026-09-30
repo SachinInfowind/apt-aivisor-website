@@ -1,6 +1,7 @@
 import { homeSerif } from "../../ui/fonts";
 import { layout } from "../../ui/type";
 import type { HeroSection } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /**
  * Career hero — Figma Frame 128 (24576:4444).
@@ -10,7 +11,7 @@ import type { HeroSection } from "@/lib/cms/types";
 export function CareerHero({ headline, headlineAccent, subhead }: HeroSection) {
   return (
     <section
-      className={`relative flex min-h-[min(100svh,56rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(2.5rem,12svh,10rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:min-h-[min(100svh,56rem)] xl:pb-[clamp(2.5rem,14svh,10rem)] xl:pt-[clamp(9.5rem,18svh,15rem)]`}
+      className={`relative flex min-h-[min(100svh,56rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:min-h-[min(100svh,56rem)] xl:pb-[clamp(2.5rem,14svh,10rem)] xl:pt-[clamp(9.5rem,18svh,15rem)]`}
     >
       <div
         aria-hidden
@@ -41,6 +42,8 @@ export function CareerHero({ headline, headlineAccent, subhead }: HeroSection) {
           </p>
         )}
       </div>
+
+      <CloudBand priority variant="edge" />
     </section>
   );
 }

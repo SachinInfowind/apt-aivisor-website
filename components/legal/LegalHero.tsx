@@ -1,6 +1,7 @@
 import { homeSerif } from "@/components/ui/fonts";
 import { layout } from "@/components/ui/type";
 import type { LegalHeroSection, LegalVariant } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /**
  * Shared hero for Privacy, Terms, and Cookies.
@@ -39,7 +40,7 @@ export function LegalHero({
 }: LegalHeroSection) {
   return (
     <section
-      className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-16 pt-[clamp(8.5rem,16svh,14.125rem)] sm:pb-20`}
+      className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(8.5rem,16svh,14.125rem)]`}
     >
       <div
         aria-hidden
@@ -81,6 +82,8 @@ export function LegalHero({
           ) : null}
         </div>
       </div>
+
+      <CloudBand priority variant="edge" />
     </section>
   );
 }
