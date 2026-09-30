@@ -1,17 +1,7 @@
-import Image from "next/image";
 import { SectionBadge } from "../../ui/SectionBadge";
-import { homeAssets } from "../../ui/assets";
+import { CmsImage } from "../../ui/CmsImage";
 import { layout } from "../../ui/type";
-import { toAbsoluteMediaUrl } from "@/lib/cms/media";
 import type { ProblemGridSection } from "@/lib/cms/types";
-
-/** Fallback art if a CMS item has no uploaded icon yet. */
-const FALLBACK_ART = [
-  homeAssets.problem.quote,
-  homeAssets.problem.renewal,
-  homeAssets.problem.deal,
-  homeAssets.problem.tools,
-];
 
 export function ProblemSection({
   badgeLabel,
@@ -43,20 +33,15 @@ export function ProblemSection({
         </div>
 
         <div className="mt-8 grid gap-4 sm:mt-12 sm:gap-5 md:grid-cols-2 xl:grid-cols-4">
-          {items.map((p, i) => (
+          {items.map((p) => (
             <article
               key={p.title}
               className="overflow-hidden rounded-card border border-line bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card-lg"
             >
               {/* Blue gradient matches Figma card tops; PNG also has it baked in */}
               <div className="relative aspect-[300/289] w-full overflow-hidden bg-card-art">
-                <Image
-                  src={
-                    p.icon
-                      ? toAbsoluteMediaUrl(p.icon.url)
-                      : FALLBACK_ART[i % FALLBACK_ART.length]
-                  }
-                  alt=""
+                <CmsImage
+                  image={p.icon}
                   fill
                   sizes="(max-width: 1280px) 50vw, 300px"
                   className="object-cover object-center"

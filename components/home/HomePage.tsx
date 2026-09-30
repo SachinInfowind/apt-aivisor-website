@@ -23,18 +23,23 @@ import type {
   FaqSection as FaqSectionData,
   WaitlistSectionData,
   WhoItIsForSectionData,
+  PlatformTabsSection,
+  ModulesSectionData,
+  HowItWorksSectionData,
 } from "@/lib/cms/types";
 
 /**
  * Full-bleed page shell — section backgrounds span the viewport.
  * Inner content caps at 1680 → 1920 (Figma 1440 canvas scaled to 1920×1080).
  *
- * `PlatformSection`, `ModulesSection`, and `HowItWorksSection` are not yet
- * wired to the CMS (heavily interactive, bespoke designs) and render with
- * their existing hardcoded content. Every other section is CMS-driven.
+ * Every section is CMS-driven: copy and images come from the page's Strapi
+ * sections (see `sections.platform-tabs`, `.modules`, `.how-it-works`, …).
  */
 export default function Home({ sections }: { sections: PageSection[] }) {
   const hero = findSection<HomeHeroSection>(sections, "sections.home-hero");
+  const platform = findSection<PlatformTabsSection>(sections, "sections.platform-tabs");
+  const modules = findSection<ModulesSectionData>(sections, "sections.modules");
+  const how = findSection<HowItWorksSectionData>(sections, "sections.how-it-works");
   const stats = findSection<StatsSectionData>(sections, "sections.stats");
   const problem = findSection<ProblemGridSection>(sections, "sections.problem-grid");
   const who = findSection<WhoItIsForSectionData>(sections, "sections.who-it-is-for");
@@ -59,12 +64,12 @@ export default function Home({ sections }: { sections: PageSection[] }) {
       <Header />
       <main className="w-full">
         {hero && <Hero {...hero} />}
-        <PlatformSection />
+        {platform && <PlatformSection {...platform} />}
         {stats && <StatsSection {...stats} />}
         {problem && <ProblemSection {...problem} />}
-        <ModulesSection />
-        <HowItWorksSection />
-        <WhoItIsForSection {...who} />
+        {modules && <ModulesSection {...modules} />}
+        {how && <HowItWorksSection {...how} />}
+        {who && <WhoItIsForSection {...who} />}
         {founder && <FounderSection {...founder} />}
         {pricing && <PricingSection {...pricing} />}
         {faq && <FaqSection {...faq} />}

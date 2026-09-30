@@ -6,9 +6,10 @@ import type { WaitlistSectionData } from "@/lib/cms/types";
  */
 export function WaitlistTrustBar({
   trustText,
+  trustSecondaryText,
   contactLabel,
   contactHref,
-}: Pick<WaitlistSectionData, "trustText" | "contactLabel" | "contactHref">) {
+}: Pick<WaitlistSectionData, "trustText" | "trustSecondaryText" | "contactLabel" | "contactHref">) {
   const text = trustText || "No spam. No credit card. Unsubscribe anytime.";
   const label = contactLabel || "info@aptaisolutions.com";
   const href = contactHref || "mailto:info@aptaisolutions.com";
@@ -25,13 +26,19 @@ export function WaitlistTrustBar({
           {text}
         </p>
         <p className="text-[1rem] font-semibold leading-7 text-white sm:text-[1.25rem] sm:leading-[1.875rem]">
-          Or reach us directly{" "}
-          <a
-            href={href}
-            className="text-[#B5CFFF] underline underline-offset-2 transition-opacity hover:opacity-90"
-          >
-            {label}
-          </a>
+          {trustSecondaryText ? (
+            trustSecondaryText
+          ) : (
+            <>
+              Or reach us directly{" "}
+              <a
+                href={href}
+                className="text-[#B5CFFF] underline underline-offset-2 transition-opacity hover:opacity-90"
+              >
+                {label}
+              </a>
+            </>
+          )}
         </p>
       </div>
     </aside>

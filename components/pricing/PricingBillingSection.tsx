@@ -5,17 +5,25 @@ import { PricingHero, type BillingPeriod } from "./PricingHero";
 import { PricingPlans } from "./PricingPlans";
 import { EnterprisePlan } from "./EnterprisePlan";
 import { layout } from "@/components/ui/type";
-import type { PricingCatalogSection } from "@/lib/cms/types";
+import type {
+  EnterprisePlanSection,
+  PricingCatalogSection,
+  PricingHeroSection,
+} from "@/lib/cms/types";
 
 /**
  * Holds the monthly/yearly billing toggle shared by the hero and the plan
  * cards. Split out so the rest of PricingPage can stay a server component.
  */
 export function PricingBillingSection({
-  plans,
+  catalog,
+  hero,
+  enterprise,
   yearlyDiscountPercent,
 }: {
-  plans: PricingCatalogSection["plans"] | undefined;
+  catalog: PricingCatalogSection | undefined;
+  hero: PricingHeroSection | undefined;
+  enterprise: EnterprisePlanSection | undefined;
   yearlyDiscountPercent: number;
 }) {
   const [billing, setBilling] = useState<BillingPeriod>("monthly");
@@ -26,6 +34,7 @@ export function PricingBillingSection({
         billing={billing}
         onBillingChange={setBilling}
         yearlyDiscountPercent={yearlyDiscountPercent}
+        hero={hero}
       />
 
       <div className={`${layout.sectionX} pt-8 sm:pt-10 md:pt-12`}>
@@ -34,10 +43,10 @@ export function PricingBillingSection({
         >
           <PricingPlans
             billing={billing}
-            plans={plans}
+            catalog={catalog}
             yearlyDiscountPercent={yearlyDiscountPercent}
           />
-          <EnterprisePlan />
+          {enterprise ? <EnterprisePlan {...enterprise} /> : null}
         </div>
       </div>
     </>

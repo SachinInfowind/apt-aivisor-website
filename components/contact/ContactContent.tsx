@@ -1,16 +1,16 @@
 "use client";
 
-import Image from "next/image";
+import { CmsImage } from "../ui/CmsImage";
 import { homeSerif } from "../ui/fonts";
 import { layout } from "../ui/type";
-import type { ContactHeroSection } from "@/lib/cms/types";
+import type { ContactHeroSection, StrapiImage } from "@/lib/cms/types";
 
 /**
  * Contact Us content — Figma 24641:106432 (1440×2012).
  * Hero + vector map + Support / Sales / Phone columns.
  */
 
-function MapMarker() {
+function MapMarker({ flag }: { flag?: StrapiImage | null }) {
   return (
     <div
       className="absolute left-[19.5%] top-[40.4%] z-[1] -translate-x-1/2 -translate-y-1/2"
@@ -19,9 +19,8 @@ function MapMarker() {
       {/* Tooltip — Figma State=Hover */}
       <div className="absolute bottom-[calc(100%+0.5rem)] left-1/2 flex w-max max-w-[16rem] -translate-x-1/2 flex-col items-center">
         <div className="flex items-start gap-1.5 rounded-lg bg-white px-3 py-2 shadow-[0_4px_8px_-2px_rgba(16,24,40,0.1),0_2px_4px_-2px_rgba(16,24,40,0.06)]">
-          <Image
-            src="/assets/contact/us-flag.svg"
-            alt=""
+          <CmsImage
+            image={flag}
             width={20}
             height={20}
             className="mt-0.5 h-5 w-5 shrink-0"
@@ -65,6 +64,8 @@ export function ContactContent({
   headingAccent,
   subhead,
   contactMethods,
+  mapImage,
+  flagImage,
 }: ContactHeroSection) {
   return (
     <section
@@ -105,15 +106,15 @@ export function ContactContent({
         {/* Map + contact methods */}
         <div className="flex w-full flex-col items-center gap-10 sm:gap-12 md:gap-16">
           <div className="relative w-full max-w-[64rem]">
-            <Image
-              src="/assets/contact/world-map.png"
-              alt="World map showing aptAI office locations"
-              width={1025}
-              height={484}
+            <CmsImage
+              image={mapImage}
+              alt={mapImage?.alternativeText || "World map showing aptAI office locations"}
+              width={mapImage?.width ?? 1025}
+              height={mapImage?.height ?? 484}
               className="h-auto w-full"
               priority
             />
-            <MapMarker />
+            <MapMarker flag={flagImage} />
           </div>
 
           <ul className="grid w-full grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10 md:gap-16">

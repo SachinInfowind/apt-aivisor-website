@@ -47,6 +47,7 @@ import { DesignPartnerCardsSection } from "@/components/design-partner/sections/
 import { ChecklistSection } from "@/components/design-partner/sections/ChecklistSection";
 import { TimelineSection } from "@/components/design-partner/sections/TimelineSection";
 import { DesignPartnerFormSection } from "@/components/design-partner/sections/DesignPartnerFormSection";
+import { getGlobal } from "@/lib/cms/queries";
 import type { PageSection } from "@/lib/cms/types";
 
 /**
@@ -54,7 +55,10 @@ import type { PageSection } from "@/lib/cms/types";
  * that renders it. Add an entry here whenever a new section component is
  * wired up to the CMS.
  */
-export function SectionRenderer({ sections }: { sections: PageSection[] }) {
+export async function SectionRenderer({ sections }: { sections: PageSection[] }) {
+  // Site-wide media some sections need (e.g. the logo on the Career success state).
+  const global = await getGlobal();
+
   return (
     <>
       {sections.map((section, index) => {
@@ -75,7 +79,7 @@ export function SectionRenderer({ sections }: { sections: PageSection[] }) {
           case "sections.card-grid":
             return <CareerValuesSection key={key} {...section} />;
           case "sections.career-roles":
-            return <CareerRolesSection key={key} {...section} />;
+            return <CareerRolesSection key={key} {...section} logo={global?.logoMark} />;
           case "sections.career-open-call":
             return <CareerOpenCallSection key={key} {...section} />;
           case "sections.problem-grid":

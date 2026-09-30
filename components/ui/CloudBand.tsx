@@ -1,4 +1,5 @@
-import Image from "next/image";
+import { CmsImage } from "./CmsImage";
+import { getGlobal } from "@/lib/cms/queries";
 
 /**
  * Reusable decorative cloud edge (Figma "cloude", 1630×404 on a 1440 canvas).
@@ -10,9 +11,12 @@ import Image from "next/image";
  * (`z-0`), so give the section's content `relative z-1` and enough bottom
  * padding that text doesn't sit on the clouds.
  */
-export const CLOUD_BAND_SRC = "/assets/clouds/cloud-band.png";
-/** Full-width cloud edge with its own blue glow (Figma export, 1426×292). */
-export const CLOUD_EDGE_SRC = "/assets/clouds/cloud-edge.png";
+
+/**
+ * The artwork comes from the CMS Global record (`cloudBand` for the 1630px band,
+ * `cloudEdge` for the full-width edge with its own blue glow, Figma export 1426×292).
+ * Server component — use it from server-rendered sections.
+ */
 
 type CloudBandProps = {
   /** Which section edge the clouds hug. `top` flips the art vertically. */
@@ -23,12 +27,13 @@ type CloudBandProps = {
   variant?: "band" | "edge";
 };
 
-export function CloudBand({
+export async function CloudBand({
   edge = "bottom",
   className = "",
   priority = false,
   variant = "band",
 }: CloudBandProps) {
+  const global = await getGlobal();
   const anchor = edge === "bottom" ? "bottom-0" : "top-0 -scale-y-100";
   if (variant === "edge") {
     return (
@@ -36,9 +41,8 @@ export function CloudBand({
         aria-hidden
         className={`pointer-events-none absolute inset-x-0 z-0 overflow-hidden ${anchor} ${className}`}
       >
-        <Image
-          src={CLOUD_EDGE_SRC}
-          alt=""
+        <CmsImage
+          image={global?.cloudEdge}
           width={1426}
           height={292}
           sizes="100vw"
@@ -57,9 +61,8 @@ export function CloudBand({
           centre it and let the sides bleed so the scallops span every
           viewport width. */}
       <div className="relative left-1/2 aspect-[1630/404] w-[max(113.2%,60rem)] -translate-x-1/2">
-        <Image
-          src={CLOUD_BAND_SRC}
-          alt=""
+        <CmsImage
+          image={global?.cloudBand}
           width={1568}
           height={320}
           sizes="120vw"

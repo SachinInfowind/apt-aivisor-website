@@ -1,8 +1,6 @@
-import Image from "next/image";
 import { SectionBadge } from "../../ui/SectionBadge";
-import { homeAssets } from "../../ui/assets";
+import { CmsImage } from "../../ui/CmsImage";
 import { layout } from "../../ui/type";
-import { toAbsoluteMediaUrl } from "@/lib/cms/media";
 import type { FounderSpotlightSection } from "@/lib/cms/types";
 import { FounderIntro } from "./FounderIntro";
 
@@ -27,6 +25,7 @@ export function FounderSection({
   ctaHref,
   highlights,
   partnersNote,
+  partnerLogos,
 }: FounderSpotlightSection) {
   return (
     <section
@@ -63,12 +62,8 @@ export function FounderSection({
                     className="absolute inset-x-0 bottom-0 top-8 rounded-xl bg-brand-pale sm:top-[38px]"
                     aria-hidden
                   />
-                  <Image
-                    src={
-                      founderPhoto
-                        ? toAbsoluteMediaUrl(founderPhoto.url)
-                        : homeAssets.founder.photo
-                    }
+                  <CmsImage
+                    image={founderPhoto}
                     alt={founderName ?? ""}
                     width={334}
                     height={423}
@@ -136,13 +131,12 @@ export function FounderSection({
 
           <div className="flex flex-col justify-center gap-3 rounded-[20px] bg-surface-muted p-4 sm:rounded-[24px] sm:gap-4 sm:p-5 sm:col-span-2 lg:col-span-1">
             <div className="flex flex-wrap items-center gap-4">
-              {homeAssets.founder.partners.map((logo) => (
-                <Image
-                  key={logo.src}
-                  src={logo.src}
-                  alt=""
-                  width={logo.width}
-                  height={logo.height}
+              {(partnerLogos ?? []).map((logo) => (
+                <CmsImage
+                  key={logo.url}
+                  image={logo}
+                  width={logo.width ?? 76}
+                  height={logo.height ?? 46}
                   className="h-7 w-auto object-contain sm:h-8"
                 />
               ))}

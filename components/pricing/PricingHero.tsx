@@ -2,6 +2,7 @@
 
 import { homeSerif } from "../ui/fonts";
 import { HeroGlowAccent } from "../ui/HeroGlowAccent";
+import type { PricingHeroSection } from "@/lib/cms/types";
 
 /**
  * Pricing page hero — Figma Pricing (1:7620) top band.
@@ -14,10 +15,13 @@ export function PricingHero({
   billing,
   onBillingChange,
   yearlyDiscountPercent = 17,
+  hero,
 }: {
   billing: BillingPeriod;
   onBillingChange: (value: BillingPeriod) => void;
   yearlyDiscountPercent?: number;
+  /** Copy from the CMS (`sections.pricing-hero`). */
+  hero?: Partial<Omit<PricingHeroSection, "__component" | "id">>;
 }) {
   const yearly = billing === "yearly";
 
@@ -29,15 +33,14 @@ export function PricingHero({
           className={`${homeSerif.className} flex w-full flex-col items-center tracking-[-0.02em]`}
         >
           <span className="text-hero-display block text-display leading-none">
-            Buy Smarter. Sell Faster.
+            {hero?.heading}
           </span>
           <span className="text-hero-negotiating mt-1 block overflow-visible pb-[0.12em] text-display-italic leading-[0.9] sm:mt-2">
-            Win Every Deal.
+            {hero?.headingAccent}
           </span>
         </h1>
         <p className="max-w-[40rem] text-base leading-7 text-[#446278] sm:text-xl sm:leading-[1.5]">
-          Three plans built around how your company actually works as a
-          technology buyer, a technology seller, or both.
+          {hero?.subhead}
         </p>
       </div>
 
@@ -47,14 +50,14 @@ export function PricingHero({
             yearly ? "text-[#446278]" : "text-[#001C2E]"
           }`}
         >
-          Pay monthly
+          {hero?.monthlyLabel}
         </span>
 
         <button
           type="button"
           role="switch"
           aria-checked={yearly}
-          aria-label="Toggle yearly billing"
+          aria-label={hero?.toggleLabel || undefined}
           onClick={() => onBillingChange(yearly ? "monthly" : "yearly")}
           className={`relative h-6 w-11 shrink-0 rounded-pill p-0.5 transition-colors ${
             yearly ? "bg-brand-strong" : "bg-surface-muted"
@@ -72,11 +75,11 @@ export function PricingHero({
             yearly ? "text-[#001C2E]" : "text-[#446278]"
           }`}
         >
-          Pay yearly
+          {hero?.yearlyLabel}
         </span>
 
         <span className="inline-flex items-center rounded-[32px] bg-[#ABEFC6] px-2.5 py-0.5 text-[13px] font-medium leading-[1.5] tracking-[-0.03em] text-black">
-          Save {yearlyDiscountPercent}%
+          {(hero?.saveLabel ?? "").replace("{percent}", String(yearlyDiscountPercent))}
         </span>
       </div>
     </header>

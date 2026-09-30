@@ -1,9 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
+import { CmsImage } from "../../ui/CmsImage";
 import { homeSerif } from "../../ui/fonts";
 import { layout } from "../../ui/type";
 import type { CareerOpenCallSectionData } from "@/lib/cms/types";
-import { toAbsoluteMediaUrl } from "@/lib/cms/media";
 
 /**
  * Career open-call CTA — Figma Frame 159 (24642:57734, 1440×755).
@@ -18,10 +17,6 @@ export function CareerOpenCallSection({
   ctaHref = "/contact",
   image,
 }: CareerOpenCallSectionData) {
-  const imageSrc = image?.url
-    ? toAbsoluteMediaUrl(image.url)
-    : "/assets/career/open-role-visual.png";
-
   return (
     <section
       className="border-t border-line-muted bg-brand-soft px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-[6.25rem] lg:px-14 xl:px-20"
@@ -65,9 +60,8 @@ export function CareerOpenCallSection({
           card above — so the chess visual aligns with the portrait column.
         */}
         <div className="relative ml-auto w-full max-w-[43.625rem] shrink-0 overflow-hidden rounded-[1.5rem] lg:w-[min(48%,43.625rem)]">
-          <Image
-            src={imageSrc}
-            alt={image?.alternativeText ?? ""}
+          <CmsImage
+            image={image}
             width={image?.width ?? 698}
             height={image?.height ?? 371}
             className="h-auto w-full object-contain object-right"

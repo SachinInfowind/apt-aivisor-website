@@ -7,13 +7,15 @@ import { BlogCard } from "./BlogCard";
 import { BlogWaitlistCta } from "./BlogWaitlistCta";
 import { NewsletterForm } from "./NewsletterForm";
 import { Pagination } from "./Pagination";
-import type { BlogPost } from "@/lib/cms/types";
+import type { BlogHeroSection, BlogPost } from "@/lib/cms/types";
 
 export default function BlogsPage({
   posts,
   page,
   pageCount,
+  hero,
 }: {
+  hero?: BlogHeroSection;
   posts: BlogPost[];
   page: number;
   pageCount: number;
@@ -32,20 +34,23 @@ export default function BlogsPage({
               <h1
                 className={`${homeSerif.className} text-[clamp(2.5rem,6vw,4.5rem)] italic leading-[1.05] tracking-[-0.02em] text-navy`}
               >
-                Resource <span className="text-brand">Library</span>
+                {hero?.heading} <span className="text-brand">{hero?.headingAccent}</span>
               </h1>
-              <p className="max-w-xl text-body-lg text-ink">
-                Subscribe to learn about new product features, the latest in
-                technology, solutions, and updates.
-              </p>
+              <p className="max-w-xl text-body-lg text-ink">{hero?.subhead}</p>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <NewsletterForm />
+              <NewsletterForm
+                placeholder={hero?.emailPlaceholder}
+                subscribeLabel={hero?.subscribeLabel}
+              />
               <p className="text-body-sm text-subtle">
-                We care about your data in our{" "}
-                <a href="/privacy" className="underline underline-offset-2">
-                  privacy policy
+                {hero?.privacyPrefix}{" "}
+                <a
+                  href={hero?.privacyLinkHref || "/privacy"}
+                  className="underline underline-offset-2"
+                >
+                  {hero?.privacyLinkLabel}
                 </a>
                 .
               </p>
@@ -71,7 +76,7 @@ export default function BlogsPage({
               </div>
             ) : (
               <p className="text-body text-subtle">
-                No posts published yet — check back soon.
+                {hero?.emptyLabel}
               </p>
             )}
 

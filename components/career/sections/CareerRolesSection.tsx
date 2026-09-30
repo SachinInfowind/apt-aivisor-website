@@ -1,9 +1,8 @@
-import Image from "next/image";
+import { CmsImage } from "../../ui/CmsImage";
 import { homeSerif } from "../../ui/fonts";
 import { SectionBadge } from "../../ui/SectionBadge";
 import { layout } from "../../ui/type";
-import type { CareerRolesSectionData } from "@/lib/cms/types";
-import { toAbsoluteMediaUrl } from "@/lib/cms/media";
+import type { CareerRolesSectionData, StrapiImage } from "@/lib/cms/types";
 import { ExpressInterestModal } from "../ExpressInterestModal";
 
 function renderBody(body: string, emphasis?: string) {
@@ -33,11 +32,8 @@ export function CareerRolesSection({
   bodyEmphasis,
   ctaLabel = "Express interest early",
   image,
-}: CareerRolesSectionData) {
-  const imageSrc = image?.url
-    ? toAbsoluteMediaUrl(image.url)
-    : "/assets/career/roles-portrait.png";
-
+  logo,
+}: CareerRolesSectionData & { logo?: StrapiImage | null }) {
   return (
     <section
       className="bg-waitlist-section px-4 py-16 sm:px-6 sm:py-20 md:px-10 md:py-[6.25rem] lg:px-14 xl:px-20"
@@ -69,16 +65,15 @@ export function CareerRolesSection({
               </div>
             </div>
 
-            {ctaLabel && <ExpressInterestModal ctaLabel={ctaLabel} />}
+            {ctaLabel && <ExpressInterestModal ctaLabel={ctaLabel} logo={logo} />}
           </div>
 
           <div
             className="relative mx-auto mt-2 h-[16rem] w-[11.5rem] sm:h-[20rem] sm:w-[14.5rem] md:h-[22rem] md:w-[16rem] lg:hidden"
             aria-hidden
           >
-            <Image
-              src={imageSrc}
-              alt={image?.alternativeText ?? ""}
+            <CmsImage
+              image={image}
               fill
               sizes="256px"
               className="object-contain object-bottom"
@@ -90,9 +85,8 @@ export function CareerRolesSection({
             aria-hidden
           >
             <div className="relative ml-auto h-full w-full max-w-[24.3125rem]">
-              <Image
-                src={imageSrc}
-                alt={image?.alternativeText ?? ""}
+              <CmsImage
+                image={image}
                 fill
                 sizes="389px"
                 className="object-contain object-bottom"

@@ -1,9 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useRef, useState, type DragEvent, type FormEvent } from "react";
 import { AboutMenuIcon } from "../layout/AboutMenuIcons";
-import { homeAssets } from "../ui/assets";
+import { CmsImage } from "../ui/CmsImage";
+import type { StrapiImage } from "@/lib/cms/types";
 import {
   RESUME_ACCEPT,
   validateCareerApplication,
@@ -82,8 +82,11 @@ function DecorativeCircles() {
 
 export function ExpressInterestModal({
   ctaLabel = "Express interest early",
+  logo,
 }: {
   ctaLabel?: string;
+  /** Site logo mark (CMS Global) shown on the success state. */
+  logo?: StrapiImage | null;
 }) {
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState<FormState>(initialState);
@@ -248,9 +251,8 @@ export function ExpressInterestModal({
             {status === "success" ? (
               <div className="relative z-[1] flex flex-col items-start gap-4 px-6 pb-6 pt-6">
                 <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#F2F4F7]">
-                  <Image
-                    src={homeAssets.brand.mark}
-                    alt=""
+                  <CmsImage
+                    image={logo}
                     width={32}
                     height={32}
                     className="h-8 w-8 object-contain"

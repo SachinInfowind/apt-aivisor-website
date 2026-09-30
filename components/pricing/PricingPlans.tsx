@@ -6,150 +6,9 @@
  * Fluid grid: 1 col → 2 col (md) → 3 col (lg).
  */
 
-export type PlanId = "buyer" | "both" | "seller";
 export type BillingPeriod = "monthly" | "yearly";
 
-type Feature = { label: string; included?: boolean };
-
-type FeatureGroup = {
-  title: string;
-  items: Feature[];
-};
-
-type Plan = {
-  id: PlanId;
-  name: string;
-  /** Monthly list price in USD */
-  priceMonthly: number;
-  description: string;
-  featured?: boolean;
-  badge?: string;
-  groups: FeatureGroup[];
-};
-
-const DEFAULT_YEARLY_DISCOUNT = 17;
-
-const PLANS: Plan[] = [
-  {
-    id: "buyer",
-    name: "Buyer Plan",
-    priceMonthly: 499,
-    description:
-      "For CFOs, finance leads & RevOps teams buying SaaS, cloud & technology services",
-    groups: [
-      {
-        title: "Contract intelligence",
-        items: [
-          { label: "Multi-LLM chatbot — Claude, GPT-4, Gemini side-by-side" },
-          { label: "50 contracts stored with clause extraction" },
-          { label: "AI risk flagging and redline suggestions" },
-          { label: "Contract drafting from any input format" },
-          { label: "Export to PDF and Word" },
-        ],
-      },
-      {
-        title: "Pricing benchmarks",
-        items: [
-          { label: "100+ vendor pricing benchmarks" },
-          { label: "Overpayment detection report" },
-          { label: "Negotiation playbook per vendor" },
-          { label: "90-day renewal alerts" },
-          { label: "Deal P&L builder" },
-        ],
-      },
-      {
-        title: "Access",
-        items: [
-          { label: "3 user seats" },
-          { label: "Contract repository" },
-          { label: "Salesforce integration", included: false },
-          { label: "Competitive pricing library", included: false },
-          { label: "Deal velocity analytics", included: false },
-        ],
-      },
-    ],
-  },
-  {
-    id: "both",
-    name: "Both Plan",
-    priceMonthly: 999,
-    featured: true,
-    badge: "Most Value",
-    description:
-      "For technology companies that buy tools to operate and sell technology products or services",
-    groups: [
-      {
-        title: "BUYING SIDE (FULL BUYER PLAN)",
-        items: [
-          { label: "Multi-LLM chatbot — Claude, GPT-4, Gemini" },
-          { label: "100+ vendor benchmarks + negotiation playbooks" },
-          { label: "Overpayment detection + renewal alerts" },
-          { label: "Contract risk scoring + redlines" },
-          { label: "Deal P&L builder (buyer view)" },
-        ],
-      },
-      {
-        title: "SELLING SIDE (FULL SELLER PLAN)",
-        items: [
-          { label: "Contract generation from CRM + email + quote" },
-          { label: "Inbound redline AI counter-draft" },
-          { label: "Deal desk P&L + discount approval builder" },
-          { label: "Competitive pricing benchmarks" },
-          { label: "Optimal price point by deal size + segment" },
-        ],
-      },
-      {
-        title: "BOTH-ONLY FEATURES",
-        items: [
-          { label: "Salesforce integration (buy + sell side)" },
-          { label: "Two-sided deal analytics dashboard" },
-          { label: "10 user seats with RBAC" },
-          { label: "Obligation + revenue recognition tracker" },
-          { label: "Quarterly benchmark refresh" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "seller",
-    name: "Seller Plan",
-    priceMonthly: 799,
-    description:
-      "For sales leaders, deal desk teams & RevOps at SaaS companies and technology service firms",
-    groups: [
-      {
-        title: "DEAL WORKFLOW",
-        items: [
-          { label: "Contract generation from CRM, email, or quote" },
-          { label: "Unlimited contracts generated per month" },
-          { label: "Inbound redline AI review + counter-draft" },
-          { label: "Deal desk P&L + discount approval builder" },
-          { label: "Export to PDF and Word" },
-        ],
-      },
-      {
-        title: "PRICING INTELLIGENCE",
-        items: [
-          { label: "Competitive pricing benchmarks for your category" },
-          { label: "Optimal price point by deal size and segment" },
-          { label: "Margin at each discount level" },
-          { label: "Win rate analysis by price tier" },
-          { label: "Which terms to hold vs. concede playbook" },
-        ],
-      },
-      {
-        title: "BOTH-ONLY FEATURES",
-        items: [
-          { label: "5 user seats" },
-          { label: "Salesforce integration" },
-          { label: "Deal velocity analytics" },
-          { label: "Buyer-side benchmarks", included: false },
-          { label: "Obligation tracker", included: false },
-        ],
-      },
-    ],
-  },
-];
+import type { PricingCatalogSection, PricingPlanPrice } from "@/lib/cms/types";
 
 function formatPrice(amount: number) {
   return `$${Math.round(amount).toLocaleString("en-US")}`;
@@ -175,14 +34,25 @@ function CheckIcon({ onBlue }: { onBlue?: boolean }) {
   );
 }
 
+type CatalogCopy = Pick<
+  PricingCatalogSection,
+  | "plansCtaLabel"
+  | "plansCtaHref"
+  | "priceSuffix"
+  | "billedMonthlyLabel"
+  | "billedYearlyLabel"
+>;
+
 function PlanCard({
   plan,
   billing,
   yearlyDiscountPercent,
+  copy,
 }: {
-  plan: Plan;
+  plan: PricingPlanPrice;
   billing: BillingPeriod;
   yearlyDiscountPercent: number;
+  copy: CatalogCopy;
 }) {
   const onBlue = Boolean(plan.featured);
   const yearlyFactor = (100 - yearlyDiscountPercent) / 100;
@@ -190,7 +60,7 @@ function PlanCard({
     billing === "yearly"
       ? plan.priceMonthly * yearlyFactor
       : plan.priceMonthly;
-  const billedLabel = billing === "yearly" ? "Billed yearly" : "Billed monthly";
+  const billedLabel = billing === "yearly" ? copy.billedYearlyLabel : copy.billedMonthlyLabel;
 
   return (
     <article
@@ -230,7 +100,7 @@ function PlanCard({
                 onBlue ? "text-white" : "text-ink"
               }`}
             >
-              /mo
+              {copy.priceSuffix}
             </span>
           </div>
           <p
@@ -250,21 +120,21 @@ function PlanCard({
           {plan.description}
         </p>
 
-        <a
-          href="/waitlist"
+        {copy.plansCtaLabel && copy.plansCtaHref ? <a
+          href={copy.plansCtaHref}
           className={`inline-flex w-full items-center justify-center rounded-pill border border-line-strong px-4 py-3 text-sm font-semibold leading-6 text-ink shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors sm:px-[1.125rem] sm:text-base ${
             onBlue
               ? "bg-white hover:bg-surface"
               : "bg-surface hover:bg-white"
           }`}
         >
-          Start 14 Free Trial
-        </a>
+          {copy.plansCtaLabel}
+        </a> : null}
       </div>
 
       <div className="flex flex-col gap-6 sm:gap-8">
-        {plan.groups.map((group) => (
-          <div key={group.title} className="flex flex-col gap-3 sm:gap-4">
+        {(plan.groups ?? []).map((group, groupIndex) => (
+          <div key={group.title ?? groupIndex} className="flex flex-col gap-3 sm:gap-4">
             <p
               className={`text-xs font-semibold leading-[1.5] ${
                 onBlue ? "text-white" : "text-navy"
@@ -273,7 +143,7 @@ function PlanCard({
               {group.title}
             </p>
             <ul className="flex flex-col gap-3">
-              {group.items.map((item) => {
+              {group.features.map((item) => {
                 const included = item.included !== false;
                 return (
                   <li
@@ -304,23 +174,15 @@ function PlanCard({
 export function PricingPlans({
   className = "",
   billing = "monthly",
-  plans: cmsPlans,
-  yearlyDiscountPercent = DEFAULT_YEARLY_DISCOUNT,
+  catalog,
+  yearlyDiscountPercent,
 }: {
   className?: string;
   billing?: BillingPeriod;
-  plans?: { planId: PlanId; name?: string; priceMonthly: number }[];
-  yearlyDiscountPercent?: number;
+  catalog?: PricingCatalogSection;
+  yearlyDiscountPercent: number;
 }) {
-  const plans = PLANS.map((plan) => {
-    const cms = cmsPlans?.find((item) => item.planId === plan.id);
-    if (!cms) return plan;
-    return {
-      ...plan,
-      name: cms.name || plan.name,
-      priceMonthly: cms.priceMonthly,
-    };
-  });
+  const plans = catalog?.plans ?? [];
 
   return (
     <div
@@ -328,22 +190,24 @@ export function PricingPlans({
     >
       <div className="flex flex-col items-center gap-3 px-1 text-center">
         <h2 className="font-display text-[1.5rem] font-normal italic leading-[1.15] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[2.75rem] lg:text-[3rem]">
-          <span className="text-[#001C2E]">Limited Founding</span>{" "}
-          <span className="text-brand-accent">Plan</span>
+          <span className="text-[#001C2E]">{catalog?.plansHeading}</span>{" "}
+          <span className="text-brand-accent">{catalog?.plansHeadingAccent}</span>
         </h2>
-        <p className="max-w-[40rem] text-sm leading-6 text-[#446278] sm:text-base">
-          Every plan up to 50% off the regular yearly price, billed yearly and
-          locked in for life. Only 200 seats available.
-        </p>
+        {catalog?.plansSubhead ? (
+          <p className="max-w-[40rem] text-sm leading-6 text-[#446278] sm:text-base">
+            {catalog.plansSubhead}
+          </p>
+        ) : null}
       </div>
 
       <div className="grid w-full min-w-0 grid-cols-1 items-stretch gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {plans.map((plan) => (
           <PlanCard
-            key={plan.id}
+            key={plan.planId}
             plan={plan}
             billing={billing}
             yearlyDiscountPercent={yearlyDiscountPercent}
+            copy={catalog ?? {}}
           />
         ))}
       </div>

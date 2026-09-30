@@ -7,7 +7,13 @@ const STRAPI_URL =
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-export function NewsletterForm() {
+export function NewsletterForm({
+  placeholder,
+  subscribeLabel,
+}: {
+  placeholder?: string;
+  subscribeLabel?: string;
+}) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
 
@@ -57,7 +63,7 @@ export function NewsletterForm() {
           id="newsletter-email"
           type="email"
           required
-          placeholder="Enter your email"
+          placeholder={placeholder}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full rounded-lg border border-line-strong bg-white px-3.5 py-2.5 text-base leading-6 text-heading shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none placeholder:text-subtle transition-shadow focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,66,187,0.12)]"
@@ -68,7 +74,7 @@ export function NewsletterForm() {
         disabled={status === "submitting"}
         className="inline-flex h-btn shrink-0 items-center justify-center rounded-pill bg-brand px-4.5 text-body font-semibold leading-6 text-white transition-colors hover:bg-brand-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {status === "submitting" ? "Subscribing…" : "Subscribe"}
+        {status === "submitting" ? "Subscribing…" : subscribeLabel}
       </button>
       {status === "error" ? (
         <p className="w-full text-body-sm text-red-600 sm:absolute sm:mt-14">

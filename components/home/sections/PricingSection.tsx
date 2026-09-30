@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SectionBadge } from "../../ui/SectionBadge";
+import { CmsImage } from "../../ui/CmsImage";
 import { layout } from "../../ui/type";
 import type { FeatureTableSection } from "@/lib/cms/types";
 
@@ -13,23 +14,7 @@ type Row = {
   generic: CellValue;
 };
 
-const competitors = [
-  {
-    key: "vendr" as const,
-    name: "Vendr / Tropic",
-    price: "$20k-36k/yr",
-  },
-  {
-    key: "ironclad" as const,
-    name: "Ironclad / Sirion",
-    price: "$25k-50k/yr",
-  },
-  {
-    key: "generic" as const,
-    name: "Generic CLM tools",
-    price: "$3k-15k/yr",
-  },
-];
+type Competitor = { key: "vendr" | "ironclad" | "generic"; name: string; price: string };
 
 function CheckIcon({ onBlue }: { onBlue?: boolean }) {
   return (
@@ -104,8 +89,11 @@ export function PricingSection({
   ctaLabel,
   ctaHref,
   rows: rawRows,
+  headerImage,
+  competitors: rawCompetitors,
 }: FeatureTableSection) {
-  const rows = rawRows as unknown as Row[];
+  const rows = (rawRows ?? []) as unknown as Row[];
+  const competitors = (rawCompetitors ?? []) as unknown as Competitor[];
 
   return (
     <section
@@ -157,12 +145,11 @@ export function PricingSection({
 
               <div className="flex flex-col rounded-xl bg-brand-accent pt-[1.1875rem] pb-5">
                 <div className="flex flex-col items-center gap-2 px-4 pb-4 sm:px-6">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src="/assets/pricing-apt-header.svg"
-                    alt="aptAIvisor — From $499/mo"
-                    width={249}
-                    height={82}
+                  <CmsImage
+                    image={headerImage}
+                    alt={headerImage?.alternativeText || "aptAIvisor"}
+                    width={headerImage?.width ?? 249}
+                    height={headerImage?.height ?? 82}
                     className="h-auto w-full max-w-[15.5rem]"
                   />
                 </div>
