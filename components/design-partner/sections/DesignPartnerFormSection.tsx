@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, type ReactNode } from "react";
+import { FormEvent, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { homeSerif } from "@/components/ui/fonts";
@@ -399,6 +399,22 @@ export function DesignPartnerFormSection({
   const [errors, setErrors] = useState<DesignPartnerFormErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "ok" | "error">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
+
+  // Pre-select the Buyer/Seller/Both toggle when arriving via a link like
+  // /design-partner?type=buyer#apply (e.g. the Solutions page's "Apply as a
+  // buyer/seller partner" CTAs). Read directly from the URL on mount rather
+  // than `useSearchParams` so this doesn't force the page into a Suspense
+  // boundary just for a one-time initial value.
+  useEffect(() => {
+    const type = new URLSearchParams(window.location.search).get("type");
+    if (type === "buyer" || type === "seller" || type === "both") {
+      // Syncing from the URL (an external system) on mount — the server
+      // can't know the query string, so this can't be a lazy useState
+      // initializer without causing a hydration mismatch.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setValues((prev) => ({ ...prev, participatingAs: type }));
+    }
+  }, []);
 
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }));

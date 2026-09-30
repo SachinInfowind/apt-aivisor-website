@@ -1,10 +1,10 @@
 import Image from "next/image";
-import Link from "next/link";
 import { homeSerif } from "../../ui/fonts";
 import { SectionBadge } from "../../ui/SectionBadge";
 import { layout } from "../../ui/type";
 import type { CareerRolesSectionData } from "@/lib/cms/types";
 import { toAbsoluteMediaUrl } from "@/lib/cms/media";
+import { ExpressInterestModal } from "../ExpressInterestModal";
 
 function renderBody(body: string, emphasis?: string) {
   if (!emphasis || !body.includes(emphasis)) {
@@ -32,7 +32,6 @@ export function CareerRolesSection({
   body,
   bodyEmphasis,
   ctaLabel = "Express interest early",
-  ctaHref = "/contact",
   image,
 }: CareerRolesSectionData) {
   const imageSrc = image?.url
@@ -70,30 +69,7 @@ export function CareerRolesSection({
               </div>
             </div>
 
-            {ctaLabel && (
-              <Link
-                href={ctaHref || "/contact"}
-                className="inline-flex w-fit items-center justify-center gap-1.5 rounded-pill border border-brand bg-brand px-4 py-2.5 text-base font-semibold leading-6 text-white shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors hover:bg-brand-hover active:scale-[0.98]"
-              >
-                {ctaLabel}
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  aria-hidden
-                  className="shrink-0"
-                >
-                  <path
-                    d="M5.83203 14.1673L14.1654 5.83398M14.1654 14.1673V5.83398H5.83203"
-                    stroke="white"
-                    strokeWidth="1.66667"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </Link>
-            )}
+            {ctaLabel && <ExpressInterestModal ctaLabel={ctaLabel} />}
           </div>
 
           <div
