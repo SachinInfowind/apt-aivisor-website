@@ -12,6 +12,8 @@ export const newsletterFormSchema = z.object({
   email: z.email("Enter a valid email address").max(254),
   // Honeypot — must stay empty. Real users never see this field.
   companyWebsite: z.string().trim().optional().default(""),
+  // Which page the signup came from (a site-relative path, e.g. "/blogs").
+  sourcePath: z.string().trim().max(300).regex(/^\//, "Invalid source path").optional(),
 });
 
 export type NewsletterFormValues = z.infer<typeof newsletterFormSchema>;

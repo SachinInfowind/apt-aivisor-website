@@ -85,3 +85,32 @@ tokens if you use authenticated API / preview / revalidate).
 
 ---
 Happy coding!
+
+## reCAPTCHA v3 (form protection)
+
+All six forms (contact, waitlist, newsletter — both the Contact page and the blog — design-partner
+application, demo "notify me", and the Career "Express interest" modal) are protected by Google
+reCAPTCHA v3. It is shared code, so a new form only needs three steps:
+
+1. **Client** — in the form component: `const { execute } = useRecaptcha();` (from
+   `components/ui/Recaptcha.tsx`), then send `recaptchaToken: await execute(RECAPTCHA_ACTIONS.<name>)`
+   with the submission (JSON field, or `form.set("recaptchaToken", …)` for multipart).
+2. **Server** — in the API route, right after parsing the request:
+   `verifyRecaptcha({ token: recaptchaTokenFrom(body), action: RECAPTCHA_ACTIONS.<name>, request })`
+   from `lib/recaptcha.ts`; return `{ message }` with the returned status when `!captcha.ok`.
+3. **Action name** — add it to `lib/recaptcha-actions.ts` (the server checks the token was issued for that exact action).
+
+Env (`.env.local`; see `.env.example`):
+
+| Variable | Purpose |
+|---|---|
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | public site key (sent to the browser) |
+| `RECAPTCHA_SECRET_KEY` | secret key — server only, never commit it |
+| `RECAPTCHA_MIN_SCORE` | optional, default `0.5` — requests scoring below it are rejected |
+| `RECAPTCHA_ALLOWED_HOSTNAMES` | optional, comma-separated hostname allow-list |
+
+Behaviour: without the secret key, **production rejects** submissions (503) and development skips the
+check with a console warning. Create keys at google.com/recaptcha/admin (type: score based v3) — use a
+separate key pair per environment and add each environment's domain (`localhost` for dev).
+Rejections are logged as `[recaptcha] rejected action=… : reason` (score, action mismatch, …), which is
+how to tune the threshold.

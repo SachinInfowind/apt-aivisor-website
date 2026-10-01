@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { RECAPTCHA_ACTIONS } from "@/lib/recaptcha-actions";
+import { recaptchaTokenFrom, verifyRecaptcha } from "@/lib/recaptcha";
 import {
   careerApplicationSchema,
   validateResumeFile,
@@ -235,6 +237,16 @@ export async function POST(request: NextRequest) {
     form = await request.formData();
   } catch {
     return NextResponse.json({ message: "Invalid request body" }, { status: 400 });
+  }
+
+  // reCAPTCHA v3 — reject bots before validating, presigning an upload or writing anything.
+  const captcha = await verifyRecaptcha({
+    token: recaptchaTokenFrom(form),
+    action: RECAPTCHA_ACTIONS.careerApplication,
+    request,
+  });
+  if (!captcha.ok) {
+    return NextResponse.json({ message: captcha.message }, { status: captcha.status });
   }
 
   try {

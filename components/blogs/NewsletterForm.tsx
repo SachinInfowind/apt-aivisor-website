@@ -2,8 +2,8 @@
 
 import { FormEvent, useState } from "react";
 
-const STRAPI_URL =
-  process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+import { useRecaptcha } from "@/components/ui/Recaptcha";
+import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -16,6 +16,7 @@ export function NewsletterForm({
 }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const { execute: executeRecaptcha } = useRecaptcha();
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,18 +24,22 @@ export function NewsletterForm({
 
     setStatus("submitting");
     try {
-      const res = await fetch(`${STRAPI_URL}/api/newsletter-subscribers`, {
+      // Goes through our own API route (not straight to the CMS) so the reCAPTCHA token can be
+      // verified server-side. The route treats an already-subscribed address as success too.
+      const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          data: { email: email.trim(), sourcePath: "/blogs" },
+          email: email.trim(),
+          companyWebsite: "",
+          sourcePath: "/blogs",
+          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.newsletter),
         }),
       });
 
-      if (!res.ok && res.status !== 400) {
+      if (!res.ok) {
         throw new Error(`Subscribe failed: ${res.status}`);
       }
-      // 400 (duplicate email) still counts as "already subscribed" — treat as success.
       setStatus("success");
       setEmail("");
     } catch {

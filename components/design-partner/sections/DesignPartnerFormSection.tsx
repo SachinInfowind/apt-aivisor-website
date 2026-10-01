@@ -15,6 +15,8 @@ import {
   type DesignPartnerFormErrors,
 } from "@/lib/validation/designPartnerForm";
 import type { DesignPartnerFormSectionData, FormFieldCopy } from "@/lib/cms/types";
+import { RecaptchaNotice, useRecaptcha } from "@/components/ui/Recaptcha";
+import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
 
 const inputClass =
   "w-full rounded-lg border border-line-strong bg-white px-3.5 py-2.5 text-base leading-6 text-heading shadow-field outline-none placeholder:text-subtle transition-shadow focus:border-brand-accent focus:shadow-field-focus";
@@ -452,6 +454,7 @@ export function DesignPartnerFormSection({
     setStep(3);
   };
 
+  const { execute: executeRecaptcha } = useRecaptcha();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
@@ -467,7 +470,10 @@ export function DesignPartnerFormSection({
       const res = await fetch("/api/design-partner-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.data),
+        body: JSON.stringify({
+          ...result.data,
+          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.designPartner),
+        }),
       });
 
       if (!res.ok) {
@@ -1001,6 +1007,7 @@ export function DesignPartnerFormSection({
               {copy.footerNote}
             </p>
           ) : null}
+          <RecaptchaNotice />
         </form>
       </div>
     </section>

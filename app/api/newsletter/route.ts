@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { RECAPTCHA_ACTIONS } from "@/lib/recaptcha-actions";
+import { recaptchaTokenFrom, verifyRecaptcha } from "@/lib/recaptcha";
 import { newsletterFormSchema } from "@/lib/validation/newsletterForm";
 
 const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
@@ -48,6 +50,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Invalid request body" }, { status: 400 });
   }
 
+  // reCAPTCHA v3 — reject bots before doing any other work.
+  const captcha = await verifyRecaptcha({
+    token: recaptchaTokenFrom(body),
+    action: RECAPTCHA_ACTIONS.newsletter,
+    request,
+  });
+  if (!captcha.ok) {
+    return NextResponse.json({ message: captcha.message }, { status: captcha.status });
+  }
+
   const parsed = newsletterFormSchema.safeParse(body);
   if (!parsed.success) {
     const errors: Record<string, string> = {};
@@ -58,7 +70,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Invalid submission", errors }, { status: 400 });
   }
 
-  const { companyWebsite, email } = parsed.data;
+  const { companyWebsite, email, sourcePath } = parsed.data;
 
   // Honeypot tripped — pretend success so bots can't tell it was dropped.
   if (companyWebsite) {
@@ -74,7 +86,7 @@ export async function POST(request: NextRequest) {
         ...(STRAPI_API_TOKEN ? { Authorization: `Bearer ${STRAPI_API_TOKEN}` } : {}),
       },
       body: JSON.stringify({
-        data: { email, sourcePath: "/contact" },
+        data: { email, sourcePath: sourcePath ?? "/contact" },
       }),
       cache: "no-store",
     });

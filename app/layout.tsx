@@ -5,6 +5,7 @@ import StoreProvider from "../store/StoreProvider";
 import { PreviewBanner } from "@/components/cms/PreviewBanner";
 import { DemoModalRoot } from "@/components/demo/DemoModalRoot";
 import { CloudsProvider } from "@/components/ui/CloudsContext";
+import { SmoothAnchors } from "@/components/ui/SmoothAnchors";
 import { getGlobal } from "@/lib/cms/queries";
 
 const geistSans = Geist({
@@ -37,6 +38,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         {/* It's important to put this here so all components can access Redux state */}
         <StoreProvider>
           <CloudsProvider value={{ edge: global?.cloudEdge, band: global?.cloudBand }}>
+            <SmoothAnchors />
             <PreviewBanner />
             {children}
             <DemoModalRoot />
