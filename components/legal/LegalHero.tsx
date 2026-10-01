@@ -10,7 +10,7 @@ import { CloudBand } from "@/components/ui/CloudBand";
  */
 
 const title =
-  "italic leading-none tracking-[-0.02em] text-[clamp(2.75rem,8vw,6.25rem)] " +
+  "leading-none tracking-[-0.02em] text-[clamp(2.75rem,8vw,6.25rem)] " +
   "[-webkit-text-stroke-width:1px] [paint-order:stroke_fill] [-webkit-font-smoothing:antialiased]";
 
 const stroke: Record<LegalVariant, string> = {
@@ -70,7 +70,7 @@ export function LegalHero({
               {headlineAccent ? " " : ""}
             </span>
             {headlineAccent ? (
-              <span className={`${title} ${stroke[variant]} ${accentFill[variant]}`}>
+              <span className={`${title} italic ${stroke[variant]} ${accentFill[variant]}`}>
                 {headlineAccent}
               </span>
             ) : null}

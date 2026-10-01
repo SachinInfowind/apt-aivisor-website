@@ -614,6 +614,10 @@ export interface WorkflowItem {
 export interface SolutionsWorkflowsSection {
   __component: "sections.solutions-workflows";
   id: number;
+  badge?: string;
+  heading?: string;
+  headingAccent?: string;
+  subhead?: string;
   items?: WorkflowItem[];
 }
 

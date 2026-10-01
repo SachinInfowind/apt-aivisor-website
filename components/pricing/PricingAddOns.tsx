@@ -145,9 +145,9 @@ export function PricingAddOns({
               {catalog.addonsBadge}
             </span>
           ) : null}
-          <h2 className="font-display text-[1.5rem] font-normal italic leading-[1.25] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[3.75rem] lg:text-[3rem]">
+          <h2 className="font-display text-[1.5rem] font-normal leading-[1.25] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[3.75rem] lg:text-[3rem]">
             <span className="text-navy">{catalog?.addonsHeading} </span>
-            <span className="text-brand-accent">{catalog?.addonsHeadingAccent}</span>
+            <span className="italic text-brand-accent">{catalog?.addonsHeadingAccent}</span>
           </h2>
         </div>
 

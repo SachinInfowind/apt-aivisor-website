@@ -164,11 +164,11 @@ export function TeamRosterSection({
         className={`${layout.inner} flex w-full max-w-[80rem] flex-col items-center gap-10 md:gap-12`}
       >
         <h2
-          className={`${homeSerif.className} w-full text-center text-[clamp(1.75rem,4vw,3rem)] italic leading-[1.2] tracking-[-0.02em]`}
+          className={`${homeSerif.className} w-full text-center text-[clamp(1.75rem,4vw,3rem)] leading-[1.2] tracking-[-0.02em]`}
         >
           <span className="text-navy">{heading} </span>
           {headingAccent ? (
-            <span className="text-brand-accent">{headingAccent}</span>
+            <span className="italic text-brand-accent">{headingAccent}</span>
           ) : null}
         </h2>
 

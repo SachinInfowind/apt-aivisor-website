@@ -29,13 +29,13 @@ export function CareerOpenCallSection({
           <div className="flex w-full flex-col items-start gap-5">
             <h2
               id="career-open-call-heading"
-              className={`${homeSerif.className} text-[clamp(1.75rem,5vw,3.75rem)] font-normal italic leading-[1.2] tracking-[-0.02em]`}
+              className={`${homeSerif.className} text-[clamp(1.75rem,5vw,3.75rem)] font-normal leading-[1.2] tracking-[-0.02em]`}
             >
               <span className="text-navy">{heading}</span>
               {headingAccent ? (
                 <>
                   {" "}
-                  <span className="text-brand-strong">{headingAccent}</span>
+                  <span className="italic text-brand-strong">{headingAccent}</span>
                 </>
               ) : null}
             </h2>

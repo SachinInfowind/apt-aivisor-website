@@ -34,9 +34,9 @@ export default function BlogsPage({
           <div className={`${layout.inner} relative z-[1] flex flex-col items-center gap-9 text-center`}>
             <div className="flex flex-col items-center gap-4">
               <h1
-                className={`${homeSerif.className} text-[clamp(2.5rem,6vw,4.5rem)] italic leading-[1.05] tracking-[-0.02em] text-navy`}
+                className={`${homeSerif.className} text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.05] tracking-[-0.02em] text-navy`}
               >
-                {hero?.heading} <span className="text-brand">{hero?.headingAccent}</span>
+                {hero?.heading} <span className="italic text-brand">{hero?.headingAccent}</span>
               </h1>
               <p className="max-w-xl text-body-lg text-ink">{hero?.subhead}</p>
             </div>

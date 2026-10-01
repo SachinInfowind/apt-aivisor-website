@@ -126,7 +126,7 @@ export async function SectionRenderer({ sections }: { sections: PageSection[] })
           case "sections.solutions-features":
             return <SolutionsFeatures key={key} {...section} />;
           case "sections.solutions-workflows":
-            return <SolutionsWorkflows key={key} items={section.items} />;
+            return <SolutionsWorkflows key={key} {...section} />;
           case "sections.solutions-partner":
             return <SolutionsPartner key={key} {...section} />;
           case "sections.solutions-founder":

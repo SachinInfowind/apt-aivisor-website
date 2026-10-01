@@ -189,9 +189,9 @@ export function PricingPlans({
       className={`flex w-full min-w-0 flex-col gap-6 overflow-hidden rounded-[24px] bg-white p-4 sm:gap-[2.125rem] sm:p-6 md:gap-[2.125rem] md:p-8 ${className}`}
     >
       <div className="flex flex-col items-center gap-3 px-1 text-center">
-        <h2 className="font-display text-[1.5rem] font-normal italic leading-[1.15] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[2.75rem] lg:text-[3rem]">
+        <h2 className="font-display text-[1.5rem] font-normal leading-[1.15] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[2.75rem] lg:text-[3rem]">
           <span className="text-[#001C2E]">{catalog?.plansHeading}</span>{" "}
-          <span className="text-brand-accent">{catalog?.plansHeadingAccent}</span>
+          <span className="italic text-brand-accent">{catalog?.plansHeadingAccent}</span>
         </h2>
         {catalog?.plansSubhead ? (
           <p className="max-w-[40rem] text-sm leading-6 text-[#446278] sm:text-base">

@@ -71,14 +71,14 @@ export function SolutionsPartner({
               </span>
             ) : null}
             <h2
-              className={`${homeSerif.className} text-[clamp(2.25rem,4vw,3rem)] italic leading-[1.2] tracking-[-0.02em]`}
+              className={`${homeSerif.className} text-[clamp(2.25rem,4vw,3rem)] leading-[1.2] tracking-[-0.02em]`}
             >
               <span className="text-navy">
                 {headline}
                 {headlineAccent ? " " : ""}
               </span>
               {headlineAccent ? (
-                <span className="text-brand-accent">{headlineAccent}</span>
+                <span className="italic text-brand-accent">{headlineAccent}</span>
               ) : null}
             </h2>
           </div>
@@ -96,13 +96,17 @@ export function SolutionsPartner({
             const panelId = `partner-source-${source.id ?? index}`;
             return (
               <div key={source.id ?? source.title} className="flex flex-col">
-                <div
-                  className={`flex items-center justify-between gap-4 p-6 ${
+                <button
+                  type="button"
+                  aria-expanded={expanded}
+                  aria-controls={panelId}
+                  onClick={() => setOpen(expanded ? -1 : index)}
+                  className={`flex w-full cursor-pointer items-center justify-between gap-4 p-6 text-left transition-colors ${
                     expanded
                       ? source.body
                         ? "rounded-t-3xl bg-brand-strong"
                         : "rounded-3xl bg-brand-strong"
-                      : "rounded-3xl bg-surface-muted"
+                      : "rounded-3xl bg-surface-muted hover:bg-line-strong/40"
                   }`}
                 >
                   <div className="flex min-w-0 flex-wrap items-center gap-4">
@@ -121,25 +125,22 @@ export function SolutionsPartner({
                       </span>
                     ) : null}
                   </div>
-                  <button
-                    type="button"
-                    aria-expanded={expanded}
-                    aria-controls={panelId}
-                    onClick={() => setOpen(expanded ? -1 : index)}
+                  <span
+                    aria-hidden
                     className={`inline-flex size-10 shrink-0 items-center justify-center rounded-pill shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] ${
                       expanded ? "bg-white" : "bg-line-strong"
                     }`}
                   >
                     {expanded ? <MinusIcon /> : <PlusIcon />}
-                    <span className="sr-only">
-                      {expanded ? `Collapse ${source.title}` : `Expand ${source.title}`}
-                    </span>
-                  </button>
-                </div>
+                  </span>
+                  <span className="sr-only">
+                    {expanded ? `Collapse ${source.title}` : `Expand ${source.title}`}
+                  </span>
+                </button>
                 {expanded && source.body ? (
                   <div
                     id={panelId}
-                    className="rounded-b-3xl bg-white p-6"
+                    className="rounded-b-3xl bg-brand-soft p-6"
                   >
                     <p className="text-body text-navy">{source.body}</p>
                   </div>

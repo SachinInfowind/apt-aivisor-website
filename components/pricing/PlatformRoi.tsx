@@ -152,10 +152,10 @@ export function PlatformRoi({
         className="flex min-w-0 flex-col gap-8 rounded-b-[20px] bg-white px-4 py-8 sm:gap-10 sm:rounded-b-[24px] sm:px-8 sm:py-12 md:px-12 lg:px-[6.0625rem] lg:py-[4.875rem]"
       >
         <div className="flex min-w-0 flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
-          <h3 className="max-w-[19.5rem] shrink-0 font-display text-[1.5rem] font-normal italic leading-[1.2] tracking-[-0.02em] sm:text-[2.25rem] lg:text-[3rem]">
+          <h3 className="max-w-[19.5rem] shrink-0 font-display text-[1.5rem] font-normal leading-[1.2] tracking-[-0.02em] sm:text-[2.25rem] lg:text-[3rem]">
             <span className="text-navy">{variant.title}</span>
             <br />
-            <span className="text-brand-strong">{variant.titleAccent}</span>
+            <span className="italic text-brand-strong">{variant.titleAccent}</span>
           </h3>
 
           <div className="flex w-full min-w-0 max-w-[40.375rem] flex-col gap-8 sm:gap-12 lg:gap-16">

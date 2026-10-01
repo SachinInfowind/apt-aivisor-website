@@ -77,8 +77,8 @@ export function SolutionsFounder({
                 </div>
               </div>
             ) : null}
-            <h2 className={`${homeSerif.className} text-[48px] italic leading-[1.2] tracking-[-0.96px] text-[#182230]`}>
-              {headline} {headlineAccent ? <span className="text-[#4F8DFF]">{headlineAccent}</span> : null}
+            <h2 className={`${homeSerif.className} text-[48px] leading-[1.2] tracking-[-0.96px] text-[#182230]`}>
+              {headline} {headlineAccent ? <span className="italic text-[#4F8DFF]">{headlineAccent}</span> : null}
             </h2>
           </div>
           {subhead ? (

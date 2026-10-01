@@ -48,13 +48,13 @@ export function CareerRolesSection({
               <div className="flex w-full flex-col items-start gap-4">
                 <h2
                   id="career-roles-heading"
-                  className={`${homeSerif.className} text-[clamp(1.75rem,4.2vw,3rem)] font-normal italic leading-[1.25] tracking-[-0.02em] text-navy lg:leading-[3.75rem]`}
+                  className={`${homeSerif.className} text-[clamp(1.75rem,4.2vw,3rem)] font-normal leading-[1.25] tracking-[-0.02em] text-navy lg:leading-[3.75rem]`}
                 >
                   {heading}
                   {headingAccent ? (
                     <>
                       {" "}
-                      <span className="text-brand-strong">{headingAccent}</span>
+                      <span className="italic text-brand-strong">{headingAccent}</span>
                     </>
                   ) : null}
                 </h2>

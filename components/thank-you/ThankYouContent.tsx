@@ -83,7 +83,7 @@ export function ThankYouContent({
             <h1
               className={`${homeSerif.className} text-display-italic leading-none tracking-[-0.02em]`}
             >
-              <span className="text-hero-display-italic">{heading} </span>
+              <span className="text-hero-display">{heading} </span>
               {headingAccent && (
                 <span className="text-hero-negotiating">{headingAccent}</span>
               )}

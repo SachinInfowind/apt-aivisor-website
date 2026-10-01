@@ -46,9 +46,9 @@ export function EnterprisePlan({
           </div>
 
           <div className="flex max-w-[48rem] flex-col gap-4 sm:gap-6">
-            <h2 className="font-display text-[1.75rem] font-normal italic leading-[1.25] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[3.75rem] lg:text-[3rem]">
+            <h2 className="font-display text-[1.75rem] font-normal leading-[1.25] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[3.75rem] lg:text-[3rem]">
               <span className="text-navy">{heading} </span>
-              <span className="text-brand-strong">{headingAccent}</span>
+              <span className="italic text-brand-strong">{headingAccent}</span>
             </h2>
 
             <div className="flex flex-col gap-4">

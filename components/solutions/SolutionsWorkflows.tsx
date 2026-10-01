@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { homeSerif } from "@/components/ui/fonts";
+import { SectionBadge } from "@/components/ui/SectionBadge";
 import { toAbsoluteMediaUrl } from "@/lib/cms/media";
 import type { WorkflowIcon, WorkflowItem } from "@/lib/cms/types";
 
@@ -50,7 +51,19 @@ function WorkflowIconMark({ name }: { name: WorkflowIcon }) {
   );
 }
 
-export function SolutionsWorkflows({ items }: { items?: WorkflowItem[] }) {
+export function SolutionsWorkflows({
+  badge,
+  heading,
+  headingAccent,
+  subhead,
+  items,
+}: {
+  badge?: string;
+  heading?: string;
+  headingAccent?: string;
+  subhead?: string;
+  items?: WorkflowItem[];
+}) {
   const workflows = (items ?? []).filter((item) => item.title);
   const [index, setIndex] = useState(0);
   const [cycle, setCycle] = useState(0);
@@ -74,9 +87,28 @@ export function SolutionsWorkflows({ items }: { items?: WorkflowItem[] }) {
 
   return (
     <section className="w-full bg-[linear-gradient(206deg,var(--color-brand-veil)_3.52%,var(--color-brand-strong)_83.83%)] px-4 py-16 sm:px-8 sm:py-20 md:px-10 xl:px-20">
-      <div className="mx-auto flex w-full max-w-[82.5rem] flex-col gap-6">
-        <div className="grid grid-cols-1 items-center gap-8 rounded-card border-2 border-brand-veil bg-white p-6 sm:p-8 lg:grid-cols-2 lg:gap-16 lg:p-12">
-          <div className="flex min-h-[16rem] items-center justify-center overflow-hidden rounded-3xl bg-brand-strong sm:min-h-[20rem] lg:min-h-[26rem]">
+      <div className="mx-auto flex w-full max-w-[82.5rem] flex-col gap-10">
+        {badge || heading || subhead ? (
+          <div className="flex flex-col items-start gap-6">
+            {badge ? <SectionBadge tone="light">{badge}</SectionBadge> : null}
+            {heading ? (
+              <h2
+                className={`${homeSerif.className} max-w-[59.9375rem] text-[clamp(2rem,3.4vw,3rem)] italic leading-[1.2] tracking-[-0.02em] text-white`}
+              >
+                {heading}
+                {headingAccent ? ` ${headingAccent}` : ""}
+              </h2>
+            ) : null}
+            {subhead ? (
+              <p className="max-w-[49.75rem] text-base font-medium leading-7 text-white sm:text-body-lg">
+                {subhead}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
+        <div className="grid grid-cols-1 items-stretch gap-8 rounded-card border-2 border-brand-veil bg-white p-6 sm:p-8 lg:grid-cols-2 lg:gap-16 lg:p-12">
+          <div className="flex min-h-[16rem] items-center justify-center overflow-hidden rounded-3xl bg-brand-strong p-6 sm:min-h-[20rem] sm:p-8">
             {imageUrl ? (
               <Image
                 key={current.id ?? current.title}
@@ -84,25 +116,27 @@ export function SolutionsWorkflows({ items }: { items?: WorkflowItem[] }) {
                 alt={current.imageAlt || current.image?.alternativeText || ""}
                 width={current.image?.width || 578}
                 height={current.image?.height || 379}
-                className="solutions-workflow-in h-auto w-full max-w-[36.125rem] object-contain"
+                className="solutions-workflow-in h-auto w-full max-w-[29.0625rem] object-contain"
               />
             ) : null}
           </div>
 
           <div
             key={`copy-${current.id ?? current.title}`}
-            className="solutions-workflow-in flex flex-col items-start gap-3.5 py-2"
+            className="solutions-workflow-in flex flex-col items-start justify-between gap-6 py-2"
           >
-            <h2
-              className={`${homeSerif.className} text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.22] tracking-[-0.02em] text-navy`}
-            >
-              {current.title}
-            </h2>
-            {current.body ? (
-              <p className="text-body font-medium text-ink sm:text-body-lg">
-                {current.body}
-              </p>
-            ) : null}
+            <div className="flex flex-col items-start gap-3.5">
+              <h2
+                className={`${homeSerif.className} text-[clamp(1.75rem,3vw,2.25rem)] leading-[1.22] tracking-[-0.02em] text-navy`}
+              >
+                {current.title}
+              </h2>
+              {current.body ? (
+                <p className="text-body font-medium text-ink sm:text-body-lg">
+                  {current.body}
+                </p>
+              ) : null}
+            </div>
             {current.metric ? (
               <p className="text-body text-metric sm:text-body-lg">
                 {current.metric}

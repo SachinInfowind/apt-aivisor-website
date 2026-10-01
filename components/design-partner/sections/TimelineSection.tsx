@@ -98,13 +98,13 @@ export function TimelineSection({
             </div>
           ) : null}
           <h2
-            className={`${homeSerif.className} max-w-[63.8125rem] text-[clamp(2rem,3.4vw,3rem)] italic leading-heading tracking-heading text-navy`}
+            className={`${homeSerif.className} max-w-[63.8125rem] text-[clamp(2rem,3.4vw,3rem)] leading-heading tracking-heading text-navy`}
           >
             {heading}
             {headingAccent ? (
               <>
                 {" "}
-                <span className="text-brand-accent">{headingAccent}</span>
+                <span className="italic text-brand-accent">{headingAccent}</span>
               </>
             ) : null}
           </h2>

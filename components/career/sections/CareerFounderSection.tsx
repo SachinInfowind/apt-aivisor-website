@@ -52,11 +52,11 @@ export function CareerFounderSection({
 
               <div className="flex w-full flex-col gap-5 sm:gap-6">
                 <h2
-                  className={`${homeSerif.className} text-[clamp(1.75rem,6vw,3rem)] font-normal italic leading-[1.2] tracking-[-0.02em]`}
+                  className={`${homeSerif.className} text-[clamp(1.75rem,6vw,3rem)] font-normal leading-[1.2] tracking-[-0.02em]`}
                 >
                   <span className="text-navy">{heading} </span>
                   {headingAccent && (
-                    <span className="text-brand-accent">{headingAccent}</span>
+                    <span className="italic text-brand-accent">{headingAccent}</span>
                   )}
                 </h2>
 

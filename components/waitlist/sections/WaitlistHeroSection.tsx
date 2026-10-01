@@ -40,7 +40,7 @@ export function WaitlistHeroSection({
           >
             {/* Figma: “Be First to Stop Overpaying” / “for Technology” — two lines */}
             <span className={`block whitespace-nowrap ${size}`}>
-              <span className="text-hero-display-italic">{headline}</span>
+              <span className="text-hero-display">{headline}</span>
               {headlineAccent ? (
                 <>
                   {" "}

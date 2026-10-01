@@ -22,7 +22,7 @@ export function TrustHeroSection({
   features,
 }: TrustHeroSectionData) {
   const line =
-    `${homeSerif.className} block italic tracking-[-0.02em] ` +
+    `${homeSerif.className} block tracking-[-0.02em] ` +
     `text-[clamp(1.75rem,6.94vw,6.25rem)] leading-none ` +
     `w-full sm:w-max sm:max-w-full sm:whitespace-nowrap`;
 
@@ -55,7 +55,7 @@ export function TrustHeroSection({
             <h1 className="flex w-full flex-col items-center">
               <span className={`${line} text-navy`}>{headline}</span>
               {headlineAccent ? (
-                <span className={`${line} mt-1 text-brand sm:mt-1.5`}>
+                <span className={`${line} mt-1 italic text-brand sm:mt-1.5`}>
                   {headlineAccent}
                 </span>
               ) : null}

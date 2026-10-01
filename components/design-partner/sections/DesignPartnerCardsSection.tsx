@@ -94,7 +94,7 @@ export function DesignPartnerCardsSection({
               <h2
                 className={`${homeSerif.className} leading-heading tracking-heading ${
                   isSecurity
-                    ? "text-[clamp(1.75rem,3.4vw,3rem)] italic text-navy"
+                    ? "text-[clamp(1.75rem,3.4vw,3rem)] text-navy"
                     : "text-[clamp(1.75rem,3.5vw,2.5rem)] text-navy"
                 }`}
               >

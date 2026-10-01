@@ -64,10 +64,10 @@ export function AudienceSection({
             </div>
           ) : null}
           <h2
-            className={`${homeSerif.className} italic text-[clamp(1.75rem,3.5vw,2.5rem)] leading-heading tracking-heading text-navy`}
+            className={`${homeSerif.className} text-[clamp(1.75rem,3.5vw,2.5rem)] leading-heading tracking-heading text-navy`}
           >
             {heading}{" "}
-            {headingAccent ? <span className="text-brand-accent">{headingAccent}</span> : null}
+            {headingAccent ? <span className="italic text-brand-accent">{headingAccent}</span> : null}
           </h2>
           {body ? (
             <p className="text-body-lg font-medium leading-[30px] text-ink">{body}</p>
