@@ -89,13 +89,13 @@ function AboutMegaMenu({
     <div
       role="menu"
       aria-label="About"
-      className="absolute left-1/2 top-[calc(100%+16px)] z-50 w-[min(960px,calc(100vw-2rem))] -translate-x-[38%] rounded-4xl border border-line bg-white p-6 shadow-card-lg"
+      className="absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-3xl border border-line bg-white shadow-card-lg"
       onClick={(e) => {
         if ((e.target as HTMLElement).closest("a")) onNavigate();
       }}
     >
-      <div className="grid gap-2 lg:grid-cols-3 lg:gap-4">
-        <div>
+      <div className="grid lg:grid-cols-[1fr_1fr_1.15fr]">
+        <div className="p-6 lg:pr-3">
           <p className="px-3 text-caption font-semibold text-brand">
             {company.title}
           </p>
@@ -113,7 +113,7 @@ function AboutMegaMenu({
           </div>
         </div>
 
-        <div>
+        <div className="p-6 lg:px-3">
           <p className="px-3 text-caption font-semibold text-brand">
             {resources.title}
           </p>
@@ -130,7 +130,7 @@ function AboutMegaMenu({
           </div>
         </div>
 
-        <div className="px-3 pt-0.5">
+        <div className="bg-surface p-6 lg:pl-8">
           <p className="text-caption font-semibold text-brand">
             {featured.title}
           </p>
@@ -277,7 +277,7 @@ export function HeaderView({
             {navLinks.map((link) => {
               if (link.mega) {
                 return (
-                  <li key={link.label} className="relative" ref={aboutRef}>
+                  <li key={link.label} ref={aboutRef}>
                     <button
                       type="button"
                       className={`inline-flex items-center gap-1.5 text-body font-semibold leading-6 transition-colors ${

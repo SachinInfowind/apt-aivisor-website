@@ -19,9 +19,14 @@ const modules = [
     body: "Ask anything about contracts, clauses, or pricing. Get answers from Claude, GPT-4, and Gemini side-by-side with citations grounded in your own contract data.",
     icon: homeAssets.modules.icons.chatbot,
     preview: homeAssets.modules.previews.chatbot,
-    /** Figma: 427×423 @ left 102 top 72 inside 630×568 */
-    frame:
-      "left-[16.2%] top-[12.7%] w-[67.8%] aspect-[106/105] rounded-[1.25rem] shadow-[0_6.25rem_12.5rem_0_rgba(52,64,84,0.18)]",
+    /**
+     * Asset is a transparent PNG: the card (with its own shadow) sits in the
+     * middle ~50%. No frame/background of our own; scale the image so the card
+     * lands on Figma's 427×423 @ left 102 top 72 inside 630×568.
+     */
+    frame: "inset-0",
+    imageClass:
+      "absolute left-[-17%] top-[-7.2%] h-auto w-[135%] max-w-none",
   },
   {
     id: "pricing" as const,
@@ -112,16 +117,27 @@ function ModuleStage({
     >
       <div
         key={activeModule.id}
-        className={`absolute overflow-hidden bg-white transition-[opacity,transform] duration-300 ease-out ${activeModule.frame}`}
+        className={`absolute overflow-hidden transition-[opacity,transform] duration-300 ease-out ${activeModule.frame}`}
       >
-        <Image
-          src={activeModule.preview}
-          alt={`${activeModule.title} preview`}
-          fill
-          sizes={sizes}
-          className="object-cover object-top"
-          priority={activeModule.id === "chatbot"}
-        />
+        {"imageClass" in activeModule ? (
+          <Image
+            src={activeModule.preview}
+            alt={`${activeModule.title} preview`}
+            width={427}
+            height={370}
+            sizes={sizes}
+            className={activeModule.imageClass}
+            priority
+          />
+        ) : (
+          <Image
+            src={activeModule.preview}
+            alt={`${activeModule.title} preview`}
+            fill
+            sizes={sizes}
+            className="object-cover object-top"
+          />
+        )}
       </div>
     </div>
   );

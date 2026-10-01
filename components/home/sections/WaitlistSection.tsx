@@ -18,6 +18,10 @@ export function WaitlistSection({
 }: WaitlistSectionData & { showCountdown?: boolean }) {
   const href = joinHref?.trim() || "/waitlist";
   const showDemo = Boolean(demoLabel?.trim() && demoHref?.trim());
+  // Figma: first line upright, the rest italic. CMS marks the break with "\n";
+  // a heading without one stays fully italic as before.
+  const [headLead, ...headRest] = heading.split("\n");
+  const headAccent = headRest.join(" ").trim();
 
   return (
     <section id="waitlist" className={`w-full bg-waitlist-section ${layout.sectionX} py-12 sm:py-16 md:py-20`}>
@@ -30,9 +34,16 @@ export function WaitlistSection({
 
         <div className="flex w-full flex-col items-center gap-4 sm:gap-6">
           <h2
-            className={`${homeSerif.className} text-hero-display-on-dark w-full text-3xl italic sm:text-4xl md:text-5xl lg:text-[48px] leading-[1.2] tracking-[-0.02em] text-white`}
+            className={`${homeSerif.className} text-hero-display-on-dark w-full text-3xl ${headAccent ? "not-italic!" : "italic"} [-webkit-text-stroke-width:0]! sm:text-4xl md:text-5xl lg:text-[48px] leading-[1.2] tracking-[-0.02em] text-white`}
           >
-            {heading}
+            {headAccent ? (
+              <>
+                {headLead}
+                <em className="block italic">{headAccent}</em>
+              </>
+            ) : (
+              heading
+            )}
           </h2>
           {subhead && (
             <p className="max-w-2xl text-base font-medium leading-7 text-white sm:text-lg sm:leading-8 md:text-xl md:leading-[30px]">

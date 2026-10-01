@@ -28,7 +28,7 @@ export function ProblemSection({
         <div className="flex max-w-heading flex-col items-start text-left">
           {badgeLabel && <SectionBadge>{badgeLabel}</SectionBadge>}
           {heading && (
-            <h2 className="mt-5 font-display text-h2 font-normal tracking-tight text-navy">
+            <h2 className="mt-5 max-w-[640px] font-display text-h2 font-normal tracking-tight text-navy">
               {heading}{" "}
               {headingAccent && (
                 <em className="italic text-brand-accent">{headingAccent}</em>
@@ -46,7 +46,7 @@ export function ProblemSection({
           {items.map((p, i) => (
             <article
               key={p.title}
-              className="overflow-hidden rounded-card border border-line bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card-lg"
+              className="flex flex-col overflow-hidden rounded-card bg-white shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-card-lg"
             >
               {/* Blue gradient matches Figma card tops; PNG also has it baked in */}
               <div className="relative aspect-[300/289] w-full overflow-hidden bg-card-art">
@@ -63,13 +63,13 @@ export function ProblemSection({
                   priority
                 />
               </div>
-              <div className="p-5">
+              <div className="flex flex-1 flex-col p-5">
                 <h3 className="font-display text-h5 text-navy">{p.title}</h3>
                 {p.description && (
                   <p className="mt-2.5 text-body-sm text-ink">{p.description}</p>
                 )}
                 {p.meta && (
-                  <p className="mt-3.5 text-body-sm font-medium text-brand">
+                  <p className="mt-auto pt-3.5 text-body-sm font-medium text-brand">
                     {p.meta}
                   </p>
                 )}
