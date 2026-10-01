@@ -98,11 +98,21 @@ function AnimatedStatValue({ value }: { value: string }) {
   );
 }
 
+// CMS currently sends the whole heading in `heading`; the Figma styles the
+// closing "Love Us" as the italic accent, so split it off when no accent is set.
+const DEFAULT_ACCENT = "Love Us";
+
 export function StatsSection({
-  heading,
-  headingAccent,
+  heading: rawHeading,
+  headingAccent: rawAccent,
   items,
 }: StatsSectionData) {
+  let heading = rawHeading;
+  let headingAccent = rawAccent;
+  if (heading && !headingAccent && heading.trim().endsWith(DEFAULT_ACCENT)) {
+    heading = heading.trim().slice(0, -DEFAULT_ACCENT.length).trim();
+    headingAccent = DEFAULT_ACCENT;
+  }
   return (
     <section className={`bg-white ${layout.sectionX} pb-section-x pt-5`}>
       <div className={layout.inner}>

@@ -204,15 +204,17 @@ export function HowItWorksSection({
               Outer panel stretches at lg so both columns share height; the
               inner aspect-[769/544] keeps Figma frame % crops undistorted. */}
           <div className="grid gap-8 lg:sticky lg:top-24 lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] lg:gap-8 xl:top-28 xl:gap-10">
-            <div className="relative aspect-[769/544] w-full overflow-hidden rounded-3xl bg-founder-card lg:flex lg:aspect-auto lg:items-center">
-              <div className="relative aspect-[769/544] w-full shrink-0 lg:h-auto">
+            <div className="relative aspect-[769/544] w-full overflow-hidden rounded-3xl bg-founder-card lg:col-start-1 lg:row-start-1 lg:aspect-auto">
+              <div className="relative aspect-[769/544] w-full lg:absolute lg:inset-0 lg:aspect-auto">
                 <StepPreview steps={steps} open={open} />
               </div>
             </div>
 
-            <div className="flex w-full flex-col gap-6 sm:gap-7.5">
+            {/* lg:contents lifts accordion + logos into the grid so the preview
+                row ends with the accordion and the logos sit below, separate. */}
+            <div className="flex w-full flex-col gap-6 sm:gap-7.5 lg:contents">
               {/* Figma: #E8F0FF, padding 20, radius 24; inner gap 20 */}
-              <div className="rounded-card bg-brand-soft p-4 sm:rounded-3xl sm:p-5">
+              <div className="rounded-card bg-brand-soft p-4 sm:rounded-3xl sm:p-5 lg:col-start-2 lg:row-start-1">
                 <div className="flex flex-col gap-4 sm:gap-5">
                   {steps.map((step, i) => {
                     const active = open === i;
@@ -254,7 +256,7 @@ export function HowItWorksSection({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-3 sm:gap-3.5">
+              <div className="flex flex-col gap-3 sm:gap-3.5 lg:col-start-2 lg:row-start-2">
                 <div className="flex flex-wrap items-center gap-2">
                   {(integrationLogos ?? []).map((logo) => (
                     <span

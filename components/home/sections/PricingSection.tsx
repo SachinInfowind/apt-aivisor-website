@@ -109,7 +109,19 @@ export function PricingSection({
             <h2 className="font-display text-h2 font-normal tracking-[-0.02em] text-navy">
               {heading}{" "}
               {headingAccent && (
-                <em className="italic text-brand-accent">{headingAccent}</em>
+                <em className="italic text-brand-accent">
+                  {headingAccent.includes(" ") ? (
+                    <>
+                      {headingAccent.slice(0, headingAccent.lastIndexOf(" "))}
+                      {/* Figma: the closing word drops to its own centered line */}
+                      <span className="block">
+                        {headingAccent.slice(headingAccent.lastIndexOf(" ") + 1)}
+                      </span>
+                    </>
+                  ) : (
+                    headingAccent
+                  )}
+                </em>
               )}
             </h2>
           )}
@@ -126,7 +138,7 @@ export function PricingSection({
         <div className="w-full min-w-0 max-w-[80rem] rounded-[1.25rem] bg-surface p-3 sm:rounded-[1.5rem] sm:p-6 md:p-8">
           <div className="-mx-1 overflow-x-auto sm:mx-0">
             <div className="grid min-w-[36rem] grid-cols-[minmax(8rem,1.2fr)_repeat(4,minmax(7rem,1fr))] items-start gap-0 sm:min-w-[52rem] md:gap-2 lg:gap-4">
-              <div className="flex flex-col pt-[5.125rem] sm:pt-[5.5rem]">
+              <div className="flex flex-col pt-[6.5rem]">
                 {rows.map((row, i) => (
                   <div
                     key={row.feature}
@@ -168,10 +180,10 @@ export function PricingSection({
               {competitors.map((col) => (
                 <div
                   key={col.key}
-                  className="flex flex-col pt-[1.4375rem] pb-5"
+                  className="flex flex-col pb-5"
                 >
-                  <div className="flex flex-col items-center gap-2 px-4 pb-4 sm:px-6">
-                    <p className="text-center text-[1rem] font-semibold leading-7 text-navy sm:text-[1.25rem] sm:leading-[1.875rem]">
+                  <div className="flex h-[6.5rem] flex-col items-center justify-center gap-2 px-2">
+                    <p className="text-center text-[1rem] font-semibold leading-7 text-navy sm:text-[1.125rem] sm:leading-7">
                       {col.name}
                     </p>
                     <span className="inline-flex items-center rounded-pill border border-[#FECDCA] bg-[#FEF3F2] px-2.5 py-0.5 text-[0.875rem] font-medium leading-5 text-danger-fg">

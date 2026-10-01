@@ -125,7 +125,7 @@ export function WhoItIsForSection(props: Partial<WhoItIsForSectionData> = {}) {
                   />
                 </span>
               ))}
-              <span className="-ml-2.5 grid h-9 w-9 place-items-center rounded-pill border-2 border-white bg-white text-caption font-semibold text-brand">
+              <span className="relative -ml-2.5 grid h-9 w-9 place-items-center rounded-pill border-2 border-white bg-white text-caption font-semibold text-brand">
                 +{p.more}
               </span>
             </div>
