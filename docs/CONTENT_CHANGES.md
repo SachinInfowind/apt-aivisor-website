@@ -54,6 +54,26 @@ Other waitlist fields already matched Figma and were not touched
 > admin UI are safer than scripts — a script PUT replaces the whole `sections`
 > list, so any section it omits is dropped.
 
+### 1.3 Solutions page — "Real problems. Real workflows." (`sections.solutions-workflows`)
+
+Page: **Solutions** (slug `solutions`). This section previously had **no**
+`badge` / `heading` / `headingAccent` / `subhead` fields at all (schema gap,
+now fixed — see the CMS-side schema change below), so it rendered with no
+heading. Set on this environment, needs re-applying on others:
+
+| Field | Value |
+|---|---|
+| `badge` | Use cases |
+| `heading` | Real problems. |
+| `headingAccent` | Real workflows. |
+| `subhead` | The situations where aptAIvisor pays for itself immediately. |
+
+**Schema change (ships with git, additive/safe):** `src/components/sections/solutions-workflows.json`
+in `apt-cms` gained these four `string` attributes. Any environment that pulls
+the updated `apt-cms` code gets the fields automatically; only the **content**
+above needs to be re-entered per environment (or restored via a re-exported
+seed archive — see `apt-cms/MIGRATION.md` §4).
+
 ---
 
 ## 2. Code that depends on the text above
@@ -61,12 +81,17 @@ Other waitlist fields already matched Figma and were not touched
 | File | What it does | Depends on |
 |------|--------------|------------|
 | `components/home/sections/WaitlistSection.tsx` | Splits `heading` on `\n`: first line upright, rest italic on its own line. A heading with no `\n` stays fully italic as before. Also removes the 1px text-stroke that made the heading look bold. | Waitlist heading containing `\n` |
-| `components/home/sections/StatsSection.tsx` | If `headingAccent` is empty and `heading` ends with "Love Us", renders "Love Us" as the blue italic accent. | Stats heading "See Why Customer Love Us" |
 | `components/home/sections/PricingSection.tsx` | The last word of `headingAccent` drops to its own centered line ("both sides of the / deal."). | Feature-table accent "both sides of the deal." |
 
-### Recommended Strapi follow-up (optional)
+### Stats section — resolved
 
-- **Stats section:** set `heading` = "See Why Customer" and `headingAccent` = "Love Us". The code fallback in `StatsSection.tsx` then becomes a no-op and can be deleted.
+The Strapi `heading`/`headingAccent` split recommended below was applied on
+this environment (`heading` = "See Why Customer", `headingAccent` = "Love
+Us"), and the now-dead fallback that inferred the split in
+`StatsSection.tsx` has been removed. **Other environments still need the
+same Strapi edit** (or a re-exported seed archive) — without it the Stats
+heading renders as one plain black line, since there's no code fallback left
+to paper over it.
 
 ---
 
@@ -84,9 +109,26 @@ Layout / style fixes, no content impact:
 
 - `components/layout/Header.tsx` — About dropdown anchored to the nav, full nav width, 24px radius, grey right panel.
 - `components/home/sections/ProblemSection.tsx` — heading max width 640px (two lines), card border removed, meta line pinned to card bottom.
-- `components/home/sections/ModulesSection.tsx` — chatbot preview: transparent frame, no white box, image rescaled.
 - `components/home/sections/HowItWorksSection.tsx` — preview box height = accordion; logos row separate (`lg:contents` grid).
 - `components/home/sections/WhoItIsForSection.tsx` — "+N" avatar badge stacks above avatars (`relative`).
-- `components/home/sections/PricingSection.tsx` — fixed 6.5rem header row, aptAIvisor logo `max-w-[7rem]`.
-- `public/assets/pricing-apt-header.svg` — `viewBox` cropped to `62 0 126 74` (width/height 126×74); artwork unchanged.
+- `components/home/sections/PricingSection.tsx` — fixed 6.5rem header row for the aptAIvisor plan column (now rendered via `CmsImage`, not a static asset).
 - `components/layout/Footer.tsx` — white background, logo + Join CTA on one row, columns below (3fr/7fr), grey copyright strip.
+
+### Superseded during the merge into `feat/aryan/s3` (not applied as written)
+
+This branch was cut before the site moved to "every section/image comes from
+the CMS" (see `apt-cms/MIGRATION.md` §11). Two of its edits reverted that
+work and were **not** carried over; the underlying CMS-driven code was kept
+instead:
+
+- `components/home/sections/ModulesSection.tsx` — this branch replaced the
+  CMS-driven `items` prop with a hardcoded `modules` array + static image
+  imports (including the "chatbot preview: transparent frame" tweak). Kept
+  the CMS-driven version instead. **If the transparent-frame treatment is
+  still wanted,** it needs to be redone as a CMS image / `variant` change, not
+  a hardcoded array.
+- `public/assets/pricing-apt-header.svg` — this branch cropped the static
+  asset's `viewBox`; the asset itself was already deleted on `feat/aryan/s3`
+  because `PricingSection.tsx`'s header image now comes from Strapi
+  (`headerImage`, via `CmsImage`). **If the crop is still wanted,** re-crop
+  the image in Strapi's media library, not this file (which no longer exists).
