@@ -15,6 +15,14 @@ import type {
  * Name + LinkedIn inline, brands top-right, blue quote card, Read More/Less.
  */
 
+/** Splits `**bold**` markup out of plain CMS text into text/<strong> nodes. */
+function renderRichBio(text: string) {
+  const parts = text.split(/\*\*(.+?)\*\*/g);
+  return parts.map((part, i) =>
+    i % 2 === 1 ? <strong key={i} className="font-semibold text-ink">{part}</strong> : part,
+  );
+}
+
 function LinkedInIcon() {
   return (
     <svg width="15" height="14" viewBox="0 0 15 14" fill="none" aria-hidden>
@@ -49,6 +57,14 @@ function MemberCard({
   const canExpand = Boolean(fullBio && preview && fullBio.length > preview.length);
   const shownBio = open || !canExpand ? fullBio || preview : preview;
   const quote = member.quote?.replace(/^["“]|["”]$/g, "").trim() ?? "";
+  const quoteAccent = member.quoteAccent?.trim() ?? "";
+  const quoteAccentIndex = quoteAccent ? quote.indexOf(quoteAccent) : -1;
+  const quoteBefore =
+    quoteAccentIndex >= 0 ? quote.slice(0, quoteAccentIndex) : quote;
+  const quoteAfter =
+    quoteAccentIndex >= 0
+      ? quote.slice(quoteAccentIndex + quoteAccent.length)
+      : "";
 
   return (
     <article className="flex w-full flex-col items-start gap-8 lg:flex-row lg:items-start lg:gap-12">
@@ -112,29 +128,35 @@ function MemberCard({
         </div>
 
         {shownBio ? (
-          <div className="flex w-full flex-col items-start gap-2">
-            <p className="whitespace-pre-line text-base leading-6 text-nav sm:text-lg sm:leading-7">
-              {shownBio}
-            </p>
+          <p className="whitespace-pre-line text-base leading-6 text-nav sm:text-lg sm:leading-7">
+            {renderRichBio(shownBio)}
             {canExpand ? (
-              <button
-                type="button"
-                onClick={onToggle}
-                aria-expanded={open}
-                className="text-base font-medium leading-6 text-brand-accent transition-colors hover:text-brand"
-              >
-                {open ? "Read Less" : "Read More"}
-              </button>
+              <>
+                {" "}
+                <button
+                  type="button"
+                  onClick={onToggle}
+                  aria-expanded={open}
+                  className="text-brand-accent underline transition-colors hover:text-brand"
+                >
+                  {open ? "Read Less" : "Read More"}
+                </button>
+                .
+              </>
             ) : null}
-          </div>
+          </p>
         ) : null}
 
         {quote ? (
           <blockquote className="w-full max-w-[52rem] rounded-3xl bg-surface px-6 py-8 sm:px-10 sm:py-10 md:px-[6.9375rem] md:py-[3.125rem]">
             <p
-              className={`${homeSerif.className} text-[clamp(1.125rem,2vw,1.5rem)] italic leading-[1.4] text-brand-deep`}
+              className={`${homeSerif.className} text-[clamp(1.125rem,2vw,1.5rem)] italic leading-[1.4] text-navy`}
             >
-              “{quote}”
+              “{quoteBefore}
+              {quoteAccentIndex >= 0 ? (
+                <span className="text-brand-deep">{quoteAccent}</span>
+              ) : null}
+              {quoteAfter}”
             </p>
           </blockquote>
         ) : null}

@@ -164,7 +164,7 @@ export interface FeatureTableSection {
   ctaLabel?: string;
   ctaHref?: string;
   rows: Record<string, unknown>[];
-  headerImage?: StrapiImage | null;
+  headerPrice?: string;
   /** Comparison columns: [{ key: "vendr" | "ironclad" | "generic", name, price }]. */
   competitors?: Record<string, unknown>[] | null;
 }
@@ -528,6 +528,7 @@ export interface TeamProfile {
   bioPreview?: string;
   bio?: string;
   quote?: string;
+  quoteAccent?: string;
   linkedinUrl?: string;
   expandedByDefault?: boolean;
   photo?: StrapiImage | null;

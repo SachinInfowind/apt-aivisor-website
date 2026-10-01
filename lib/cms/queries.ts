@@ -8,7 +8,7 @@ const SECTIONS_POPULATE = {
     "sections.hero": { populate: ["image"] },
     "sections.stats": { populate: ["items"] },
     "sections.faq": { populate: ["items"] },
-    "sections.feature-table": { populate: ["headerImage"] },
+    "sections.feature-table": true,
     "sections.card-grid": { populate: { items: { populate: ["icon"] } } },
     "sections.team": { populate: { members: { populate: ["photo"] } } },
     "sections.cta": true,
