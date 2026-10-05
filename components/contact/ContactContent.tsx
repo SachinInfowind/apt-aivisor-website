@@ -1,16 +1,18 @@
 "use client";
 
-import Image from "next/image";
+import { CloudBand } from "../ui/CloudBand";
+import { CmsImage } from "../ui/CmsImage";
+import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import { homeSerif } from "../ui/fonts";
 import { layout } from "../ui/type";
-import type { ContactHeroSection } from "@/lib/cms/types";
+import type { ContactHeroSection, StrapiImage } from "@/lib/cms/types";
 
 /**
  * Contact Us content — Figma 24641:106432 (1440×2012).
  * Hero + vector map + Support / Sales / Phone columns.
  */
 
-function MapMarker() {
+function MapMarker({ flag }: { flag?: StrapiImage | null }) {
   return (
     <div
       className="absolute left-[19.5%] top-[40.4%] z-[1] -translate-x-1/2 -translate-y-1/2"
@@ -19,9 +21,8 @@ function MapMarker() {
       {/* Tooltip — Figma State=Hover */}
       <div className="absolute bottom-[calc(100%+0.5rem)] left-1/2 flex w-max max-w-[16rem] -translate-x-1/2 flex-col items-center">
         <div className="flex items-start gap-1.5 rounded-lg bg-white px-3 py-2 shadow-[0_4px_8px_-2px_rgba(16,24,40,0.1),0_2px_4px_-2px_rgba(16,24,40,0.06)]">
-          <Image
-            src="/assets/contact/us-flag.svg"
-            alt=""
+          <CmsImage
+            image={flag}
             width={20}
             height={20}
             className="mt-0.5 h-5 w-5 shrink-0"
@@ -65,15 +66,17 @@ export function ContactContent({
   headingAccent,
   subhead,
   contactMethods,
+  mapImage,
+  flagImage,
 }: ContactHeroSection) {
   return (
-    <section
-      className={`relative w-full bg-white ${layout.sectionX} pb-16 pt-[clamp(9.5rem,18vw,15rem)] sm:pb-20 md:pb-24`}
-    >
-      <div
-        className={`${layout.inner} flex max-w-[80rem] flex-col items-center gap-12 sm:gap-16 md:gap-20`}
+    <>
+      {/* Hero band — mesh + cloud edge, same treatment as the other page heroes */}
+      <section
+        className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(9.5rem,18vw,15rem)]`}
       >
-        {/* Hero */}
+        <HeroGlowAccent />
+        <div className={`${layout.inner} relative z-[1] flex max-w-[80rem] flex-col items-center`}>
         <div className="flex w-full max-w-[56.5625rem] flex-col items-center gap-6 text-center sm:gap-8 md:gap-9">
           {badgeLabel && (
             <div className="inline-flex items-center gap-1.5 rounded-lg border border-line-strong bg-white px-2.5 py-1 text-[0.875rem] font-medium leading-5 text-ink shadow-sm">
@@ -89,7 +92,7 @@ export function ContactContent({
             <h1
               className={`${homeSerif.className} text-display-italic leading-none tracking-[-0.02em]`}
             >
-              <span className="text-hero-display-italic">{heading} </span>
+              <span className="text-hero-display">{heading} </span>
               {headingAccent && (
                 <span className="text-hero-negotiating">{headingAccent}</span>
               )}
@@ -102,18 +105,26 @@ export function ContactContent({
           </div>
         </div>
 
+        </div>
+        <CloudBand priority variant="edge" />
+      </section>
+
+      <section className={`relative w-full bg-white ${layout.sectionX} pb-16 sm:pb-20 md:pb-24`}>
+        <div
+          className={`${layout.inner} flex max-w-[80rem] flex-col items-center gap-12 sm:gap-16 md:gap-20`}
+        >
         {/* Map + contact methods */}
         <div className="flex w-full flex-col items-center gap-10 sm:gap-12 md:gap-16">
           <div className="relative w-full max-w-[64rem]">
-            <Image
-              src="/assets/contact/world-map.png"
-              alt="World map showing aptAI office locations"
-              width={1025}
-              height={484}
+            <CmsImage
+              image={mapImage}
+              alt={mapImage?.alternativeText || "World map showing aptAI office locations"}
+              width={mapImage?.width ?? 1025}
+              height={mapImage?.height ?? 484}
               className="h-auto w-full"
               priority
             />
-            <MapMarker />
+            <MapMarker flag={flagImage} />
           </div>
 
           <ul className="grid w-full grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10 md:gap-16">
@@ -140,7 +151,8 @@ export function ContactContent({
             ))}
           </ul>
         </div>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

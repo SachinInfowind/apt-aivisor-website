@@ -1,10 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import { NotFoundCloudIllustration } from "../ui/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { homeSerif } from "../ui/fonts";
 import { layout } from "../ui/type";
+import type { NotFoundSection } from "@/lib/cms/types";
 
 /**
  * 404 content — Figma “404 error” (1:19276, 1722×1313).
@@ -71,13 +72,10 @@ function NotFoundIllustration() {
 
       {/* Cloud */}
       <div className="absolute left-[10.8%] top-[10%] w-[79.2%]">
-        <Image
-          src="/assets/404-cloud.svg"
-          alt=""
+        <NotFoundCloudIllustration
           width={380}
           height={217}
           className="h-auto w-full drop-shadow-[0_2.5rem_3rem_-0.5rem_rgba(16,24,40,0.08)]"
-          priority
         />
       </div>
 
@@ -89,7 +87,14 @@ function NotFoundIllustration() {
   );
 }
 
-export function NotFoundContent() {
+export function NotFoundContent({
+  eyebrow,
+  heading,
+  body,
+  backLabel,
+  homeLabel,
+  homeHref,
+}: Partial<Omit<NotFoundSection, "__component" | "id">>) {
   const router = useRouter();
 
   return (
@@ -104,17 +109,20 @@ export function NotFoundContent() {
           <div className="flex w-full flex-col gap-6">
             <div className="flex w-full flex-col gap-3">
               <p className="text-body font-semibold leading-6 text-brand-deep">
-                404 error
+                {eyebrow}
               </p>
               <h1
                 className={`${homeSerif.className} text-hero-display text-[clamp(2.25rem,1.5rem+3vw,3.75rem)] leading-[1.2] tracking-[-0.02em]`}
               >
-                Page not found
+                {heading}
               </h1>
               <p className="max-w-[30rem] text-[clamp(1rem,0.9rem+0.4vw,1.25rem)] leading-[1.5] text-nav">
-                Sorry, the page you are looking for doesn&apos;t exist.
-                <br className="hidden sm:block" />
-                Here are some helpful links:
+                {(body ?? "").split("\n").map((line, i) => (
+                  <span key={i}>
+                    {i > 0 ? <br className="hidden sm:block" /> : null}
+                    {line}
+                  </span>
+                ))}
               </p>
             </div>
           </div>
@@ -126,13 +134,13 @@ export function NotFoundContent() {
               className="inline-flex items-center justify-center gap-1.5 rounded-pill border border-line-strong bg-white px-[1.125rem] py-3 text-body font-semibold leading-6 text-ink shadow-sm transition-colors hover:bg-surface active:scale-[0.98]"
             >
               <ArrowLeftIcon />
-              Go back
+              {backLabel}
             </button>
             <Link
-              href="/"
+              href={homeHref || "/"}
               className="inline-flex items-center justify-center gap-1.5 rounded-pill border border-brand bg-brand px-[1.125rem] py-3 text-body font-semibold leading-6 text-white shadow-sm transition-colors hover:bg-brand-hover active:scale-[0.98]"
             >
-              Take me home
+              {homeLabel}
             </Link>
           </div>
         </div>

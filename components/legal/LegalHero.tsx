@@ -1,6 +1,7 @@
 import { homeSerif } from "@/components/ui/fonts";
 import { layout } from "@/components/ui/type";
 import type { LegalHeroSection, LegalVariant } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /**
  * Shared hero for Privacy, Terms, and Cookies.
@@ -9,7 +10,7 @@ import type { LegalHeroSection, LegalVariant } from "@/lib/cms/types";
  */
 
 const title =
-  "italic leading-none tracking-[-0.02em] text-[clamp(2.75rem,8vw,6.25rem)] " +
+  "leading-none tracking-[-0.02em] text-[clamp(2.75rem,8vw,6.25rem)] " +
   "[-webkit-text-stroke-width:1px] [paint-order:stroke_fill] [-webkit-font-smoothing:antialiased]";
 
 const stroke: Record<LegalVariant, string> = {
@@ -39,7 +40,7 @@ export function LegalHero({
 }: LegalHeroSection) {
   return (
     <section
-      className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-16 pt-[clamp(8.5rem,16svh,14.125rem)] sm:pb-20`}
+      className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(8.5rem,16svh,14.125rem)]`}
     >
       <div
         aria-hidden
@@ -69,7 +70,7 @@ export function LegalHero({
               {headlineAccent ? " " : ""}
             </span>
             {headlineAccent ? (
-              <span className={`${title} ${stroke[variant]} ${accentFill[variant]}`}>
+              <span className={`${title} italic ${stroke[variant]} ${accentFill[variant]}`}>
                 {headlineAccent}
               </span>
             ) : null}
@@ -81,6 +82,8 @@ export function LegalHero({
           ) : null}
         </div>
       </div>
+
+      <CloudBand priority variant="edge" />
     </section>
   );
 }

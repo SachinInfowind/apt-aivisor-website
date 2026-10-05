@@ -2,6 +2,7 @@ import { homeSerif } from "../../ui/fonts";
 import { HeroGlowAccent } from "../../ui/HeroGlowAccent";
 import { layout } from "../../ui/type";
 import type { WaitlistHeroSection as WaitlistHeroSectionData } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /**
  * Waitlist hero — Figma Frame 128 (26281:29767, 1440×868).
@@ -19,7 +20,7 @@ export function WaitlistHeroSection({
 
   return (
     <section
-      className={`relative flex min-h-[min(100svh,54.25rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(2.5rem,12svh,10rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:pb-[clamp(2.5rem,14svh,10rem)] xl:pt-[clamp(9.5rem,18svh,13.75rem)]`}
+      className={`relative flex min-h-[min(100svh,54.25rem)] w-full flex-col items-center justify-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(7.5rem,14svh,12rem)] sm:pt-[clamp(8.5rem,15svh,13rem)] md:pt-[clamp(9.5rem,16svh,14rem)] xl:pb-[clamp(2.5rem,14svh,10rem)] xl:pt-[clamp(9.5rem,18svh,13.75rem)]`}
     >
       <HeroGlowAccent />
       <div className="relative z-[1] flex w-full flex-col items-center gap-6 text-center sm:gap-8 md:gap-9">
@@ -39,7 +40,7 @@ export function WaitlistHeroSection({
           >
             {/* Figma: “Be First to Stop Overpaying” / “for Technology” — two lines */}
             <span className={`block whitespace-nowrap ${size}`}>
-              <span className="text-hero-display-italic">{headline}</span>
+              <span className="text-hero-display">{headline}</span>
               {headlineAccent ? (
                 <>
                   {" "}
@@ -63,6 +64,8 @@ export function WaitlistHeroSection({
           ) : null}
         </div>
       </div>
+
+      <CloudBand priority variant="edge" />
     </section>
   );
 }

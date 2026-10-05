@@ -24,13 +24,13 @@ export function CtaSection({
         >
           <div className="flex w-full flex-col items-center gap-5">
             <h2
-              className={`${homeSerif.className} text-[clamp(1.75rem,3.4vw,3rem)] italic leading-heading tracking-heading text-navy`}
+              className={`${homeSerif.className} text-[clamp(1.75rem,3.4vw,3rem)] leading-heading tracking-heading text-navy`}
             >
               {heading}
               {headingAccent ? (
                 <>
                   {heading.endsWith("-") ? "" : " "}
-                  <span className="text-brand-accent">{headingAccent}</span>
+                  <span className="italic text-brand-accent">{headingAccent}</span>
                 </>
               ) : null}
             </h2>

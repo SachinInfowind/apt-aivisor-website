@@ -6,14 +6,18 @@ import { layout } from "@/components/ui/type";
 import { BlogCard } from "./BlogCard";
 import { BlogWaitlistCta } from "./BlogWaitlistCta";
 import { NewsletterForm } from "./NewsletterForm";
+import { RecaptchaNotice } from "@/components/ui/Recaptcha";
 import { Pagination } from "./Pagination";
-import type { BlogPost } from "@/lib/cms/types";
+import type { BlogHeroSection, BlogPost } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 export default function BlogsPage({
   posts,
   page,
   pageCount,
+  hero,
 }: {
+  hero?: BlogHeroSection;
   posts: BlogPost[];
   page: number;
   pageCount: number;
@@ -25,32 +29,37 @@ export default function BlogsPage({
     >
       <Header />
       <main className="w-full">
-        <section className={`relative overflow-hidden ${layout.sectionX} pb-16 pt-32 sm:pt-40`}>
+        <section className={`relative overflow-hidden ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-32 sm:pt-40`}>
           <HeroGlowAccent />
-          <div className={`${layout.inner} relative flex flex-col items-center gap-9 text-center`}>
+          <div className={`${layout.inner} relative z-[1] flex flex-col items-center gap-9 text-center`}>
             <div className="flex flex-col items-center gap-4">
               <h1
-                className={`${homeSerif.className} text-[clamp(2.5rem,6vw,4.5rem)] italic leading-[1.05] tracking-[-0.02em] text-navy`}
+                className={`${homeSerif.className} text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.05] tracking-[-0.02em] text-navy`}
               >
-                Resource <span className="text-brand">Library</span>
+                {hero?.heading} <span className="italic text-brand">{hero?.headingAccent}</span>
               </h1>
-              <p className="max-w-xl text-body-lg text-ink">
-                Subscribe to learn about new product features, the latest in
-                technology, solutions, and updates.
-              </p>
+              <p className="max-w-xl text-body-lg text-ink">{hero?.subhead}</p>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <NewsletterForm />
+              <NewsletterForm
+                placeholder={hero?.emailPlaceholder}
+                subscribeLabel={hero?.subscribeLabel}
+              />
               <p className="text-body-sm text-subtle">
-                We care about your data in our{" "}
-                <a href="/privacy" className="underline underline-offset-2">
-                  privacy policy
+                {hero?.privacyPrefix}{" "}
+                <a
+                  href={hero?.privacyLinkHref || "/privacy"}
+                  className="underline underline-offset-2"
+                >
+                  {hero?.privacyLinkLabel}
                 </a>
                 .
               </p>
+              <RecaptchaNotice className="max-w-md text-center" />
             </div>
           </div>
+          <CloudBand priority variant="edge" />
         </section>
 
         <section className={`${layout.sectionX} pb-24`}>
@@ -71,7 +80,7 @@ export default function BlogsPage({
               </div>
             ) : (
               <p className="text-body text-subtle">
-                No posts published yet — check back soon.
+                {hero?.emptyLabel}
               </p>
             )}
 

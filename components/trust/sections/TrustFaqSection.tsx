@@ -65,13 +65,13 @@ export function TrustFaqSection({
       >
         <div className="flex w-full shrink-0 flex-col gap-8 lg:max-w-[22rem] xl:max-w-[26rem]">
           <h2
-            className={`${homeSerif.className} text-[clamp(1.75rem,3vw,3rem)] italic leading-[1.2] tracking-[-0.02em]`}
+            className={`${homeSerif.className} text-[clamp(1.75rem,3vw,3rem)] leading-[1.2] tracking-[-0.02em]`}
           >
             <span className="text-navy">{heading}</span>
             {headingAccent ? (
               <>
                 <br />
-                <span className="text-brand-accent">{headingAccent}</span>
+                <span className="italic text-brand-accent">{headingAccent}</span>
               </>
             ) : null}
           </h2>

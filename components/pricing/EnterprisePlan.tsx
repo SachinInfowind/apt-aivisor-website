@@ -3,17 +3,7 @@
  * White card: badge + copy left, Contact Us right (desktop), feature pill strip.
  */
 
-const FEATURES = [
-  "Unlimited users + RBAC",
-  "Private RAG on your data",
-  "Custom benchmark library",
-  "SSO / SAML",
-  "DocuSign + Slack + CPQ",
-  "Dedicated CSM",
-  "SLA guarantee",
-  "Security review support",
-  "White-label option",
-] as const;
+import type { EnterprisePlanSection } from "@/lib/cms/types";
 
 function FeaturePill({ label }: { label: string }) {
   return (
@@ -23,7 +13,19 @@ function FeaturePill({ label }: { label: string }) {
   );
 }
 
-export function EnterprisePlan({ className = "" }: { className?: string }) {
+export function EnterprisePlan({
+  badge,
+  badgeNote,
+  heading,
+  headingAccent,
+  quote,
+  body,
+  ctaLabel,
+  ctaHref,
+  features: featureItems,
+  className = "",
+}: Partial<Omit<EnterprisePlanSection, "__component" | "id">> & { className?: string }) {
+  const FEATURES = (featureItems ?? []).map((f) => f.text);
   // Duplicate for seamless CSS marquee on wider viewports.
   const marquee = [...FEATURES, ...FEATURES];
 
@@ -36,44 +38,42 @@ export function EnterprisePlan({ className = "" }: { className?: string }) {
         <div className="flex min-w-0 flex-1 flex-col gap-6 sm:gap-8">
           <div className="inline-flex w-fit max-w-full flex-wrap items-center gap-2 rounded-pill border border-line-muted bg-surface-muted py-1 pl-1 pr-2.5 sm:gap-3">
             <span className="inline-flex items-center rounded-pill border border-badge-edge bg-badge-bg px-2.5 py-0.5 text-sm font-medium leading-5 text-badge-text">
-              Enterprise
+              {badge}
             </span>
             <span className="text-sm font-medium leading-5 text-ink">
-              Custom Pricing
+              {badgeNote}
             </span>
           </div>
 
           <div className="flex max-w-[48rem] flex-col gap-4 sm:gap-6">
-            <h2 className="font-display text-[1.75rem] font-normal italic leading-[1.25] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[3.75rem] lg:text-[3rem]">
-              <span className="text-navy">Custom Plan — </span>
-              <span className="text-brand-strong">
-                For mid-market and enterprise teams
-              </span>
+            <h2 className="font-display text-[1.75rem] font-normal leading-[1.25] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[3.75rem] lg:text-[3rem]">
+              <span className="text-navy">{heading} </span>
+              <span className="italic text-brand-strong">{headingAccent}</span>
             </h2>
 
             <div className="flex flex-col gap-4">
-              <p className="text-base font-medium leading-7 text-ink sm:text-xl sm:leading-7">
-                “A complete end to end White Glove Service. aptAI dedicated
-                strategic deal consultants will analyze, construct, negotiate
-                (on demand), and close the most strategic deal for you.”
-              </p>
-              <p className="text-base leading-7 text-ink sm:text-xl sm:leading-7">
-                Unlimited users, private RAG pipeline on your proprietary data,
-                custom benchmark library, SSO/SAML, dedicated CSM, SLA
-                guarantees, and white-label options. Built for companies where
-                contract intelligence is mission-critical infrastructure — not a
-                tool.
-              </p>
+              {quote ? (
+                <p className="text-base font-medium leading-7 text-ink sm:text-xl sm:leading-7">
+                  {quote}
+                </p>
+              ) : null}
+              {body ? (
+                <p className="text-base leading-7 text-ink sm:text-xl sm:leading-7">
+                  {body}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
 
-        <a
-          href="mailto:info@aptaisolutions.com"
-          className="inline-flex w-full shrink-0 items-center justify-center rounded-pill border border-brand bg-brand px-[1.125rem] py-3 text-base font-semibold leading-6 text-white shadow-sm transition-colors hover:bg-brand-hover sm:w-auto sm:min-w-[10.8125rem] lg:mb-1"
-        >
-          Contact Us
-        </a>
+        {ctaLabel && ctaHref ? (
+          <a
+            href={ctaHref}
+            className="inline-flex w-full shrink-0 items-center justify-center rounded-pill border border-brand bg-brand px-[1.125rem] py-3 text-base font-semibold leading-6 text-white shadow-sm transition-colors hover:bg-brand-hover sm:w-auto sm:min-w-[10.8125rem] lg:mb-1"
+          >
+            {ctaLabel}
+          </a>
+        ) : null}
       </div>
 
       {/* Feature pills — wrap on small screens; marquee on md+ */}

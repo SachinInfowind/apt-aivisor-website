@@ -4,63 +4,13 @@ import { useId, useState, type ReactNode } from "react";
 
 /**
  * Platform ROI — Figma component set (1:8031).
- * Three Property 1 variants switch via pill tabs; layout stays fluid.
+ * Variants switch via pill tabs; layout stays fluid. Copy comes from the CMS
+ * (`sections.platform-roi`).
  */
 
-export type PlatformRoiId = "buyer" | "seller" | "both";
+import type { ContentItem } from "@/lib/cms/types";
 
-type RoiStat = { value: string; label: string };
-
-type RoiVariant = {
-  id: PlatformRoiId;
-  tab: string;
-  /** Navy serif line */
-  title: string;
-  /** Brand-blue italic serif line */
-  titleAccent: string;
-  body: string;
-  stats: [RoiStat, RoiStat];
-};
-
-const VARIANTS: RoiVariant[] = [
-  {
-    id: "buyer",
-    tab: "Technology Buyer ROI",
-    title: "One renewal.",
-    titleAccent: "Pays for a year.",
-    body: "Negotiate one Salesforce renewal down 15% on a $120K contract and save $18K — a 3× annual ROI on the Buyer plan.",
-    stats: [
-      { value: "$18K", label: "saved on one renewal" },
-      { value: "3X", label: "ROI year 1" },
-    ],
-  },
-  {
-    id: "seller",
-    tab: "Technology Seller ROI",
-    title: "8 days faster.",
-    titleAccent: "Every deal.",
-    body: "Cut deal cycle time by 8 days on 5 deals a month and add $280K+ in accelerated ARR — a 29× ROI on the Seller plan.",
-    stats: [
-      { value: "8 Days", label: "Faster per deal close" },
-      { value: "29X", label: "ROI from velocity" },
-    ],
-  },
-  {
-    id: "both",
-    tab: "Buyer + Seller ROI",
-    title: "Both sides.",
-    titleAccent: "One platform.",
-    body: "The Both plan costs 25% less than buying Buyer + Seller separately. And the benchmark data compounds — buy-side insights inform sell-side pricing and vice versa.",
-    stats: [
-      { value: "25%", label: "Vs buying both plans separately" },
-      {
-        value: "2X",
-        label: "Data flywheel — both sides inform each other",
-      },
-    ],
-  },
-];
-
+/** Tab glyphs, keyed by the tab's `variant` in the CMS (buyer / seller / both). */
 function CartIcon() {
   const id = useId();
   return (
@@ -119,13 +69,13 @@ function BothIcon() {
   );
 }
 
-const TAB_ICONS: Record<PlatformRoiId, () => ReactNode> = {
+const TAB_ICONS: Record<string, () => ReactNode> = {
   buyer: CartIcon,
   seller: BuildingIcon,
   both: BothIcon,
 };
 
-function Stat({ value, label }: RoiStat) {
+function Stat({ value, label }: { value?: string; label?: string }) {
   return (
     <div className="flex min-w-0 items-center gap-3 sm:gap-6">
       <span
@@ -143,14 +93,17 @@ function Stat({ value, label }: RoiStat) {
 }
 
 export function PlatformRoi({
-  defaultId = "buyer",
+  tabs,
+  tabsLabel,
   className = "",
 }: {
-  defaultId?: PlatformRoiId;
+  tabs: ContentItem[];
+  tabsLabel?: string;
   className?: string;
 }) {
-  const [active, setActive] = useState<PlatformRoiId>(defaultId);
-  const variant = VARIANTS.find((v) => v.id === active) ?? VARIANTS[0];
+  const [active, setActive] = useState(0);
+  const variant = tabs[active] ?? tabs[0];
+  if (!variant) return null;
 
   return (
     <div
@@ -159,21 +112,21 @@ export function PlatformRoi({
       {/* Tab bar — Figma: padding 12, gap 8, radius 24 24 0 0 */}
       <div
         role="tablist"
-        aria-label="Platform ROI personas"
+        aria-label={tabsLabel || undefined}
         className="flex flex-wrap items-center gap-2 rounded-t-[20px] bg-white p-2 sm:rounded-t-[24px] sm:p-3"
       >
-        {VARIANTS.map((v) => {
-          const selected = v.id === active;
-          const Icon = TAB_ICONS[v.id];
+        {tabs.map((v, index) => {
+          const selected = index === active;
+          const Icon = TAB_ICONS[v.variant ?? ""] ?? BothIcon;
           return (
             <button
-              key={v.id}
+              key={v.id ?? index}
               type="button"
               role="tab"
               aria-selected={selected}
-              id={`platform-roi-tab-${v.id}`}
+              id={`platform-roi-tab-${index}`}
               aria-controls="platform-roi-panel"
-              onClick={() => setActive(v.id)}
+              onClick={() => setActive(index)}
               className={`inline-flex max-w-full items-center gap-1 rounded-2xl border px-2.5 py-1 text-xs font-medium leading-5 transition-colors sm:px-3 sm:text-sm ${
                 selected
                   ? "border-brand-strong bg-brand-strong text-white"
@@ -185,7 +138,7 @@ export function PlatformRoi({
               >
                 <Icon />
               </span>
-              <span className="truncate">{v.tab}</span>
+              <span className="truncate">{v.label}</span>
             </button>
           );
         })}
@@ -195,14 +148,14 @@ export function PlatformRoi({
       <div
         role="tabpanel"
         id="platform-roi-panel"
-        aria-labelledby={`platform-roi-tab-${variant.id}`}
+        aria-labelledby={`platform-roi-tab-${active}`}
         className="flex min-w-0 flex-col gap-8 rounded-b-[20px] bg-white px-4 py-8 sm:gap-10 sm:rounded-b-[24px] sm:px-8 sm:py-12 md:px-12 lg:px-[6.0625rem] lg:py-[4.875rem]"
       >
         <div className="flex min-w-0 flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
-          <h3 className="max-w-[19.5rem] shrink-0 font-display text-[1.5rem] font-normal italic leading-[1.2] tracking-[-0.02em] sm:text-[2.25rem] lg:text-[3rem]">
+          <h3 className="max-w-[19.5rem] shrink-0 font-display text-[1.5rem] font-normal leading-[1.2] tracking-[-0.02em] sm:text-[2.25rem] lg:text-[3rem]">
             <span className="text-navy">{variant.title}</span>
             <br />
-            <span className="text-brand-strong">{variant.titleAccent}</span>
+            <span className="italic text-brand-strong">{variant.titleAccent}</span>
           </h3>
 
           <div className="flex w-full min-w-0 max-w-[40.375rem] flex-col gap-8 sm:gap-12 lg:gap-16">
@@ -211,8 +164,9 @@ export function PlatformRoi({
             </p>
 
             <div className="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:items-start sm:gap-10 lg:gap-[3.1875rem]">
-              <Stat {...variant.stats[0]} />
-              <Stat {...variant.stats[1]} />
+              {(variant.stats ?? []).map((stat, i) => (
+                <Stat key={i} value={stat.value} label={stat.label} />
+              ))}
             </div>
           </div>
         </div>

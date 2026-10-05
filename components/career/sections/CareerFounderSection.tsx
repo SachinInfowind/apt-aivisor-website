@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { CmsImage } from "../../ui/CmsImage";
 import { homeSerif } from "../../ui/fonts";
 import { SectionBadge } from "../../ui/SectionBadge";
 import { layout } from "../../ui/type";
@@ -16,6 +16,8 @@ export function CareerFounderSection({
   headingAccent,
   body,
   cardTitle,
+  cardImage,
+  decorImages,
 }: FounderHighlightSection) {
   return (
     <section
@@ -29,16 +31,14 @@ export function CareerFounderSection({
             aria-hidden
             className="pointer-events-none absolute -bottom-[18rem] -right-[14rem] hidden h-[49.1875rem] w-[49.1875rem] opacity-10 sm:block lg:-bottom-[18.25rem] lg:-right-[23.5rem]"
           >
-            <Image
-              src="/assets/career/subtract-0.svg"
-              alt=""
+            <CmsImage
+              image={decorImages?.[0]}
               width={787}
               height={787}
               className="h-full w-full"
             />
-            <Image
-              src="/assets/career/subtract-1.svg"
-              alt=""
+            <CmsImage
+              image={decorImages?.[1]}
               width={440}
               height={440}
               className="absolute left-[22%] top-[22%] h-[56%] w-[56%]"
@@ -52,11 +52,11 @@ export function CareerFounderSection({
 
               <div className="flex w-full flex-col gap-5 sm:gap-6">
                 <h2
-                  className={`${homeSerif.className} text-[clamp(1.75rem,6vw,3rem)] font-normal italic leading-[1.2] tracking-[-0.02em]`}
+                  className={`${homeSerif.className} text-[clamp(1.75rem,6vw,3rem)] font-normal leading-[1.2] tracking-[-0.02em]`}
                 >
                   <span className="text-navy">{heading} </span>
                   {headingAccent && (
-                    <span className="text-brand-accent">{headingAccent}</span>
+                    <span className="italic text-brand-accent">{headingAccent}</span>
                   )}
                 </h2>
 
@@ -78,9 +78,9 @@ export function CareerFounderSection({
 
             {/* Right visual — Frame 269 export */}
             <div className="relative mx-auto w-full max-w-[37.5625rem] shrink-0 lg:mx-0 lg:ml-auto lg:w-[min(100%,37.5625rem)]">
-              <Image
-                src="/assets/career/founding-team-card.svg"
-                alt={cardTitle || "Join the Founding Team"}
+              <CmsImage
+                image={cardImage}
+                alt={cardTitle || cardImage?.alternativeText || ""}
                 width={601}
                 height={402}
                 className="h-auto w-full"

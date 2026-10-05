@@ -7,16 +7,14 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { personas, type PersonaId } from "../../ui/tokens";
 import { layout } from "../../ui/type";
-
-/** Figma Frame 112 tab order: Buyer → Seller → Buyer+Seller */
-const order: PersonaId[] = ["buyer", "seller", "both"];
+import type { PlatformTabsSection } from "@/lib/cms/types";
 
 /** Auto-advance interval — restores prior marketing rotate behavior */
 const ROTATE_MS = 5000;
 
-const icons: Record<PersonaId, ReactNode> = {
+/** Tab glyphs, keyed by the tab's `variant` in the CMS (buyer / seller / both). */
+const icons: Record<string, ReactNode> = {
   buyer: (
     <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
       <path
@@ -90,11 +88,19 @@ function CheckIcon() {
 /**
  * Platform / Section 2 — Figma Frame 112 (26193:18333, 1440×762).
  * Tabs auto-rotate every 5s; pause on hover / focus / manual click.
+ * All copy comes from the CMS (`sections.platform-tabs`).
  */
-export function PlatformSection() {
-  const [active, setActive] = useState<PersonaId>("buyer");
+export function PlatformSection({
+  heading,
+  headingAccent,
+  headingAfter,
+  tabsLabel,
+  tabs,
+}: Omit<PlatformTabsSection, "__component" | "id">) {
+  const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
-  const data = personas[active];
+  const data = tabs[active] ?? tabs[0];
+  const stat = data?.stats?.[0];
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelHeight, setPanelHeight] = useState<number | undefined>(undefined);
 
@@ -111,18 +117,17 @@ export function PlatformSection() {
   }, [active]);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || tabs.length < 2) return;
     const id = window.setInterval(() => {
-      setActive((current) => {
-        const i = order.indexOf(current);
-        return order[(i + 1) % order.length];
-      });
+      setActive((current) => (current + 1) % tabs.length);
     }, ROTATE_MS);
     return () => window.clearInterval(id);
-  }, [paused]);
+  }, [paused, tabs.length]);
 
-  const select = (id: PersonaId) => {
-    setActive(id);
+  if (!data) return null;
+
+  const select = (index: number) => {
+    setActive(index);
     setPaused(true);
   };
 
@@ -144,35 +149,35 @@ export function PlatformSection() {
       >
         <div className="flex w-full flex-col items-center gap-8 px-5 sm:gap-10 sm:px-8 md:gap-10 md:px-10 lg:gap-10 lg:px-12 xl:px-14">
           <h2 className="max-w-[min(100%,66.5625rem)] text-center font-display text-h2 font-normal tracking-[-0.02em] text-navy">
-            Our aptAIvisor Platform changes that for{" "}
-            <em className="italic text-brand-accent">
-              technology buyers, sellers, and everyone
-            </em>{" "}
-            who is both.
+            {heading}{" "}
+            {headingAccent ? (
+              <em className="italic text-brand-accent">{headingAccent}</em>
+            ) : null}{" "}
+            {headingAfter}
           </h2>
 
           <div
             className="flex max-w-full flex-wrap items-center justify-center gap-2 rounded-pill border border-surface-muted bg-white p-1"
             role="tablist"
-            aria-label="Audience"
+            aria-label={tabsLabel || undefined}
           >
-            {order.map((id) => {
-              const selected = active === id;
+            {tabs.map((tab, index) => {
+              const selected = active === index;
               return (
                 <button
-                  key={id}
+                  key={tab.id ?? index}
                   type="button"
                   role="tab"
                   aria-selected={selected}
-                  onClick={() => select(id)}
+                  onClick={() => select(index)}
                   className={`inline-flex items-center gap-1 rounded-pill border px-2.5 py-1 text-sm font-medium transition-colors sm:gap-1.5 sm:px-3 sm:py-1 ${
                     selected
                       ? "border-brand-strong bg-brand text-white"
                       : "border-line bg-surface text-ink hover:bg-white"
                   }`}
                 >
-                  <span className="opacity-90">{icons[id]}</span>
-                  {personas[id].label}
+                  <span className="opacity-90">{icons[tab.variant ?? ""] ?? icons.both}</span>
+                  {tab.label}
                 </button>
               );
             })}
@@ -190,32 +195,34 @@ export function PlatformSection() {
           >
             <div className="flex min-w-0 flex-col gap-6 sm:gap-8">
               <p className="font-display text-quote leading-[1.25] text-navy md:text-[clamp(1.5rem,2.5vw,2.25rem)]">
-                “{data.quote}”
+                “{data.body}”
               </p>
               <ul className="flex flex-col gap-4 sm:gap-5">
-                {data.bullets.map((item) => (
+                {(data.bullets ?? []).map((item) => (
                   <li
-                    key={item}
+                    key={item.text}
                     className="flex items-start gap-2 text-base leading-7 text-ink sm:gap-2.5 sm:text-lg sm:leading-8"
                   >
                     <CheckIcon />
-                    <span>{item}</span>
+                    <span>{item.text}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            <aside className="flex w-full flex-col gap-2 rounded-[20px] bg-white p-6 sm:rounded-[24px] sm:p-8 lg:max-w-[278px] lg:justify-self-end 2xl:max-w-[360px] 2xl:p-10">
-              <p className="font-display text-stat-lg leading-none text-brand-accent">
-                {data.statValue}
-              </p>
-              <p className="text-[1rem] font-semibold leading-7 text-ink sm:text-[1.125rem]">
-                {data.statLabel}
-              </p>
-              <p className="text-[0.875rem] leading-5 text-ink sm:text-[1rem] sm:leading-6">
-                {data.statNote}
-              </p>
-            </aside>
+            {stat ? (
+              <aside className="flex w-full flex-col gap-2 rounded-[20px] bg-white p-6 sm:rounded-[24px] sm:p-8 lg:max-w-[278px] lg:justify-self-end 2xl:max-w-[360px] 2xl:p-10">
+                <p className="font-display text-stat-lg leading-none text-brand-accent">
+                  {stat.value}
+                </p>
+                <p className="text-[1rem] font-semibold leading-7 text-ink sm:text-[1.125rem]">
+                  {stat.label}
+                </p>
+                <p className="text-[0.875rem] leading-5 text-ink sm:text-[1rem] sm:leading-6">
+                  {stat.note}
+                </p>
+              </aside>
+            ) : null}
           </div>
         </div>
       </div>

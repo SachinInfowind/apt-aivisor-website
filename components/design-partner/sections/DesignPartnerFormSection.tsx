@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState, type ReactNode } from "react";
+import { FormEvent, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { homeSerif } from "@/components/ui/fonts";
@@ -15,6 +15,8 @@ import {
   type DesignPartnerFormErrors,
 } from "@/lib/validation/designPartnerForm";
 import type { DesignPartnerFormSectionData, FormFieldCopy } from "@/lib/cms/types";
+import { RecaptchaNotice, useRecaptcha } from "@/components/ui/Recaptcha";
+import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
 
 const inputClass =
   "w-full rounded-lg border border-line-strong bg-white px-3.5 py-2.5 text-base leading-6 text-heading shadow-field outline-none placeholder:text-subtle transition-shadow focus:border-brand-accent focus:shadow-field-focus";
@@ -400,6 +402,22 @@ export function DesignPartnerFormSection({
   const [status, setStatus] = useState<"idle" | "submitting" | "ok" | "error">("idle");
   const [serverError, setServerError] = useState<string | null>(null);
 
+  // Pre-select the Buyer/Seller/Both toggle when arriving via a link like
+  // /design-partner?type=buyer#apply (e.g. the Solutions page's "Apply as a
+  // buyer/seller partner" CTAs). Read directly from the URL on mount rather
+  // than `useSearchParams` so this doesn't force the page into a Suspense
+  // boundary just for a one-time initial value.
+  useEffect(() => {
+    const type = new URLSearchParams(window.location.search).get("type");
+    if (type === "buyer" || type === "seller" || type === "both") {
+      // Syncing from the URL (an external system) on mount — the server
+      // can't know the query string, so this can't be a lazy useState
+      // initializer without causing a hydration mismatch.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setValues((prev) => ({ ...prev, participatingAs: type }));
+    }
+  }, []);
+
   const setField = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: undefined }));
@@ -436,6 +454,7 @@ export function DesignPartnerFormSection({
     setStep(3);
   };
 
+  const { execute: executeRecaptcha } = useRecaptcha();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
@@ -451,7 +470,10 @@ export function DesignPartnerFormSection({
       const res = await fetch("/api/design-partner-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.data),
+        body: JSON.stringify({
+          ...result.data,
+          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.designPartner),
+        }),
       });
 
       if (!res.ok) {
@@ -985,6 +1007,7 @@ export function DesignPartnerFormSection({
               {copy.footerNote}
             </p>
           ) : null}
+          <RecaptchaNotice />
         </form>
       </div>
     </section>

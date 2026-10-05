@@ -164,6 +164,9 @@ export interface FeatureTableSection {
   ctaLabel?: string;
   ctaHref?: string;
   rows: Record<string, unknown>[];
+  headerPrice?: string;
+  /** Comparison columns: [{ key: "vendr" | "ironclad" | "generic", name, price }]. */
+  competitors?: Record<string, unknown>[] | null;
 }
 
 export interface CardGridSection {
@@ -223,6 +226,8 @@ export interface ContactHeroSection {
   headingAccent?: string;
   subhead?: string;
   contactMethods: ContactMethod[];
+  mapImage?: StrapiImage | null;
+  flagImage?: StrapiImage | null;
 }
 
 export interface ConfirmationSection {
@@ -249,6 +254,8 @@ export interface FounderHighlightSection {
   cardTitle?: string;
   cardSubtitle?: string;
   cardNote?: string;
+  cardImage?: StrapiImage | null;
+  decorImages?: StrapiImage[] | null;
 }
 
 export interface HomeHeroSection {
@@ -279,6 +286,7 @@ export interface FounderSpotlightSection {
   ctaHref?: string;
   highlights: StatItem[];
   partnersNote?: string;
+  partnerLogos?: StrapiImage[] | null;
 }
 
 export interface WaitlistSectionData {
@@ -293,6 +301,8 @@ export interface WaitlistSectionData {
   demoHref?: string;
   successMessage?: string;
   trustText?: string;
+  /** Replaces the "Or reach us directly …" line in the trust bar when set. */
+  trustSecondaryText?: string;
   contactLabel?: string;
   contactHref?: string;
 }
@@ -346,11 +356,20 @@ export interface PricingPlanPrice {
   planId: PricingPlanId;
   name: string;
   priceMonthly: number;
+  description?: string | null;
+  badge?: string | null;
+  featured?: boolean | null;
+  groups?: FeatureGroup[];
 }
 
 export interface PricingAddonPrice {
   addonId: PricingAddonId;
   name: string;
+  description?: string | null;
+  icon?: StrapiImage | null;
+  footerType?: "none" | "avatars" | "hubspot" | "pratt" | "clouds" | null;
+  footerImages?: StrapiImage[] | null;
+  footerLabel?: string | null;
   price: string;
 }
 
@@ -360,6 +379,17 @@ export interface PricingCatalogSection {
   yearlyDiscountPercent?: number;
   plans: PricingPlanPrice[];
   addons: PricingAddonPrice[];
+  plansHeading?: string | null;
+  plansHeadingAccent?: string | null;
+  plansSubhead?: string | null;
+  plansCtaLabel?: string | null;
+  plansCtaHref?: string | null;
+  priceSuffix?: string | null;
+  billedMonthlyLabel?: string | null;
+  billedYearlyLabel?: string | null;
+  addonsBadge?: string | null;
+  addonsHeading?: string | null;
+  addonsHeadingAccent?: string | null;
 }
 
 export interface CareerRolesSectionData {
@@ -498,6 +528,7 @@ export interface TeamProfile {
   bioPreview?: string;
   bio?: string;
   quote?: string;
+  quoteAccent?: string;
   linkedinUrl?: string;
   expandedByDefault?: boolean;
   photo?: StrapiImage | null;
@@ -584,6 +615,10 @@ export interface WorkflowItem {
 export interface SolutionsWorkflowsSection {
   __component: "sections.solutions-workflows";
   id: number;
+  badge?: string;
+  heading?: string;
+  headingAccent?: string;
+  subhead?: string;
   items?: WorkflowItem[];
 }
 
@@ -882,6 +917,138 @@ export interface AboutEthosSection {
   items: CardItem[];
 }
 
+/* ───────────── Reusable content building blocks ───────────── */
+
+export interface ContentStat {
+  value?: string;
+  label?: string;
+  note?: string;
+}
+
+export interface FeatureLine {
+  label: string;
+  included?: boolean | null;
+}
+
+export interface FeatureGroup {
+  title?: string | null;
+  features: FeatureLine[];
+}
+
+/** Generic item used by tabs, modules, steps, ROI variants… (see the CMS `shared.content-item`). */
+export interface ContentItem {
+  id?: number;
+  label?: string | null;
+  title?: string | null;
+  titleAccent?: string | null;
+  body?: string | null;
+  badge?: string | null;
+  price?: string | null;
+  variant?: string | null;
+  href?: string | null;
+  hrefLabel?: string | null;
+  icon?: StrapiImage | null;
+  image?: StrapiImage | null;
+  imageSecondary?: StrapiImage | null;
+  imageTertiary?: StrapiImage | null;
+  bullets?: { text: string }[];
+  stats?: ContentStat[];
+  groups?: FeatureGroup[];
+}
+
+export interface PlatformTabsSection {
+  __component: "sections.platform-tabs";
+  id: number;
+  heading?: string;
+  headingAccent?: string;
+  headingAfter?: string;
+  tabsLabel?: string;
+  tabs: ContentItem[];
+}
+
+export interface ModulesSectionData {
+  __component: "sections.modules";
+  id: number;
+  badgeLabel?: string;
+  heading?: string;
+  headingAccent?: string;
+  subhead?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  viewingLabel?: string;
+  items: ContentItem[];
+}
+
+export interface HowItWorksSectionData {
+  __component: "sections.how-it-works";
+  id: number;
+  badgeLabel?: string;
+  heading?: string;
+  headingAccent?: string;
+  steps: ContentItem[];
+  integrationLogos?: StrapiImage[] | null;
+  integrationsBody?: string;
+}
+
+export interface PricingHeroSection {
+  __component: "sections.pricing-hero";
+  id: number;
+  heading?: string;
+  headingAccent?: string;
+  subhead?: string;
+  monthlyLabel?: string;
+  yearlyLabel?: string;
+  /** Supports a `{percent}` placeholder. */
+  saveLabel?: string;
+  toggleLabel?: string;
+}
+
+export interface PlatformRoiSection {
+  __component: "sections.platform-roi";
+  id: number;
+  tabsLabel?: string;
+  tabs: ContentItem[];
+}
+
+export interface EnterprisePlanSection {
+  __component: "sections.enterprise-plan";
+  id: number;
+  badge?: string;
+  badgeNote?: string;
+  heading?: string;
+  headingAccent?: string;
+  quote?: string;
+  body?: string;
+  ctaLabel?: string;
+  ctaHref?: string;
+  features: { text: string }[];
+}
+
+export interface NotFoundSection {
+  __component: "sections.not-found";
+  id: number;
+  eyebrow?: string;
+  heading?: string;
+  body?: string;
+  backLabel?: string;
+  homeLabel?: string;
+  homeHref?: string;
+}
+
+export interface BlogHeroSection {
+  __component: "sections.blog-hero";
+  id: number;
+  heading?: string;
+  headingAccent?: string;
+  subhead?: string;
+  emailPlaceholder?: string;
+  subscribeLabel?: string;
+  privacyPrefix?: string;
+  privacyLinkLabel?: string;
+  privacyLinkHref?: string;
+  emptyLabel?: string;
+}
+
 export type PageSection =
   | HeroSection
   | StatsSection
@@ -931,7 +1098,15 @@ export type PageSection =
   | AboutHeroSection
   | AboutForesightSection
   | AboutNameSection
-  | AboutEthosSection;
+  | AboutEthosSection
+  | PlatformTabsSection
+  | ModulesSectionData
+  | HowItWorksSectionData
+  | PricingHeroSection
+  | PlatformRoiSection
+  | EnterprisePlanSection
+  | NotFoundSection
+  | BlogHeroSection;
 
 export interface CmsPage {
   id: number;
@@ -976,4 +1151,15 @@ export interface CmsGlobal {
   socialLinks: Link[];
   demoModal?: DemoModalCopy | null;
   seo?: Seo;
+  logoMark?: StrapiImage | null;
+  footerClouds?: StrapiImage | null;
+  cloudBand?: StrapiImage | null;
+  cloudEdge?: StrapiImage | null;
+  headerDemoLabel?: string | null;
+  headerDemoHref?: string | null;
+  headerWaitlistLabel?: string | null;
+  headerWaitlistHref?: string | null;
+  footerWaitlistLabel?: string | null;
+  footerWaitlistHref?: string | null;
+  footerBackToTopLabel?: string | null;
 }

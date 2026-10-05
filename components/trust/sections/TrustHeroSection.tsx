@@ -5,6 +5,7 @@ import { homeSerif } from "../../ui/fonts";
 import { layout } from "../../ui/type";
 import { toAbsoluteMediaUrl } from "@/lib/cms/media";
 import type { TrustHeroSection as TrustHeroSectionData } from "@/lib/cms/types";
+import { CloudBand } from "@/components/ui/CloudBand";
 
 /** Half of card row (~235px) — mesh stops here so cards straddle hero / white. */
 const MESH_END_FROM_BOTTOM = "7.375rem";
@@ -21,7 +22,7 @@ export function TrustHeroSection({
   features,
 }: TrustHeroSectionData) {
   const line =
-    `${homeSerif.className} block italic tracking-[-0.02em] ` +
+    `${homeSerif.className} block tracking-[-0.02em] ` +
     `text-[clamp(1.75rem,6.94vw,6.25rem)] leading-none ` +
     `w-full sm:w-max sm:max-w-full sm:whitespace-nowrap`;
 
@@ -30,9 +31,11 @@ export function TrustHeroSection({
       {/* Full-bleed mesh stops at mid-card — bottom half sits on page white */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 bg-hero-mesh"
+        className="pointer-events-none absolute inset-x-0 top-0 overflow-hidden bg-hero-mesh"
         style={{ bottom: MESH_END_FROM_BOTTOM }}
-      />
+      >
+        <CloudBand priority variant="edge" />
+      </div>
       <div
         aria-hidden
         className="pointer-events-none absolute -left-[8rem] -top-[10rem] h-[33rem] w-[33rem] rounded-full bg-platform-to opacity-70 blur-[150px]"
@@ -52,7 +55,7 @@ export function TrustHeroSection({
             <h1 className="flex w-full flex-col items-center">
               <span className={`${line} text-navy`}>{headline}</span>
               {headlineAccent ? (
-                <span className={`${line} mt-1 text-brand sm:mt-1.5`}>
+                <span className={`${line} mt-1 italic text-brand sm:mt-1.5`}>
                   {headlineAccent}
                 </span>
               ) : null}

@@ -42,13 +42,13 @@ export function DesignPartnerHero({
           <div className="flex w-full flex-col items-center gap-9">
             <h1 className="flex w-full flex-col items-center gap-[0.1em]">
               <span
-                className={`${homeSerif.className} block text-[clamp(2.5rem,6.9vw,6.25rem)] font-normal italic leading-[0.9] text-navy text-stroke-brand`}
+                className={`${homeSerif.className} block text-[clamp(2.5rem,6.9vw,6.25rem)] font-normal leading-[0.9] text-navy text-stroke-brand`}
               >
                 {heading}
                 {headingAccent ? (
                   <>
                     {" "}
-                    <span className="text-brand">{headingAccent}</span>
+                    <span className="italic text-brand">{headingAccent}</span>
                   </>
                 ) : null}
               </span>

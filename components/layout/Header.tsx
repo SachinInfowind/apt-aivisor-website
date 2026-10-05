@@ -1,29 +1,23 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import {
-  aboutMegaMenu as defaultAboutMegaMenu,
-  navLinks as defaultNavLinks,
-} from "./aboutMenu";
 import { AboutMenuIcon } from "./AboutMenuIcons";
 import { isVideoUrl, VideoModal } from "./VideoModal";
-import { homeAssets } from "../ui/assets";
+import { CmsImage } from "../ui/CmsImage";
 import { layout } from "../ui/type";
-import type { MegaMenu } from "@/lib/cms/types";
+import type { MegaMenu, StrapiImage } from "@/lib/cms/types";
 
-function Logo() {
+function Logo({ image }: { image?: StrapiImage | null }) {
   return (
     <Link
       href="/"
       className="flex shrink-0 items-center gap-2.5 transition-opacity hover:opacity-80"
       aria-label="aptAI Solutions home"
     >
-      <Image
-        src={homeAssets.brand.mark}
-        alt=""
+      <CmsImage
+        image={image}
         width={127}
         height={54}
         className="h-7 w-auto object-contain object-left sm:h-8 xl:h-9"
@@ -89,13 +83,13 @@ function AboutMegaMenu({
     <div
       role="menu"
       aria-label="About"
-      className="absolute left-1/2 top-[calc(100%+16px)] z-50 w-[min(960px,calc(100vw-2rem))] -translate-x-[38%] rounded-4xl border border-line bg-white p-6 shadow-card-lg"
+      className="absolute inset-x-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-3xl border border-line bg-white shadow-card-lg"
       onClick={(e) => {
         if ((e.target as HTMLElement).closest("a")) onNavigate();
       }}
     >
-      <div className="grid gap-2 lg:grid-cols-3 lg:gap-4">
-        <div>
+      <div className="grid lg:grid-cols-[1fr_1fr_1.15fr]">
+        <div className="p-6 lg:pr-3">
           <p className="px-3 text-caption font-semibold text-brand">
             {company.title}
           </p>
@@ -113,7 +107,7 @@ function AboutMegaMenu({
           </div>
         </div>
 
-        <div>
+        <div className="p-6 lg:px-3">
           <p className="px-3 text-caption font-semibold text-brand">
             {resources.title}
           </p>
@@ -130,7 +124,7 @@ function AboutMegaMenu({
           </div>
         </div>
 
-        <div className="px-3 pt-0.5">
+        <div className="bg-surface p-6 lg:pl-8">
           <p className="text-caption font-semibold text-brand">
             {featured.title}
           </p>
@@ -213,16 +207,29 @@ export interface HeaderNavLink {
   mega?: boolean | null;
 }
 
+export interface HeaderCta {
+  label?: string | null;
+  href?: string | null;
+}
+
+/** Everything the header shows comes from the CMS Global record (see HeaderCms). */
 export function HeaderView({
-  navLinks = defaultNavLinks,
-  aboutMegaMenu = defaultAboutMegaMenu as unknown as MegaMenu,
+  navLinks = [],
+  aboutMegaMenu,
+  logo,
+  demo,
+  waitlist,
 }: {
   navLinks?: readonly HeaderNavLink[];
-  aboutMegaMenu?: MegaMenu;
+  aboutMegaMenu?: MegaMenu | null;
+  logo?: StrapiImage | null;
+  demo?: HeaderCta;
+  waitlist?: HeaderCta;
 }) {
   const pathname = usePathname();
   // "About" is a menu, not a page: highlight it on any of its destinations.
-  const aboutActive = aboutMegaMenu.company.items.some((item) => item.href === pathname);
+  const aboutActive =
+    aboutMegaMenu?.company?.items?.some((item) => item.href === pathname) ?? false;
   const [openAbout, setOpenAbout] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileAboutOpen, setMobileAboutOpen] = useState(false);
@@ -271,13 +278,13 @@ export function HeaderView({
           className="pointer-events-auto relative flex h-14 w-full max-w-content items-center justify-between rounded-pill bg-white px-4 shadow-nav sm:h-16 sm:px-5 md:px-6 xl:h-nav-h xl:max-w-page"
           aria-label="Primary"
         >
-          <Logo />
+          <Logo image={logo} />
 
           <ul className="hidden items-center gap-5 xl:flex">
             {navLinks.map((link) => {
-              if (link.mega) {
+              if (link.mega && aboutMegaMenu) {
                 return (
-                  <li key={link.label} className="relative" ref={aboutRef}>
+                  <li key={link.label} ref={aboutRef}>
                     <button
                       type="button"
                       className={`inline-flex items-center gap-1.5 text-body font-semibold leading-6 transition-colors ${
@@ -334,18 +341,22 @@ export function HeaderView({
           </ul>
 
           <div className="flex items-center gap-3">
-            <a
-              href="#demo"
-              className="hidden h-btn items-center rounded-pill border border-line-strong bg-white px-4.5 text-body font-semibold leading-6 text-ink transition-all hover:border-brand hover:text-brand active:scale-[0.98] sm:inline-flex"
-            >
-              Demo
-            </a>
-            <a
-              href="/waitlist"
-              className="hidden h-btn items-center rounded-pill bg-brand px-4.5 text-body font-semibold leading-6 text-white transition-colors hover:bg-brand-hover active:scale-[0.98] xl:inline-flex"
-            >
-              Join the waitlist
-            </a>
+            {demo?.label && demo.href ? (
+              <a
+                href={demo.href}
+                className="hidden h-btn items-center rounded-pill border border-line-strong bg-white px-4.5 text-body font-semibold leading-6 text-ink transition-all hover:border-brand hover:text-brand active:scale-[0.98] sm:inline-flex"
+              >
+                {demo.label}
+              </a>
+            ) : null}
+            {waitlist?.label && waitlist.href ? (
+              <a
+                href={waitlist.href}
+                className="hidden h-btn items-center rounded-pill bg-brand px-4.5 text-body font-semibold leading-6 text-white transition-colors hover:bg-brand-hover active:scale-[0.98] xl:inline-flex"
+              >
+                {waitlist.label}
+              </a>
+            ) : null}
 
             <button
               type="button"
@@ -388,7 +399,7 @@ export function HeaderView({
             >
               <ul className="flex flex-col">
                 {navLinks.map((link) => {
-                  if (link.mega) {
+                  if (link.mega && aboutMegaMenu) {
                     return (
                       <li
                         key={link.label}
@@ -420,8 +431,8 @@ export function HeaderView({
                         {mobileAboutOpen ? (
                           <ul className="flex flex-col gap-0.5 pb-3">
                             {[
-                              ...aboutMegaMenu.company.items,
-                              ...aboutMegaMenu.resources.items,
+                              ...(aboutMegaMenu?.company?.items ?? []),
+                              ...(aboutMegaMenu?.resources?.items ?? []),
                             ].map((item) => (
                               <li key={item.label}>
                                 <Link
@@ -459,20 +470,24 @@ export function HeaderView({
               </ul>
 
               <div className="mt-4 flex flex-col gap-3">
-                <a
-                  href="#demo"
-                  className="inline-flex h-btn items-center justify-center rounded-pill border border-line-strong bg-white px-4.5 text-body font-semibold leading-6 text-ink transition-all hover:border-brand hover:text-brand active:scale-[0.98]"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Demo
-                </a>
-                <a
-                  href="/waitlist"
-                  className="inline-flex h-btn items-center justify-center rounded-pill bg-brand px-4.5 text-body font-semibold leading-6 text-white transition-colors hover:bg-brand-hover active:scale-[0.98]"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  Join the waitlist
-                </a>
+                {demo?.label && demo.href ? (
+                  <a
+                    href={demo.href}
+                    className="inline-flex h-btn items-center justify-center rounded-pill border border-line-strong bg-white px-4.5 text-body font-semibold leading-6 text-ink transition-all hover:border-brand hover:text-brand active:scale-[0.98]"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {demo.label}
+                  </a>
+                ) : null}
+                {waitlist?.label && waitlist.href ? (
+                  <a
+                    href={waitlist.href}
+                    className="inline-flex h-btn items-center justify-center rounded-pill bg-brand px-4.5 text-body font-semibold leading-6 text-white transition-colors hover:bg-brand-hover active:scale-[0.98]"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {waitlist.label}
+                  </a>
+                ) : null}
               </div>
             </div>
           ) : null}

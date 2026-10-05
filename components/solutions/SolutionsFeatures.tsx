@@ -80,14 +80,14 @@ export function SolutionsFeatures({
             </div>
           ) : null}
           <h2
-            className={`${homeSerif.className} text-[clamp(2.25rem,4vw,3rem)] italic leading-[1.2] tracking-[-0.02em]`}
+            className={`${homeSerif.className} text-[clamp(2.25rem,4vw,3rem)] leading-[1.2] tracking-[-0.02em]`}
           >
             <span className="text-navy">
               {headline}
               {headlineAccent ? " " : ""}
             </span>
             {headlineAccent ? (
-              <span className="text-brand-accent">{headlineAccent}</span>
+              <span className="italic text-brand-accent">{headlineAccent}</span>
             ) : null}
           </h2>
         </div>

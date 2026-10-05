@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { RECAPTCHA_ACTIONS } from "@/lib/recaptcha-actions";
+import { recaptchaTokenFrom, verifyRecaptcha } from "@/lib/recaptcha";
 import { demoNotifyFormSchema } from "@/lib/validation/demoNotifyForm";
 
 const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
@@ -49,6 +51,16 @@ export async function POST(request: NextRequest) {
     body = await request.json();
   } catch {
     return NextResponse.json({ message: "Invalid request body" }, { status: 400 });
+  }
+
+  // reCAPTCHA v3 — reject bots before doing any other work.
+  const captcha = await verifyRecaptcha({
+    token: recaptchaTokenFrom(body),
+    action: RECAPTCHA_ACTIONS.demoNotify,
+    request,
+  });
+  if (!captcha.ok) {
+    return NextResponse.json({ message: captcha.message }, { status: captcha.status });
   }
 
   const parsed = demoNotifyFormSchema.safeParse(body);

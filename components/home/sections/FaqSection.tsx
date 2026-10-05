@@ -64,12 +64,12 @@ export function FaqSection({ badgeLabel, heading, headingAccent, items }: FaqSec
         <div className="flex w-full shrink-0 flex-col items-start gap-6 sm:gap-8 lg:max-w-[22rem] xl:max-w-[26rem]">
           {badgeLabel && <SectionBadge>{badgeLabel}</SectionBadge>}
           {heading && (
-            <h2 className="font-display text-h2 font-normal italic leading-[1.2] tracking-[-0.02em]">
+            <h2 className="font-display text-h2 font-normal leading-[1.2] tracking-[-0.02em]">
               <span className="text-navy">{heading}</span>
               {headingAccent && (
                 <>
                   <br />
-                  <span className="text-brand-accent">{headingAccent}</span>
+                  <span className="italic text-brand-accent">{headingAccent}</span>
                 </>
               )}
             </h2>

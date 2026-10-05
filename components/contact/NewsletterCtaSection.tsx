@@ -8,6 +8,8 @@ import {
   validateNewsletterForm,
   type NewsletterFormErrors,
 } from "@/lib/validation/newsletterForm";
+import { RecaptchaNotice, useRecaptcha } from "@/components/ui/Recaptcha";
+import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
 
 /**
  * Newsletter CTA — Figma "Newsletter CTA section" (26281:26980).
@@ -24,6 +26,7 @@ export function NewsletterCtaSection() {
   );
   const [serverError, setServerError] = useState<string | null>(null);
 
+  const { execute: executeRecaptcha } = useRecaptcha();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
@@ -39,7 +42,10 @@ export function NewsletterCtaSection() {
       const res = await fetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(result.data),
+        body: JSON.stringify({
+          ...result.data,
+          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.newsletter),
+        }),
       });
 
       if (!res.ok) {
@@ -151,6 +157,7 @@ export function NewsletterCtaSection() {
                 You&apos;re subscribed — thanks!
               </p>
             ) : null}
+            <RecaptchaNotice />
           </form>
         </div>
       </div>
