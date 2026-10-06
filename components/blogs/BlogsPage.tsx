@@ -9,7 +9,6 @@ import { NewsletterForm } from "./NewsletterForm";
 import { RecaptchaNotice } from "@/components/ui/Recaptcha";
 import { Pagination } from "./Pagination";
 import type { BlogHeroSection, BlogPost } from "@/lib/cms/types";
-import { CloudBand } from "@/components/ui/CloudBand";
 
 export default function BlogsPage({
   posts,
@@ -59,7 +58,6 @@ export default function BlogsPage({
               <RecaptchaNotice className="max-w-md text-center" />
             </div>
           </div>
-          <CloudBand priority variant="edge" />
         </section>
 
         <section className={`${layout.sectionX} pb-24`}>

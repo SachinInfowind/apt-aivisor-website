@@ -3,7 +3,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { homeSerif } from "../ui/fonts";
-import { CloudBand } from "../ui/CloudBand";
 import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import { layout } from "../ui/type";
 import type { ConfirmationSection } from "@/lib/cms/types";
@@ -101,7 +100,6 @@ export function ThankYouContent({
           </div>
 
         </div>
-        <CloudBand priority variant="edge" />
       </section>
 
       <section className={`relative bg-white ${layout.sectionX} pb-16 sm:pb-20 md:pb-24`}>

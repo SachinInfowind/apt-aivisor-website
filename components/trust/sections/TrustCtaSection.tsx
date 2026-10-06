@@ -25,13 +25,13 @@ export function TrustCtaSection({
       <div className="mx-auto flex w-full max-w-[54.125rem] flex-col items-center gap-10 text-center sm:gap-14 md:gap-20">
         <div className="flex w-full flex-col items-center gap-5 sm:gap-[1.875rem]">
           <h2
-            className={`${homeSerif.className} w-full text-[clamp(1.75rem,4vw,3rem)] italic leading-[1.2] tracking-[-0.02em] text-white`}
+            className={`${homeSerif.className} w-full text-[clamp(1.75rem,4vw,3rem)] leading-[1.2] tracking-[-0.02em] text-white`}
           >
             <span>{heading}</span>
             {headingAccent ? (
               <>
-                <br />
-                <span>{headingAccent}</span>
+                {" "}
+                <span className="italic">{headingAccent}</span>
               </>
             ) : null}
           </h2>

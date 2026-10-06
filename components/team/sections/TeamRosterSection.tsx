@@ -148,7 +148,7 @@ function MemberCard({
         ) : null}
 
         {quote ? (
-          <blockquote className="w-full max-w-[52rem] rounded-3xl bg-surface px-6 py-8 sm:px-10 sm:py-10 md:px-[6.9375rem] md:py-[3.125rem]">
+          <blockquote className="w-full rounded-3xl bg-surface px-6 py-8 sm:px-10 sm:py-10 md:px-[6.9375rem] md:py-[3.125rem]">
             <p
               className={`${homeSerif.className} text-[clamp(1.125rem,2vw,1.5rem)] italic leading-[1.4] text-navy`}
             >
@@ -180,13 +180,13 @@ export function TeamRosterSection({
 
   return (
     <section
-      className={`w-full border-t border-line-muted bg-surface/50 ${layout.sectionX} py-16 sm:py-20 md:py-[6.25rem]`}
+      className={`w-full bg-white ${layout.sectionX} py-16 sm:py-20 md:py-[6.25rem]`}
     >
       <div
-        className={`${layout.inner} flex w-full max-w-[80rem] flex-col items-center gap-10 md:gap-12`}
+        className={`${layout.inner} flex w-full max-w-[80rem] flex-col items-start gap-10 md:gap-12`}
       >
         <h2
-          className={`${homeSerif.className} w-full text-center text-[clamp(1.75rem,4vw,3rem)] leading-[1.2] tracking-[-0.02em]`}
+          className={`${homeSerif.className} w-full text-left text-[clamp(1.75rem,4vw,3rem)] leading-[1.2] tracking-[-0.02em]`}
         >
           <span className="text-navy">{heading} </span>
           {headingAccent ? (

@@ -1,6 +1,5 @@
 "use client";
 
-import { CloudBand } from "../ui/CloudBand";
 import { CmsImage } from "../ui/CmsImage";
 import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import { homeSerif } from "../ui/fonts";
@@ -106,7 +105,6 @@ export function ContactContent({
         </div>
 
         </div>
-        <CloudBand priority variant="edge" />
       </section>
 
       <section className={`relative w-full bg-white ${layout.sectionX} pb-16 sm:pb-20 md:pb-24`}>

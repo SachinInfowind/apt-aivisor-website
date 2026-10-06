@@ -54,7 +54,7 @@ export function TrustNotesSection({
         className={`${layout.inner} flex w-full max-w-[80rem] flex-col items-start gap-8 md:gap-12`}
       >
         <h2
-          className={`${homeSerif.className} max-w-[38.75rem] text-[clamp(1.75rem,3vw,3rem)] leading-[1.2] tracking-[-0.02em]`}
+          className={`${homeSerif.className} text-[clamp(1.75rem,3vw,3rem)] leading-[1.2] tracking-[-0.02em]`}
         >
           <span className="text-navy">{heading} </span>
           {headingAccent ? (
@@ -63,7 +63,7 @@ export function TrustNotesSection({
         </h2>
 
         {notes?.length ? (
-          <div className="flex w-full max-w-[52.3125rem] flex-col items-start gap-5 sm:gap-6">
+          <div className="flex w-full flex-col items-start gap-5 sm:gap-6">
             {notes.map((note, i) => (
               <NoteBody
                 key={`${note.id ?? i}-${note.body.slice(0, 24)}`}
