@@ -76,9 +76,7 @@ const SECTIONS_POPULATE = {
     "sections.design-partner-cards": { populate: { items: { populate: ["icon"] } } },
     "sections.design-partner-checklist": { populate: ["items"] },
     "sections.design-partner-timeline": { populate: { steps: { populate: ["image"] } } },
-    "sections.design-partner-form": {
-      populate: { options: { populate: ["icon"] }, fields: true },
-    },
+    "sections.design-partner-form": true,
     "sections.team-roster": {
       populate: { members: { populate: ["photo", "brands"] } },
     },

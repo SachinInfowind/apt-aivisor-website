@@ -437,51 +437,53 @@ export function ExpressInterestModal({
 
                     <div className="flex flex-col gap-1.5">
                       <span className={labelClass}>Resume / CV *</span>
-                      <div
-                        onDragOver={(e) => {
-                          e.preventDefault();
-                          setDragActive(true);
-                        }}
-                        onDragLeave={() => setDragActive(false)}
-                        onDrop={onDrop}
-                        className={`flex flex-col items-center gap-3 rounded-xl border p-6 transition-colors ${
-                          dragActive ? "border-brand bg-brand-soft" : "border-[#EAECF0] bg-white"
-                        }`}
-                      >
-                        <span className="grid h-10 w-10 place-items-center rounded-lg border border-[#EAECF0] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)]">
-                          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
-                            <path
-                              d="M13.3346 13.3333L10.0013 10L6.66797 13.3333M10.0013 10V17.5M16.668 13.9524C17.6859 13.1117 18.3346 11.8399 18.3346 10.4167C18.3346 7.88536 16.2826 5.83333 13.7513 5.83333C13.5692 5.83333 13.3989 5.73833 13.3064 5.58145C12.2197 3.73736 10.2133 2.5 7.91797 2.5C4.46619 2.5 1.66797 5.29822 1.66797 8.75C1.66797 10.4718 2.36417 12.0309 3.49043 13.1613"
-                              stroke="#344054"
-                              strokeWidth="1.66667"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                            />
-                          </svg>
-                        </span>
-                        <div className="flex flex-col items-center gap-1">
-                          <div className="flex items-center gap-1">
-                            <button
-                              type="button"
-                              onClick={() => fileInputRef.current?.click()}
-                              className="text-sm font-semibold text-[#003699] hover:underline"
-                            >
-                              Click to upload
-                            </button>
-                            <span className="text-sm text-[#475467]">or drag and drop</span>
-                          </div>
-                          <span className="text-center text-xs text-[#475467]">
-                            PDF, DOC or DOCX (max 10MB)
+                      {!resumeFile && (
+                        <div
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setDragActive(true);
+                          }}
+                          onDragLeave={() => setDragActive(false)}
+                          onDrop={onDrop}
+                          className={`flex flex-col items-center gap-3 rounded-xl border p-6 transition-colors ${
+                            dragActive ? "border-brand bg-brand-soft" : "border-[#EAECF0] bg-white"
+                          }`}
+                        >
+                          <span className="grid h-10 w-10 place-items-center rounded-lg border border-[#EAECF0] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)]">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+                              <path
+                                d="M13.3346 13.3333L10.0013 10L6.66797 13.3333M10.0013 10V17.5M16.668 13.9524C17.6859 13.1117 18.3346 11.8399 18.3346 10.4167C18.3346 7.88536 16.2826 5.83333 13.7513 5.83333C13.5692 5.83333 13.3989 5.73833 13.3064 5.58145C12.2197 3.73736 10.2133 2.5 7.91797 2.5C4.46619 2.5 1.66797 5.29822 1.66797 8.75C1.66797 10.4718 2.36417 12.0309 3.49043 13.1613"
+                                stroke="#344054"
+                                strokeWidth="1.66667"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              />
+                            </svg>
                           </span>
+                          <div className="flex flex-col items-center gap-1">
+                            <div className="flex items-center gap-1">
+                              <button
+                                type="button"
+                                onClick={() => fileInputRef.current?.click()}
+                                className="text-sm font-semibold text-[#003699] hover:underline"
+                              >
+                                Click to upload
+                              </button>
+                              <span className="text-sm text-[#475467]">or drag and drop</span>
+                            </div>
+                            <span className="text-center text-xs text-[#475467]">
+                              PDF, DOC or DOCX (max 10MB)
+                            </span>
+                          </div>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept={RESUME_ACCEPT}
+                            className="hidden"
+                            onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
+                          />
                         </div>
-                        <input
-                          ref={fileInputRef}
-                          type="file"
-                          accept={RESUME_ACCEPT}
-                          className="hidden"
-                          onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
-                        />
-                      </div>
+                      )}
                       {resumeFile && (
                         <div className="mt-1 flex items-center justify-between gap-3 rounded-xl border border-[#EAECF0] p-3">
                           <span className="min-w-0 truncate text-sm font-medium text-[#344054]">

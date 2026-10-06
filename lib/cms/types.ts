@@ -795,23 +795,6 @@ export interface DesignPartnerTimelineSection {
   steps: TimelineStep[];
 }
 
-export interface FormOption {
-  id?: number;
-  group: string;
-  key: string;
-  label: string;
-  icon?: StrapiImage | null;
-}
-
-export interface FormFieldCopy {
-  id?: number;
-  key: string;
-  label?: string | null;
-  placeholder?: string | null;
-  hint?: string | null;
-  prefix?: string | null;
-}
-
 export interface DesignPartnerFormSectionData {
   __component: "sections.design-partner-form";
   id: number;
@@ -819,46 +802,6 @@ export interface DesignPartnerFormSectionData {
   heading: string;
   subhead?: string;
   successHref?: string;
-  // Wizard copy — all editable in Strapi (sections.design-partner-form).
-  /** Dropdown / chip / buyer-seller options. `group` = field name, `key` = submitted value. */
-  options?: FormOption[];
-  /** Per-field label, placeholder, hint (and prefix) — keyed by field name. */
-  fields?: FormFieldCopy[];
-  stepPrefix?: string | null;
-  step1Label?: string | null;
-  step2Label?: string | null;
-  step3Label?: string | null;
-  personalTitle?: string | null;
-  personalSubtitle?: string | null;
-  companyTitle?: string | null;
-  companySubtitle?: string | null;
-  noticeTitle?: string | null;
-  noticeBody?: string | null;
-  vendorsTitle?: string | null;
-  vendorsSubtitle?: string | null;
-  categoriesTitle?: string | null;
-  categoriesSubtitle?: string | null;
-  categoriesPrompt?: string | null;
-  economicsTitle?: string | null;
-  economicsSubtitle?: string | null;
-  continueToStep2Label?: string | null;
-  continueToStep3Label?: string | null;
-  backLabel?: string | null;
-  submitLabel?: string | null;
-  submittingLabel?: string | null;
-  termsPrefix?: string | null;
-  termsLinkLabel?: string | null;
-  termsHref?: string | null;
-  privacyLinkLabel?: string | null;
-  privacyHref?: string | null;
-  termsSuffix?: string | null;
-  ndaText?: string | null;
-  ndaLinkLabel?: string | null;
-  ndaLinkHref?: string | null;
-  consentText?: string | null;
-  footerNote?: string | null;
-  successTitle?: string | null;
-  successBody?: string | null;
 }
 
 export interface AboutHeroSection {

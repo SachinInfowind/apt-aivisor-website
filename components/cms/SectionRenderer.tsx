@@ -46,7 +46,7 @@ import { AudienceSection } from "@/components/design-partner/sections/AudienceSe
 import { DesignPartnerCardsSection } from "@/components/design-partner/sections/DesignPartnerCardsSection";
 import { ChecklistSection } from "@/components/design-partner/sections/ChecklistSection";
 import { TimelineSection } from "@/components/design-partner/sections/TimelineSection";
-import { DesignPartnerFormSection } from "@/components/design-partner/sections/DesignPartnerFormSection";
+import { DesignPartnerQuestionnaire } from "@/components/design-partner/sections/DesignPartnerQuestionnaire";
 import { getGlobal } from "@/lib/cms/queries";
 import type { PageSection } from "@/lib/cms/types";
 
@@ -160,7 +160,14 @@ export async function SectionRenderer({ sections }: { sections: PageSection[] })
           case "sections.design-partner-timeline":
             return <TimelineSection key={key} {...section} />;
           case "sections.design-partner-form":
-            return <DesignPartnerFormSection key={key} {...section} />;
+            return (
+              <DesignPartnerQuestionnaire
+                key={key}
+                badgeLabel={section.badgeLabel}
+                heading={section.heading}
+                subhead={section.subhead}
+              />
+            );
           case "sections.contact-hero":
             return (
               <div key={key}>
