@@ -9,6 +9,7 @@
 export type BillingPeriod = "monthly" | "yearly";
 
 import type { PricingCatalogSection, PricingPlanPrice } from "@/lib/cms/types";
+import { PlanFeatureIcon } from "./PlanFeatureIcon";
 
 function formatPrice(amount: number) {
   return `$${Math.round(amount).toLocaleString("en-US")}`;
@@ -152,7 +153,12 @@ function PlanCard({
                       included ? "" : "opacity-40"
                     }`}
                   >
-                    <CheckIcon onBlue={onBlue} />
+                    <PlanFeatureIcon
+                      planId={plan.planId}
+                      label={item.label}
+                      fallback={<CheckIcon onBlue={onBlue} />}
+                      className={`mt-0.5 shrink-0 ${onBlue ? "text-white" : "text-nav"}`}
+                    />
                     <span
                       className={`min-w-0 text-xs font-medium leading-[1.5] ${
                         onBlue ? "text-white" : "text-nav"

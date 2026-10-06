@@ -73,7 +73,7 @@ function AddonFooter({ addon }: { addon: PricingAddonPrice }) {
 
   if (addon.footerType === "pratt") {
     return (
-      <div className="inline-flex items-center gap-1 rounded-pill border border-line-strong bg-surface py-px pl-px pr-3">
+      <div className="inline-flex w-fit items-center gap-1 rounded-pill border border-line-strong bg-surface py-px pl-px pr-3">
         <CmsImage image={images[0]} width={24} height={25} className="h-6 w-6 rounded-pill object-cover" />
         <CmsImage image={images[1]} alt="aptAI" width={31} height={18} className="h-[18px] w-auto" />
       </div>
@@ -81,14 +81,19 @@ function AddonFooter({ addon }: { addon: PricingAddonPrice }) {
   }
 
   if (addon.footerType === "clouds") {
-    // Azure + GCP + AI symbols
-    const [azure, gcp, aiA, aiB] = images;
+    // Provider logos (AWS, Azure, Google Cloud, Anthropic, OpenAI, Google…): render
+    // whatever the CMS holds, in order, at the Figma 19px logo height.
     return (
-      <div className="flex flex-wrap items-center gap-2 pt-1">
-        <CmsImage image={azure} alt="Azure" width={23} height={23} className="h-5 w-5 object-contain" />
-        <CmsImage image={gcp} alt="Google Cloud" width={31} height={19} className="h-[19px] w-auto object-contain" />
-        <CmsImage image={aiA} width={19} height={19} className="h-5 w-5 object-contain" />
-        <CmsImage image={aiB} width={27} height={19} className="h-5 w-auto object-contain" />
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 py-[3px]">
+        {images.map((image) => (
+          <CmsImage
+            key={image.url}
+            image={image}
+            width={image.width ?? 24}
+            height={image.height ?? 19}
+            className="h-[19px] w-auto object-contain"
+          />
+        ))}
       </div>
     );
   }
@@ -106,14 +111,18 @@ function AddonCard({ addon }: { addon: PricingAddonPrice }) {
         <CmsImage image={addon.icon} width={24} height={24} className="h-6 w-6" />
       </div>
 
-      <div className="flex flex-1 flex-col gap-3 sm:gap-4">
+      <div className="flex flex-col gap-1.5">
         <h3 className="font-body text-lg font-semibold leading-7 text-navy sm:text-xl sm:leading-[1.5]">
           {addon.name}
         </h3>
         {addon.description ? (
           <p className="text-sm leading-5 text-ink">{addon.description}</p>
         ) : null}
-        <p className="mt-auto text-lg font-bold leading-[1.5] text-brand-accent sm:text-xl">
+      </div>
+
+      <div className="mt-auto flex flex-col gap-5 sm:gap-6">
+        <hr className="h-px w-full border-0 bg-line-strong" />
+        <p className="text-lg font-bold leading-[1.5] text-brand-accent sm:text-xl">
           {addon.price}
         </p>
         <AddonFooter addon={addon} />
@@ -139,19 +148,22 @@ export function PricingAddOns({
       <div
         className={`${layout.inner} flex flex-col items-center gap-8 sm:gap-10 md:gap-12`}
       >
-        <div className="flex flex-col items-center gap-4 text-center sm:gap-5">
-          {catalog?.addonsBadge ? (
-            <span className="inline-flex items-center justify-center rounded-pill bg-brand-veil px-3.5 py-2 text-sm font-semibold leading-5 text-navy sm:px-4 sm:py-3.5">
-              {catalog.addonsBadge}
-            </span>
-          ) : null}
+        {/* Figma: heading and ADD-ONS pill share one row. On desktop that row is
+            left-aligned and indented 108px (a 100px spacer + 8px gap in the frame);
+            below xl it is centred. */}
+        <div className="flex flex-wrap items-center justify-center gap-2 text-center xl:self-stretch xl:justify-start xl:pl-[108px] xl:text-left">
           <h2 className="font-display text-[1.5rem] font-normal leading-[1.25] tracking-[-0.02em] sm:text-[2.5rem] sm:leading-[3.75rem] lg:text-[3rem]">
             <span className="text-navy">{catalog?.addonsHeading} </span>
             <span className="italic text-brand-accent">{catalog?.addonsHeadingAccent}</span>
           </h2>
+          {catalog?.addonsBadge ? (
+            <span className="inline-flex items-center justify-center rounded-pill bg-brand-veil p-3.5 text-sm font-semibold leading-5 text-navy">
+              {catalog.addonsBadge}
+            </span>
+          ) : null}
         </div>
 
-        <div className="grid w-full min-w-0 grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-4 xl:gap-8">
+        <div className="grid w-full min-w-0 grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 xl:grid-cols-4 xl:gap-7">
           {addons.map((addon) => (
             <AddonCard key={addon.addonId} addon={addon} />
           ))}

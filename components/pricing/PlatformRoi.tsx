@@ -107,13 +107,14 @@ export function PlatformRoi({
 
   return (
     <div
-      className={`flex w-full min-w-0 flex-col overflow-hidden rounded-[20px] bg-white sm:rounded-[24px] ${className}`}
+      className={`flex w-full min-w-0 flex-col ${className}`}
     >
-      {/* Tab bar — Figma: padding 12, gap 8, radius 24 24 0 0 */}
+      {/* Tab bar — Figma: its own white block hugging the pills (padding 12, gap 8,
+          radius 24 24 0 0), so it reads as a folder tab on top of the panel. */}
       <div
         role="tablist"
         aria-label={tabsLabel || undefined}
-        className="flex flex-wrap items-center gap-2 rounded-t-[20px] bg-white p-2 sm:rounded-t-[24px] sm:p-3"
+        className="flex max-w-full flex-wrap items-center gap-2 self-start rounded-t-[20px] bg-white p-2 sm:rounded-t-[24px] sm:p-3"
       >
         {tabs.map((v, index) => {
           const selected = index === active;
@@ -144,14 +145,14 @@ export function PlatformRoi({
         })}
       </div>
 
-      {/* Content — Figma: padding ~78×97, radius 0 24 24 24 */}
+      {/* Content — Figma: padding 78×97, radius 0 24 24 24 (square top-left under the tabs) */}
       <div
         role="tabpanel"
         id="platform-roi-panel"
         aria-labelledby={`platform-roi-tab-${active}`}
-        className="flex min-w-0 flex-col gap-8 rounded-b-[20px] bg-white px-4 py-8 sm:gap-10 sm:rounded-b-[24px] sm:px-8 sm:py-12 md:px-12 lg:px-[6.0625rem] lg:py-[4.875rem]"
+        className="flex min-w-0 flex-col gap-8 rounded-b-[20px] rounded-tr-[20px] bg-white px-4 py-8 sm:gap-10 sm:rounded-b-[24px] sm:rounded-tr-[24px] sm:px-8 sm:py-12 md:px-12 lg:px-[6.0625rem] lg:py-[4.875rem]"
       >
-        <div className="flex min-w-0 flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+        <div className="flex min-w-0 flex-col gap-8 lg:max-w-[62.0625rem] lg:flex-row lg:items-center lg:justify-between lg:gap-12">
           <h3 className="max-w-[19.5rem] shrink-0 font-display text-[1.5rem] font-normal leading-[1.2] tracking-[-0.02em] sm:text-[2.25rem] lg:text-[3rem]">
             <span className="text-navy">{variant.title}</span>
             <br />
