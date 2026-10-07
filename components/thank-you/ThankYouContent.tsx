@@ -3,13 +3,14 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { homeSerif } from "../ui/fonts";
-import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import { layout } from "../ui/type";
 import type { ConfirmationSection } from "@/lib/cms/types";
 
 /**
- * Thank-you content — Figma 24794:14598.
- * Centered confirmation + “What happens next?” step cards.
+ * Thank-you content — Figma "Rectangle 47" (3400:1926) + "Frame 1261154200"
+ * (3400:1930). One continuous flat #E8F0FF (brand-soft) backdrop behind both
+ * the confirmation text and the "What happens next?" cards — no mesh
+ * pattern, no hard color break at the fold like the other page heroes.
  */
 
 function FileCheckIcon() {
@@ -71,79 +72,72 @@ export function ThankYouContent({
   ctaHref,
 }: ConfirmationSection) {
   return (
-    <>
-      {/* Hero band — mesh + cloud edge, same treatment as the other page heroes */}
-      <section
-        className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(9.5rem,18vw,15rem)]`}
+    <section
+      className={`relative flex w-full flex-col items-center bg-brand-soft ${layout.sectionX} pb-16 pt-[clamp(9.5rem,18vw,15rem)] sm:pb-20 md:pb-24`}
+    >
+      <div
+        className={`${layout.inner} relative flex max-w-[80rem] flex-col items-center gap-8 text-center sm:gap-10 md:gap-12`}
       >
-        <HeroGlowAccent />
-        <div className={`${layout.inner} relative z-[1] flex max-w-[80rem] flex-col items-center text-center`}>
-          <div className="flex w-full flex-col items-center gap-4 sm:gap-6">
-            <h1
-              className={`${homeSerif.className} text-display-italic leading-none tracking-[-0.02em]`}
-            >
-              <span className="text-hero-display">{heading} </span>
-              {headingAccent && (
-                <span className="text-hero-negotiating">{headingAccent}</span>
-              )}
-            </h1>
-            {leadText && (
-              <p className="text-lg font-semibold leading-[1.5] text-ink sm:text-xl sm:leading-[1.875rem]">
-                {leadText}
-              </p>
+        <div className="flex w-full flex-col items-center gap-4 sm:gap-6">
+          <h1
+            className={`${homeSerif.className} text-display-italic leading-none tracking-[-0.02em]`}
+          >
+            <span className="text-hero-display">{heading} </span>
+            {headingAccent && (
+              <span className="text-hero-negotiating">{headingAccent}</span>
             )}
-            {bodyText && (
-              <p className="max-w-[47.125rem] text-sm italic leading-6 text-ink sm:text-base sm:leading-6">
-                {bodyText}
-              </p>
-            )}
-          </div>
-
+          </h1>
+          {leadText && (
+            <p className="text-lg font-semibold leading-[1.5] text-ink sm:text-xl sm:leading-[1.875rem]">
+              {leadText}
+            </p>
+          )}
+          {bodyText && (
+            <p className="max-w-[47.125rem] text-sm italic leading-6 text-ink sm:text-base sm:leading-6">
+              {bodyText}
+            </p>
+          )}
         </div>
-      </section>
 
-      <section className={`relative bg-white ${layout.sectionX} pb-16 sm:pb-20 md:pb-24`}>
-        <div
-          className={`${layout.inner} flex max-w-[80rem] flex-col items-center gap-8 sm:gap-10 md:gap-12`}
-        >
-          <div className="flex w-full flex-col items-center gap-8 text-center sm:gap-10 md:gap-12">
-            {stepsHeading && (
-              <h2
-                className={`${homeSerif.className} text-hero-display w-full text-h2 leading-[1.25] tracking-[-0.02em]`}
+        <div className="h-px w-full max-w-[35.75rem] bg-line-strong" />
+
+        <div className="flex w-full flex-col items-center gap-8 sm:gap-10 md:gap-12">
+          {stepsHeading && (
+            <h2
+              className={`${homeSerif.className} text-hero-display w-full text-h2 leading-[1.25] tracking-[-0.02em]`}
+            >
+              {stepsHeading}
+            </h2>
+          )}
+
+          <ul className="grid w-full grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 md:gap-6 lg:gap-8">
+            {steps.map((step, index) => (
+              <li
+                key={step.title}
+                className="flex items-start gap-4 rounded-[24px] border border-line-strong bg-white p-5 sm:gap-6 sm:p-8"
               >
-                {stepsHeading}
-              </h2>
-            )}
-
-            <ul className="grid w-full grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 md:gap-6 lg:gap-8">
-              {steps.map((step, index) => (
-                <li
-                  key={step.title}
-                  className="flex items-start gap-4 rounded-[24px] border border-line-strong bg-white p-5 sm:gap-6 sm:p-8"
+                <span
+                  className={`grid h-12 w-12 shrink-0 place-items-center rounded-[10px] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] ${STEP_STYLES[index % STEP_STYLES.length].iconBg}`}
                 >
-                  <span
-                    className={`grid h-12 w-12 shrink-0 place-items-center rounded-[10px] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] ${STEP_STYLES[index % STEP_STYLES.length].iconBg}`}
-                  >
-                    {STEP_STYLES[index % STEP_STYLES.length].icon}
-                  </span>
-                  <p className="pt-1 text-base font-semibold leading-[1.5] text-ink sm:text-xl sm:leading-[1.875rem]">
-                    {step.title}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
+                  {STEP_STYLES[index % STEP_STYLES.length].icon}
+                </span>
+                <p className="pt-1 text-left text-base font-semibold leading-[1.5] text-ink sm:text-xl sm:leading-[1.875rem]">
+                  {step.title}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-          {ctaLabel && ctaHref && (
+        {ctaLabel && ctaHref && (
           <Link
             href={ctaHref}
             className="inline-flex min-w-[13.125rem] items-center justify-center rounded-pill border border-brand bg-brand px-[1.375rem] py-4 text-lg font-semibold leading-7 text-white shadow-[0_20px_24px_-4px_rgba(16,24,40,0.08),0_8px_8px_-4px_rgba(16,24,40,0.03)] transition-colors hover:bg-brand-hover active:scale-[0.98]"
           >
             {ctaLabel}
           </Link>
-          )}
-        </div>
-      </section>
-    </>
+        )}
+      </div>
+    </section>
   );
 }
