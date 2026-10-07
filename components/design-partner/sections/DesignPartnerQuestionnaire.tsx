@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { homeSerif } from "@/components/ui/fonts";
 import { useRecaptcha } from "@/components/ui/Recaptcha";
@@ -86,6 +86,29 @@ export function DesignPartnerQuestionnaire({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const { execute: executeRecaptcha } = useRecaptcha();
   const router = useRouter();
+  const cardRef = useRef<HTMLDivElement>(null);
+  // Last draft JSON this tab either wrote to localStorage or applied from
+  // another tab's `storage` event — see the autosave + tab-sync effects.
+  const lastDraftJsonRef = useRef<string | null>(null);
+  // Starts true so the render right after the draft-restore effect settles
+  // (which can itself change `currentIndex` to a saved mid-form step) is
+  // never treated as a user-driven step change.
+  const skipNextScrollRef = useRef(true);
+
+  // Scroll the card back into view on every step change (Continue/Back) —
+  // without this, advancing from the bottom of a long step leaves the user
+  // scrolled to the bottom of the new step with no way to see its heading.
+  // Gated on `hasRestored` (not just mount) so loading the page — including
+  // restoring a saved draft that was mid-form — never yanks the viewport
+  // down to the card; only an actual Continue/Back click does.
+  useEffect(() => {
+    if (!hasRestored) return;
+    if (skipNextScrollRef.current) {
+      skipNextScrollRef.current = false;
+      return;
+    }
+    cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [currentIndex, hasRestored]);
 
   useEffect(() => {
     try {
@@ -116,15 +139,102 @@ export function DesignPartnerQuestionnaire({
     setHasRestored(true);
   }, []);
 
+  // Handles the redirect back from the verification email link
+  // (?emailVerifyToken=... set by the CMS's /email-verifications/confirm
+  // route after the user clicks "Verify email" in their inbox). Re-checks
+  // the token server-side rather than trusting the URL param on its own.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("emailVerifyToken");
+    const verifyError = params.get("emailVerifyError");
+    if (!token && !verifyError) return;
+
+    const cleanUrl = () => {
+      params.delete("emailVerifyToken");
+      params.delete("emailVerifyError");
+      const query = params.toString();
+      const next = `${window.location.pathname}${query ? `?${query}` : ""}${window.location.hash}`;
+      window.history.replaceState(null, "", next);
+    };
+
+    if (!token) {
+      cleanUrl();
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(
+          `/api/design-partner-application/verify-email/status?token=${encodeURIComponent(token)}`,
+          { cache: "no-store" },
+        );
+        const body = (await res.json().catch(() => ({}))) as { status?: string; email?: string };
+        if (cancelled) return;
+        if (res.ok && body.status === "verified" && body.email) {
+          setStep1((prev) => ({
+            ...prev,
+            workEmail: prev.workEmail.trim() ? prev.workEmail : body.email!,
+            emailVerification: "verified",
+          }));
+        }
+      } catch {
+        // Network blip — the field just stays unverified; the user can retry.
+      } finally {
+        if (!cancelled) cleanUrl();
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (!hasRestored) return;
     try {
       const draft: QuestionnaireDraft = { step1, step2, step3, step4, step5, currentIndex };
-      window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+      const json = JSON.stringify(draft);
+      // Skip the write if this is just an echo of what we (or another tab,
+      // via the storage-sync effect below) already applied — otherwise two
+      // open tabs write-trigger each other's `storage` listener forever
+      // (each write → other tab applies it → its own state "changes" →
+      // its autosave effect fires → writes back → ad infinitum), which
+      // shows up as constant re-rendering ("blinking") the moment any field
+      // changes while a second tab on the same draft is open.
+      if (json === lastDraftJsonRef.current) return;
+      lastDraftJsonRef.current = json;
+      window.localStorage.setItem(DRAFT_STORAGE_KEY, json);
     } catch {
       // Storage full or unavailable (e.g. private browsing) — autosave is best-effort.
     }
   }, [hasRestored, step1, step2, step3, step4, step5, currentIndex]);
+
+  // Keeps same-browser tabs in sync — e.g. verifying the Business Email in a
+  // tab opened from the inbox link (clicking an email commonly opens a new
+  // tab) now reaches the original tab too, instead of it being stuck showing
+  // "pending" forever. Guarded by lastDraftJsonRef (see the autosave effect
+  // above) so this can't ping-pong between tabs.
+  useEffect(() => {
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== DRAFT_STORAGE_KEY || !event.newValue) return;
+      if (event.newValue === lastDraftJsonRef.current) return;
+      lastDraftJsonRef.current = event.newValue;
+      try {
+        const draft = JSON.parse(event.newValue) as Partial<QuestionnaireDraft>;
+        if (draft.step1) setStep1(draft.step1);
+        if (draft.step2) setStep2(draft.step2);
+        if (draft.step3) setStep3(draft.step3);
+        if (draft.step4) setStep4(draft.step4);
+        if (draft.step5) setStep5(draft.step5);
+      } catch {
+        // Ignore a malformed write from another tab.
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   const startOver = () => {
     try {
@@ -250,7 +360,10 @@ export function DesignPartnerQuestionnaire({
           ) : null}
         </div>
 
-        <div className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-3xl border border-[#E2E8F0]/90 bg-white">
+        <div
+          ref={cardRef}
+          className="mx-auto w-full max-w-[80rem] overflow-hidden rounded-3xl border border-[#E2E8F0]/90 bg-white scroll-mt-24"
+        >
           <div className="h-1 w-full bg-surface-muted">
             <div
               className="h-full bg-metric transition-[width]"

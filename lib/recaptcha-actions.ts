@@ -10,6 +10,7 @@ export const RECAPTCHA_ACTIONS = {
   designPartner: "design_partner",
   demoNotify: "demo_notify",
   careerApplication: "career_application",
+  emailVerification: "email_verification",
 } as const;
 
 export type RecaptchaAction = (typeof RECAPTCHA_ACTIONS)[keyof typeof RECAPTCHA_ACTIONS];

@@ -6,6 +6,7 @@ import {
   SelectField,
   StepSectionHeading,
   TextareaField,
+  TextField,
 } from "./shared";
 
 /** Step 2 — Buyer Profile. Figma "Design Partner Program New/Step2" (node 3376:2266). */
@@ -14,8 +15,12 @@ export type Step2State = {
   annualSpend: string;
   spendGrowth: string;
   vendorCategories: string[];
+  /** Shown only when vendorCategories includes "Other" (Figma: 15-char manual input). */
+  vendorCategoriesOther: string;
   hasCommitments: string;
   commitmentPlatforms: string[];
+  /** Shown only when commitmentPlatforms includes "Other" (the Data subgroup's Other chip). */
+  commitmentPlatformsOther: string;
   activeContracts: string;
   contractLength: string;
   renewalsPerYear: string;
@@ -31,8 +36,10 @@ export const INITIAL_STEP2: Step2State = {
   annualSpend: "",
   spendGrowth: "",
   vendorCategories: [],
+  vendorCategoriesOther: "",
   hasCommitments: "",
   commitmentPlatforms: [],
+  commitmentPlatformsOther: "",
   activeContracts: "",
   contractLength: "",
   renewalsPerYear: "",
@@ -60,11 +67,11 @@ const VENDOR_CATEGORIES = [
   "Cloud infrastructure (AWS/Azure/GCP/Other)",
   "AI models and APIs (e.g., OpenAI, Anthropic, Gemini)",
   "GPU / AI compute capacity",
+  "Cybersecurity",
   "Data platforms & analytics (e.g., Snowflake, Databricks)",
   "Business software (CRM, HR, finance, productivity)",
-  "Cybersecurity",
-  "Developer tools",
   "Hardware (servers, devices, networking)",
+  "Developer tools",
   "Professional & managed services",
   "Other",
 ];
@@ -182,7 +189,7 @@ export function Step2BuyerProfile({
     <div className="flex w-full flex-col items-start gap-10">
       <div className="flex w-full flex-col items-start gap-6">
         <StepSectionHeading title="Technology Spend" stepLabel={stepLabel} />
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+        <div className="flex w-full flex-col items-start gap-6">
           <SelectField
             label="Annual technology spend (cloud + SaaS + services combined)"
             required
@@ -210,6 +217,14 @@ export function Step2BuyerProfile({
             options={VENDOR_CATEGORIES}
             error={errChips(value.vendorCategories.length > 0)}
           />
+          {value.vendorCategories.includes("Other") ? (
+            <TextField
+              label="Manual input (max 15 characters)"
+              value={value.vendorCategoriesOther}
+              onChange={(v) => set("vendorCategoriesOther", v.slice(0, 15))}
+              placeholder="Enter category name"
+            />
+          ) : null}
           <PillRadioGroup
             label="Do you have any multi-year committed spend agreements currently active?"
             required
@@ -219,17 +234,26 @@ export function Step2BuyerProfile({
             error={err(Boolean(value.hasCommitments))}
           />
           {value.hasCommitments === "Yes" ? (
-            <div className="flex w-full flex-col items-start gap-5 sm:max-w-[36.4375rem]">
+            <div className="flex w-full flex-col items-start gap-5">
               <p className="text-sm font-medium leading-5 text-ink">If yes — which platforms? *</p>
               {COMMITMENT_GROUPS.map((group) => (
-                <ChipMultiSelect
-                  key={group.label}
-                  label={group.label}
-                  labelColor="muted"
-                  value={value.commitmentPlatforms}
-                  onChange={(v) => set("commitmentPlatforms", v)}
-                  options={group.options}
-                />
+                <div key={group.label} className="flex w-full flex-col items-start gap-5">
+                  <ChipMultiSelect
+                    label={group.label}
+                    labelColor="muted"
+                    value={value.commitmentPlatforms}
+                    onChange={(v) => set("commitmentPlatforms", v)}
+                    options={group.options}
+                  />
+                  {group.label === "Data" && value.commitmentPlatforms.includes("Other") ? (
+                    <TextField
+                      label="Manual input (max 15 characters)"
+                      value={value.commitmentPlatformsOther}
+                      onChange={(v) => set("commitmentPlatformsOther", v.slice(0, 15))}
+                      placeholder="Enter category name"
+                    />
+                  ) : null}
+                </div>
               ))}
               {errChips(value.commitmentPlatforms.length > 0) ? (
                 <p className="text-sm leading-5 text-red-600">Please select at least one platform</p>
@@ -241,7 +265,7 @@ export function Step2BuyerProfile({
 
       <div className="flex w-full flex-col items-start gap-6">
         <StepSectionHeading title="Contract & Renewal Management" />
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+        <div className="flex w-full flex-col items-start gap-6">
           <SelectField
             label="How many active technology vendor contracts does your company manage?"
             required
@@ -291,7 +315,7 @@ export function Step2BuyerProfile({
 
       <div className="flex w-full flex-col items-start gap-6">
         <StepSectionHeading title="Negotiation Experience" />
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+        <div className="flex w-full flex-col items-start gap-6">
           <SelectField
             label="How confident is your team in knowing whether your vendor pricing is fair compared with what similar companies pay?"
             required

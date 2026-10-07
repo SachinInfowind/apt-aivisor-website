@@ -130,6 +130,7 @@ export function TextField({
   onChange,
   placeholder,
   error,
+  hint,
   type = "text",
 }: {
   label: string;
@@ -138,10 +139,11 @@ export function TextField({
   onChange: (value: string) => void;
   placeholder: string;
   error?: string;
+  hint?: string;
   type?: "text" | "email";
 }) {
   return (
-    <Field label={label} required={required} error={error}>
+    <Field label={label} required={required} error={error} hint={hint}>
       <input
         type={type}
         value={value}
@@ -226,7 +228,7 @@ export function PillRadioGroup({
               onClick={() => onChange(opt)}
               className={
                 variant === "card"
-                  ? `flex-1 rounded-xl border p-4 text-left text-sm font-semibold leading-5 transition-colors ${
+                  ? `flex-1 rounded-lg border px-2 py-1 text-center text-xs font-semibold leading-[1.5] transition-colors ${
                       selected
                         ? "border-[#82AEFF] bg-[#E8F0FF] text-brand-deep"
                         : error

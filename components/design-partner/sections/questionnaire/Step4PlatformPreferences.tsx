@@ -14,6 +14,7 @@ export type Step4State = {
   excitedModules: string[];
   dealDeskPriorities: string[];
   currentManagement: string[];
+  /** Shown only when currentManagement includes "Other". */
   currentManagementOther: string;
   crm: string;
   successDefinition: string;
@@ -64,16 +65,17 @@ const CURRENT_MANAGEMENT = [
   "Contract management software / CLM (Ironclad, DocuSign CLM)",
   "Procurement or finance system (e.g. Coupa, NetSuite)",
   "Email",
+  "Other",
 ];
 
 const CRM_OPTIONS = ["Salesforce", "HubSpot", "Pipedrive", "Microsoft Dynamics", "None", "Other"];
 
 const HEARD_ABOUT_OPTIONS = ["LinkedIn", "Referred by someone", "aptAI team outreach", "Event or webinar", "Other"];
 
-/** PDF UX notes: "Required — all questions except D5a (referrer name, optional)."
- * D4 (successDefinition) is explicitly flagged "Required — cannot submit
- * without," reinforcing the blanket rule. referrerName is only required when
- * it's actually shown (D5 = "Referred by someone"). */
+/** Updated Step 4 Figma (node 3395:6434) shows referrerName as explicitly
+ * optional ("Optional (10 words max) · short text", no asterisk) — dropped
+ * from required, unlike the PDF's blanket D5a-is-the-only-optional-field
+ * framing used earlier. */
 export function isStep4Valid(v: Step4State): boolean {
   return Boolean(
     v.excitedModules.length > 0 &&
@@ -81,8 +83,7 @@ export function isStep4Valid(v: Step4State): boolean {
       v.currentManagement.length > 0 &&
       v.crm &&
       v.successDefinition.trim() &&
-      v.heardAbout &&
-      (v.heardAbout !== "Referred by someone" || v.referrerName.trim()),
+      v.heardAbout,
   );
 }
 
@@ -109,45 +110,41 @@ export function Step4PlatformPreferences({
     <div className="flex w-full flex-col items-start gap-6">
       <StepSectionHeading title="Platform Preferences" stepLabel={stepLabel} />
 
-      <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
-        <div className="sm:col-span-2">
-          <ChipMultiSelect
-            label="Which aptAIvisor modules are you most excited to use?"
-            required
-            value={value.excitedModules}
-            onChange={(v) => set("excitedModules", v)}
-            options={EXCITED_MODULES}
-            error={errChips(value.excitedModules.length > 0)}
-          />
-        </div>
+      <div className="flex w-full flex-col items-start gap-6">
+        <ChipMultiSelect
+          label="Which aptAIvisor modules are you most excited to use?"
+          required
+          value={value.excitedModules}
+          onChange={(v) => set("excitedModules", v)}
+          options={EXCITED_MODULES}
+          error={errChips(value.excitedModules.length > 0)}
+        />
 
-        <div className="sm:col-span-2">
-          <ChipMultiSelect
-            label="If you want aptAIvisor to advise or build your deal desk function, what are your key company/business priorities?"
-            required
-            value={value.dealDeskPriorities}
-            onChange={(v) => set("dealDeskPriorities", v)}
-            options={DEAL_DESK_PRIORITIES}
-            error={errChips(value.dealDeskPriorities.length > 0)}
-          />
-        </div>
+        <ChipMultiSelect
+          label="If you want aptAIvisor to advise or build your deal desk function, what are your key company/business priorities?"
+          required
+          value={value.dealDeskPriorities}
+          onChange={(v) => set("dealDeskPriorities", v)}
+          options={DEAL_DESK_PRIORITIES}
+          error={errChips(value.dealDeskPriorities.length > 0)}
+        />
 
-        <div className="flex flex-col items-start gap-5 sm:col-span-2 sm:max-w-[36.4375rem]">
-          <ChipMultiSelect
-            label="How do you currently manage contracts and vendor data?"
-            required
-            value={value.currentManagement}
-            onChange={(v) => set("currentManagement", v)}
-            options={CURRENT_MANAGEMENT}
-            error={errChips(value.currentManagement.length > 0)}
-          />
+        <ChipMultiSelect
+          label="How do you currently manage contracts and vendor data?"
+          required
+          value={value.currentManagement}
+          onChange={(v) => set("currentManagement", v)}
+          options={CURRENT_MANAGEMENT}
+          error={errChips(value.currentManagement.length > 0)}
+        />
+        {value.currentManagement.includes("Other") ? (
           <TextField
-            label="Other"
+            label="Manual input (max 15 characters)"
             value={value.currentManagementOther}
-            onChange={(v) => set("currentManagementOther", v)}
+            onChange={(v) => set("currentManagementOther", v.slice(0, 15))}
             placeholder="Enter category name"
           />
-        </div>
+        ) : null}
 
         <SelectField
           label="Which CRM does your team use?"
@@ -159,16 +156,14 @@ export function Step4PlatformPreferences({
           error={err(Boolean(value.crm))}
         />
 
-        <div className="sm:col-span-2">
-          <TextareaField
-            label="How would you define success for your design partner experience after 90 days?"
-            hint="Required (60 words max) · Placeholder: e.g. benchmark our AWS renewal, or cut redline cycle from 2 weeks to 3 days"
-            value={value.successDefinition}
-            onChange={(v) => set("successDefinition", v)}
-            placeholder="Describe what success looks like"
-            error={err(Boolean(value.successDefinition.trim()))}
-          />
-        </div>
+        <TextareaField
+          label="How would you define success for your design partner experience after 90 days?"
+          hint="Required (60 words max) · Placeholder: e.g. benchmark our AWS renewal, or cut redline cycle from 2 weeks to 3 days"
+          value={value.successDefinition}
+          onChange={(v) => set("successDefinition", v)}
+          placeholder="Describe what success looks like"
+          error={err(Boolean(value.successDefinition.trim()))}
+        />
 
         <SelectField
           label="How did you hear about aptAIvisor?"
@@ -183,11 +178,10 @@ export function Step4PlatformPreferences({
         {value.heardAbout === "Referred by someone" ? (
           <TextField
             label="If referred — who referred you?"
-            required
             value={value.referrerName}
             onChange={(v) => set("referrerName", v)}
             placeholder="Enter referrer name"
-            error={err(Boolean(value.referrerName.trim()))}
+            hint="Optional (10 words max) · short text"
           />
         ) : null}
       </div>

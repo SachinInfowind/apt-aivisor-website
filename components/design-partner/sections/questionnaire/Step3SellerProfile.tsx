@@ -18,6 +18,7 @@ export type Step3State = {
   termLength: string;
   salesMotion: string;
   contractTypes: string[];
+  /** Shown only when contractTypes includes "Other" (the Hardware subgroup's Other chip). */
   contractTypeOther: string;
   dealDeskFunction: string;
   dealPolicy: string;
@@ -29,6 +30,8 @@ export type Step3State = {
   signTimeAfterApproval: string;
   avgDealCycleTime: string;
   buyerPushbackTerms: string[];
+  /** Shown only when buyerPushbackTerms includes "Other". */
+  buyerPushbackTermsOther: string;
   lostDealSlowApprovals: string;
   biggestChallengeClosing: string;
   sellerNotes: string;
@@ -52,6 +55,7 @@ export const INITIAL_STEP3: Step3State = {
   signTimeAfterApproval: "",
   avgDealCycleTime: "",
   buyerPushbackTerms: [],
+  buyerPushbackTermsOther: "",
   lostDealSlowApprovals: "",
   biggestChallengeClosing: "",
   sellerNotes: "",
@@ -115,7 +119,12 @@ const CONTRACT_TYPE_GROUPS: { label: string; options: string[] }[] = [
   },
   {
     label: "Hardware",
-    options: ["Bundle (hardware + software + support)", "Volume purchase agreement", "Lease or lease-to-own"],
+    options: [
+      "Bundle (hardware + software + support)",
+      "Volume purchase agreement",
+      "Lease or lease-to-own",
+      "Other",
+    ],
   },
 ];
 
@@ -247,7 +256,7 @@ export function Step3SellerProfile({
     <div className="flex w-full flex-col items-start gap-10">
       <div className="flex w-full flex-col items-start gap-6">
         <StepSectionHeading title="Sales & Deal Profile" stepLabel={stepLabel} />
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+        <div className="flex w-full flex-col items-start gap-6">
           <SelectField
             label="Your company's Annual revenue (ARR if you sell subscriptions)"
             required
@@ -294,7 +303,7 @@ export function Step3SellerProfile({
             error={err(Boolean(value.salesMotion))}
           />
 
-          <div className="flex w-full flex-col items-start gap-5 sm:col-span-2 sm:max-w-[36.4375rem]">
+          <div className="flex w-full flex-col items-start gap-5">
             <p className="text-sm font-medium leading-5 text-ink">
               What type of contracts do you primarily sell? *
             </p>
@@ -311,19 +320,21 @@ export function Step3SellerProfile({
             {errChips(value.contractTypes.length > 0) ? (
               <p className="text-sm leading-5 text-red-600">Please select at least one contract type</p>
             ) : null}
-            <TextField
-              label="Other"
-              value={value.contractTypeOther}
-              onChange={(v) => set("contractTypeOther", v)}
-              placeholder="Enter category name"
-            />
+            {value.contractTypes.includes("Other") ? (
+              <TextField
+                label="Manual input (max 15 characters)"
+                value={value.contractTypeOther}
+                onChange={(v) => set("contractTypeOther", v.slice(0, 15))}
+                placeholder="Enter category name"
+              />
+            ) : null}
           </div>
         </div>
       </div>
 
       <div className="flex w-full flex-col items-start gap-6">
         <StepSectionHeading title="Deal Desk & Approval Workflow" />
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+        <div className="flex w-full flex-col items-start gap-6">
           <SelectField
             label="Do you have a dedicated deal desk function?"
             required
@@ -342,16 +353,14 @@ export function Step3SellerProfile({
             options={DEAL_POLICY}
             error={err(Boolean(value.dealPolicy))}
           />
-          <div className="sm:col-span-2">
-            <ChipMultiSelect
-              label="Where would you want help? (Select all that apply)"
-              required
-              value={value.dealDeskHelp}
-              onChange={(v) => set("dealDeskHelp", v)}
-              options={DEAL_DESK_HELP}
-              error={errChips(value.dealDeskHelp.length > 0)}
-            />
-          </div>
+          <ChipMultiSelect
+            label="Where would you want help? (Select all that apply)"
+            required
+            value={value.dealDeskHelp}
+            onChange={(v) => set("dealDeskHelp", v)}
+            options={DEAL_DESK_HELP}
+            error={errChips(value.dealDeskHelp.length > 0)}
+          />
           <SelectField
             label="How many non-standard deals (requiring special approval) do you review per quarter on average?"
             required
@@ -370,22 +379,20 @@ export function Step3SellerProfile({
             options={APPROVAL_CYCLE_TIME}
             error={err(Boolean(value.approvalCycleTime))}
           />
-          <div className="sm:col-span-2">
-            <ChipMultiSelect
-              label="Who is typically involved in deal approval?"
-              required
-              value={value.dealApprovalInvolved}
-              onChange={(v) => set("dealApprovalInvolved", v)}
-              options={DEAL_APPROVAL_INVOLVED}
-              error={errChips(value.dealApprovalInvolved.length > 0)}
-            />
-          </div>
+          <ChipMultiSelect
+            label="Who is typically involved in deal approval?"
+            required
+            value={value.dealApprovalInvolved}
+            onChange={(v) => set("dealApprovalInvolved", v)}
+            options={DEAL_APPROVAL_INVOLVED}
+            error={errChips(value.dealApprovalInvolved.length > 0)}
+          />
         </div>
       </div>
 
       <div className="flex w-full flex-col items-start gap-6">
         <StepSectionHeading title="Contract & Redline Operations" />
-        <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8">
+        <div className="flex w-full flex-col items-start gap-6">
           <SelectField
             label="What percentage of your deals involves changes to your standard contract?"
             required
@@ -422,6 +429,14 @@ export function Step3SellerProfile({
             options={BUYER_PUSHBACK_TERMS}
             error={errChips(value.buyerPushbackTerms.length > 0)}
           />
+          {value.buyerPushbackTerms.includes("Other") ? (
+            <TextField
+              label="Manual input (max 15 characters)"
+              value={value.buyerPushbackTermsOther}
+              onChange={(v) => set("buyerPushbackTermsOther", v.slice(0, 15))}
+              placeholder="Enter category name"
+            />
+          ) : null}
           <SelectField
             label="Have you ever lost a deal because internal approvals took too long?"
             required
