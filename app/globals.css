@@ -1,6 +1,22 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
+/* Tailwind v4's preflight doesn't set cursor:pointer on <button> (only
+ * <a href> gets it from the browser by default) — site-wide, every custom
+ * button/clickable control needs this explicitly or it shows the plain
+ * arrow cursor on hover, which reads as "not clickable" to users even
+ * though it is. One rule here instead of hunting down every button across
+ * every component. `disabled:cursor-not-allowed` utilities already used
+ * throughout the codebase still win (higher specificity), so disabled
+ * buttons are unaffected. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+}
+
 :root {
   --background: #ffffff;
   --foreground: #182230;

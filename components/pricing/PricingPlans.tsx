@@ -9,6 +9,7 @@
 export type BillingPeriod = "monthly" | "yearly";
 
 import type { PricingCatalogSection, PricingPlanPrice } from "@/lib/cms/types";
+import { PlanFeatureIcon } from "./PlanFeatureIcon";
 
 function formatPrice(amount: number) {
   return `$${Math.round(amount).toLocaleString("en-US")}`;
@@ -21,7 +22,7 @@ function CheckIcon({ onBlue }: { onBlue?: boolean }) {
       viewBox="0 0 20 20"
       fill="none"
       aria-hidden
-      className={`mt-0.5 shrink-0 ${onBlue ? "text-white" : "text-nav"}`}
+      className={`-mt-px shrink-0 ${onBlue ? "text-white" : "text-nav"}`}
     >
       <path
         d="M16.6667 5L7.50004 14.1667L3.33337 10"
@@ -152,7 +153,12 @@ function PlanCard({
                       included ? "" : "opacity-40"
                     }`}
                   >
-                    <CheckIcon onBlue={onBlue} />
+                    <PlanFeatureIcon
+                      planId={plan.planId}
+                      label={item.label}
+                      fallback={<CheckIcon onBlue={onBlue} />}
+                      className={`-mt-px shrink-0 ${onBlue ? "text-white" : "text-nav"}`}
+                    />
                     <span
                       className={`min-w-0 text-xs font-medium leading-[1.5] ${
                         onBlue ? "text-white" : "text-nav"

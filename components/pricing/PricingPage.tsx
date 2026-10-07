@@ -56,16 +56,19 @@ export default function PricingPage({ sections }: { sections: PageSection[] }) {
 
           {/* Add-ons — full-bleed white (Frame 205) */}
           <PricingAddOns catalog={catalog} />
+        </div>
 
-          {/* Platform ROI — on gradient, same content width as FAQ */}
+        {/* Platform ROI — Figma "Platform ROI" frame: its own full-bleed gradient
+            (#B5CFFF → #1C6BFF), padding 100×80, 1280 content. */}
+        {roi ? (
           <div
-            className={`${layout.sectionX} pb-10 pt-10 sm:pb-12 sm:pt-12 md:pb-16 md:pt-16`}
+            className={`${layout.sectionX} bg-[linear-gradient(180deg,#B5CFFF_0%,#1C6BFF_100%)] py-12 sm:py-16 md:py-[6.25rem]`}
           >
             <div className={layout.inner}>
-              {roi ? <PlatformRoi tabs={roi.tabs} tabsLabel={roi.tabsLabel} /> : null}
+              <PlatformRoi tabs={roi.tabs} tabsLabel={roi.tabsLabel} />
             </div>
           </div>
-        </div>
+        ) : null}
 
         {faq && <FaqSection {...faq} />}
         {waitlist && (

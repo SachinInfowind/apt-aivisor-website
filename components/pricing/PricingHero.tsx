@@ -3,7 +3,6 @@
 import { homeSerif } from "../ui/fonts";
 import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import type { PricingHeroSection } from "@/lib/cms/types";
-import { CloudBand } from "@/components/ui/CloudBand";
 
 /**
  * Pricing page hero — Figma Pricing (1:7620) top band.
@@ -83,7 +82,6 @@ export function PricingHero({
           {(hero?.saveLabel ?? "").replace("{percent}", String(yearlyDiscountPercent))}
         </span>
       </div>
-      <CloudBand priority variant="edge" />
     </header>
   );
 }
