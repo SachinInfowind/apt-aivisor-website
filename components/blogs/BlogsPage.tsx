@@ -1,12 +1,12 @@
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/HeaderCms";
-import { HeroGlowAccent } from "@/components/ui/HeroGlowAccent";
+import { HeroGlow } from "@/components/ui/HeroGlow";
+import { CloudBand } from "@/components/ui/CloudBand";
 import { homeSerif } from "@/components/ui/fonts";
 import { layout } from "@/components/ui/type";
 import { BlogCard } from "./BlogCard";
 import { BlogWaitlistCta } from "./BlogWaitlistCta";
 import { NewsletterForm } from "./NewsletterForm";
-import { RecaptchaNotice } from "@/components/ui/Recaptcha";
 import { Pagination } from "./Pagination";
 import type { BlogHeroSection, BlogPost } from "@/lib/cms/types";
 
@@ -21,6 +21,12 @@ export default function BlogsPage({
   page: number;
   pageCount: number;
 }) {
+  const heading = hero?.heading?.trim() || "Resource";
+  const headingAccent = hero?.headingAccent?.trim() || "Library";
+  const subhead =
+    hero?.subhead?.trim() ||
+    "Subscribe to learn about new product features, the latest in technology, solutions, and updates.";
+
   return (
     <div
       id="top"
@@ -28,36 +34,43 @@ export default function BlogsPage({
     >
       <Header />
       <main className="w-full">
-        <section className={`relative overflow-hidden ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-32 sm:pt-40`}>
-          <HeroGlowAccent />
-          <div className={`${layout.inner} relative z-[1] flex flex-col items-center gap-9 text-center`}>
-            <div className="flex flex-col items-center gap-4">
+        <section
+          className={`relative overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(9rem,22vw,16rem)] pt-[clamp(8rem,16svh,14rem)] sm:pt-[clamp(9rem,18svh,15rem)]`}
+        >
+          <HeroGlow />
+          <div
+            className={`${layout.inner} relative z-[1] flex flex-col items-center gap-10 sm:gap-12 text-center`}
+          >
+            <div className="flex flex-col items-center gap-6 sm:gap-9">
               <h1
-                className={`${homeSerif.className} text-[clamp(2.5rem,6vw,4.5rem)] leading-[1.05] tracking-[-0.02em] text-navy`}
+                className={`${homeSerif.className} text-[clamp(3rem,6.94vw,6.25rem)] leading-[1] tracking-[-0.02em] text-navy`}
               >
-                {hero?.heading} <span className="italic text-brand">{hero?.headingAccent}</span>
+                <span>{heading}</span>{" "}
+                <span className="italic text-brand">{headingAccent}</span>
               </h1>
-              <p className="max-w-xl text-body-lg text-ink">{hero?.subhead}</p>
+              <p className="max-w-[48rem] text-base text-[#344054] sm:text-[1.25rem] sm:leading-[1.875rem]">
+                {subhead}
+              </p>
             </div>
 
             <div className="flex flex-col items-center gap-2">
               <NewsletterForm
-                placeholder={hero?.emailPlaceholder}
-                subscribeLabel={hero?.subscribeLabel}
+                placeholder={hero?.emailPlaceholder || "Enter your email"}
+                subscribeLabel={hero?.subscribeLabel || "Subscribe"}
               />
-              <p className="text-body-sm text-subtle">
-                {hero?.privacyPrefix}{" "}
+              <p className="text-[14px] leading-5 text-[#475467]">
+                {hero?.privacyPrefix || "We care about your data in our"}{" "}
                 <a
                   href={hero?.privacyLinkHref || "/privacy"}
-                  className="underline underline-offset-2"
+                  className="text-[#0042BB] underline underline-offset-2 hover:opacity-80"
                 >
-                  {hero?.privacyLinkLabel}
+                  {hero?.privacyLinkLabel || "privacy policy"}
                 </a>
                 .
               </p>
-              <RecaptchaNotice className="max-w-md text-center" />
             </div>
           </div>
+          <CloudBand priority variant="band" />
         </section>
 
         <section className={`${layout.sectionX} pb-24`}>
@@ -65,13 +78,18 @@ export default function BlogsPage({
             {posts.length > 0 ? (
               <div className="flex w-full max-w-[76rem] flex-col items-center gap-16">
                 {page === 1 ? (
-                  <BlogCard post={posts[0]!} variant="featured" />
+                  <BlogCard post={posts[0]!} variant="featured" index={0} />
                 ) : null}
 
                 {(page === 1 ? posts.slice(1) : posts).length > 0 ? (
                   <div className="grid w-full grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-                    {(page === 1 ? posts.slice(1) : posts).map((post) => (
-                      <BlogCard key={post.id} post={post} variant="grid" />
+                    {(page === 1 ? posts.slice(1) : posts).map((post, idx) => (
+                      <BlogCard
+                        key={post.id}
+                        post={post}
+                        variant="grid"
+                        index={idx}
+                      />
                     ))}
                   </div>
                 ) : null}

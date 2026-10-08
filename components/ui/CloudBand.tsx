@@ -64,14 +64,23 @@ export function CloudBand({
           centre it and let the sides bleed so the scallops span every
           viewport width. */}
       <div className="relative left-1/2 aspect-[1630/404] w-[max(113.2%,60rem)] -translate-x-1/2">
-        <CmsImage
-          image={clouds.band}
-          width={1568}
-          height={320}
-          sizes="120vw"
-          priority={priority}
-          className="h-full w-full max-w-none select-none object-fill"
-        />
+        {clouds.band ? (
+          <CmsImage
+            image={clouds.band}
+            width={1568}
+            height={320}
+            sizes="120vw"
+            priority={priority}
+            className="h-full w-full max-w-none select-none object-fill"
+          />
+        ) : (
+          <img
+            src="https://api.builder.io/api/v1/image/assets/TEMP/b9bb11ffeef9a23427c5c74c08a34cc1e4f5c7ea?width=3259"
+            alt=""
+            aria-hidden
+            className="h-full w-full max-w-none select-none object-fill pointer-events-none"
+          />
+        )}
       </div>
     </div>
   );

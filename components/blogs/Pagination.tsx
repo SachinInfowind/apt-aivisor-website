@@ -21,24 +21,26 @@ function pageNumbers(current: number, total: number): (number | "...")[] {
   return result;
 }
 
-export function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
-  if (pageCount <= 1) return null;
+export function Pagination({ page = 1, pageCount = 1 }: { page: number; pageCount: number }) {
+  const total = Math.max(1, pageCount);
+  const isFirstPage = page <= 1;
+  const isLastPage = page >= total;
 
   return (
     <nav
       aria-label="Blog pagination"
-      className="flex w-full items-center justify-between border-t border-line pt-8"
+      className="flex w-full items-center justify-between border-t border-[#EAECF0] pt-5"
     >
       <Link
         href={pageHref(Math.max(1, page - 1))}
-        aria-disabled={page <= 1}
-        className={`inline-flex items-center gap-2 text-body-sm font-semibold text-subtle transition-colors hover:text-brand ${
-          page <= 1 ? "pointer-events-none opacity-40" : ""
+        aria-disabled={isFirstPage}
+        className={`inline-flex items-center gap-2 text-sm font-semibold text-[#475467] transition-colors hover:text-brand ${
+          isFirstPage ? "pointer-events-none opacity-40 cursor-not-allowed" : ""
         }`}
       >
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
           <path
-            d="M16.6693 10H3.33594M3.33594 10L8.33594 15M3.33594 10L8.33594 5"
+            d="M15.8333 10H4.16667M4.16667 10L10 15.8333M4.16667 10L10 4.16667"
             stroke="currentColor"
             strokeWidth="1.67"
             strokeLinecap="round"
@@ -48,12 +50,12 @@ export function Pagination({ page, pageCount }: { page: number; pageCount: numbe
         Previous
       </Link>
 
-      <div className="flex items-center gap-0.5">
-        {pageNumbers(page, pageCount).map((p, i) =>
+      <div className="flex items-center gap-1">
+        {pageNumbers(page, total).map((p, i) =>
           p === "..." ? (
             <span
               key={`ellipsis-${i}`}
-              className="grid h-10 w-10 place-items-center text-body-sm text-subtle"
+              className="grid h-10 w-10 place-items-center text-sm font-medium text-[#475467]"
             >
               ...
             </span>
@@ -62,10 +64,10 @@ export function Pagination({ page, pageCount }: { page: number; pageCount: numbe
               key={p}
               href={pageHref(p)}
               aria-current={p === page ? "page" : undefined}
-              className={`grid h-10 w-10 place-items-center rounded-pill text-body-sm font-medium transition-colors ${
+              className={`grid h-10 w-10 place-items-center rounded-lg text-sm font-medium transition-colors ${
                 p === page
-                  ? "bg-surface-muted text-navy"
-                  : "text-subtle hover:bg-surface-muted hover:text-navy"
+                  ? "bg-[#F9FAFB] text-[#182230] font-semibold shadow-xs"
+                  : "text-[#475467] hover:bg-[#F9FAFB] hover:text-[#182230]"
               }`}
             >
               {p}
@@ -75,16 +77,16 @@ export function Pagination({ page, pageCount }: { page: number; pageCount: numbe
       </div>
 
       <Link
-        href={pageHref(Math.min(pageCount, page + 1))}
-        aria-disabled={page >= pageCount}
-        className={`inline-flex items-center gap-2 text-body-sm font-semibold text-subtle transition-colors hover:text-brand ${
-          page >= pageCount ? "pointer-events-none opacity-40" : ""
+        href={pageHref(Math.min(total, page + 1))}
+        aria-disabled={isLastPage}
+        className={`inline-flex items-center gap-2 text-sm font-semibold text-[#475467] transition-colors hover:text-brand ${
+          isLastPage ? "pointer-events-none opacity-40 cursor-not-allowed" : ""
         }`}
       >
         Next
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
           <path
-            d="M3.33594 10H16.6693M16.6693 10L11.6693 5M16.6693 10L11.6693 15"
+            d="M4.16667 10H15.8333M15.8333 10L10 4.16667M15.8333 10L10 15.8333"
             stroke="currentColor"
             strokeWidth="1.67"
             strokeLinecap="round"

@@ -126,74 +126,86 @@ function AboutMegaMenu({
 
         <div className="bg-surface p-6 lg:pl-8">
           <p className="text-caption font-semibold text-brand">
-            {featured.title}
+            {featured.title || "Resources"}
           </p>
-          <div className="mt-3 flex gap-3.5">
+          <div className="mt-3.5 flex gap-4">
             {featuredIsVideo ? (
               <button
                 type="button"
                 onClick={() => onWatchVideo(watchHref)}
-                className="relative flex h-[100px] w-[128px] shrink-0 flex-col justify-between overflow-hidden rounded-2xl bg-brand p-3 text-left text-white"
+                className="group relative flex h-[104px] w-[148px] shrink-0 flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B55DD] via-[#0844BA] to-[#042A82] p-3 text-left text-white shadow-sm transition-transform duration-200 hover:scale-[1.02]"
               >
-                <span className="absolute inset-0 bg-card-art opacity-80" />
-                <span className="relative text-nano font-semibold opacity-90">
-                  {featured.thumbLine1}
+                <span className="relative text-[11px] font-semibold text-white/90">
+                  {featured.thumbLine1 || "Part 1"}
                 </span>
-                <span className="relative mx-auto grid h-8 w-8 place-items-center rounded-pill bg-white/20">
-                  <AboutMenuIcon name="play" className="text-white" />
+                <span className="absolute inset-0 m-auto flex h-11 w-11 items-center justify-center rounded-full bg-white/25 shadow-inner backdrop-blur-xs transition-transform duration-200 group-hover:scale-110">
+                  <svg
+                    className="h-5 w-5 translate-x-0.5 fill-[#063397] text-[#063397]"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
+                    <polygon points="7,4 20,12 7,20" fill="currentColor" />
+                  </svg>
                 </span>
-                <span className="relative text-caption font-semibold leading-tight">
-                  {featured.thumbLine2}
+                <span className="relative text-[13px] font-bold leading-tight text-white line-clamp-2">
+                  {featured.thumbLine2 || featured.heading || "How to get started"}
                 </span>
               </button>
             ) : (
               <a
                 href={watchHref}
-                className="relative flex h-[100px] w-[128px] shrink-0 flex-col justify-between overflow-hidden rounded-2xl bg-brand p-3 text-left text-white"
+                className="group relative flex h-[104px] w-[148px] shrink-0 flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-[#0B55DD] via-[#0844BA] to-[#042A82] p-3 text-left text-white shadow-sm transition-transform duration-200 hover:scale-[1.02]"
               >
-                <span className="absolute inset-0 bg-card-art opacity-80" />
-                <span className="relative text-nano font-semibold opacity-90">
-                  {featured.thumbLine1}
+                <span className="relative text-[11px] font-semibold text-white/90">
+                  {featured.thumbLine1 || "Part 1"}
                 </span>
-                <span className="relative mx-auto grid h-8 w-8 place-items-center rounded-pill bg-white/20">
-                  <AboutMenuIcon name="play" className="text-white" />
+                <span className="absolute inset-0 m-auto flex h-11 w-11 items-center justify-center rounded-full bg-white/25 shadow-inner backdrop-blur-xs transition-transform duration-200 group-hover:scale-110">
+                  <svg
+                    className="h-5 w-5 translate-x-0.5 fill-[#063397] text-[#063397]"
+                    viewBox="0 0 24 24"
+                    aria-hidden
+                  >
+                    <polygon points="7,4 20,12 7,20" fill="currentColor" />
+                  </svg>
                 </span>
-                <span className="relative text-caption font-semibold leading-tight">
-                  {featured.thumbLine2}
+                <span className="relative text-[13px] font-bold leading-tight text-white line-clamp-2">
+                  {featured.thumbLine2 || featured.heading || "How to get started"}
                 </span>
               </a>
             )}
             <div className="min-w-0 flex-1">
-              <p className="text-body font-semibold text-navy">
-                {featured.heading}
+              <p className="text-[15px] font-bold leading-snug text-navy">
+                {featured.heading || "How to get started"}
               </p>
-              <p className="mt-1 text-body-sm text-subtle">{featured.body}</p>
+              <p className="mt-1 text-[13px] leading-relaxed text-subtle">
+                {featured.body || "Jump right in — get an overview of the basics and get started on building."}
+              </p>
               {featuredIsVideo ? (
                 <button
                   type="button"
                   onClick={() => onWatchVideo(watchHref)}
-                  className="mt-2.5 inline-flex items-center gap-1.5 text-body-sm font-semibold text-brand"
+                  className="mt-3 inline-flex items-center gap-1.5 text-body-sm font-semibold text-brand transition-colors hover:underline"
                 >
-                  <AboutMenuIcon name="play" />
-                  {featured.watchLabel}
+                  <AboutMenuIcon name="play" className="h-4.5 w-4.5 text-brand shrink-0" />
+                  <span>{featured.watchLabel || "Watch video"}</span>
                 </button>
               ) : (
                 <a
                   href={watchHref}
-                  className="mt-2.5 inline-flex items-center gap-1.5 text-body-sm font-semibold text-brand"
+                  className="mt-3 inline-flex items-center gap-1.5 text-body-sm font-semibold text-brand transition-colors hover:underline"
                 >
-                  <AboutMenuIcon name="play" />
-                  {featured.watchLabel}
+                  <AboutMenuIcon name="play" className="h-4.5 w-4.5 text-brand shrink-0" />
+                  <span>{featured.watchLabel || "Watch video"}</span>
                 </a>
               )}
             </div>
           </div>
           <a
             href={featured.allHref ?? "#tutorials"}
-            className="mt-4 inline-flex items-center gap-1 text-body-sm font-semibold text-brand"
+            className="mt-5 inline-flex items-center gap-1.5 text-body-sm font-semibold text-brand transition-colors hover:underline"
           >
-            {featured.allLabel}
-            <span aria-hidden>→</span>
+            <span>{featured.allLabel || "All video tutorials"}</span>
+            <span aria-hidden className="text-base leading-none">→</span>
           </a>
         </div>
       </div>

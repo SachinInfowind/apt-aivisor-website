@@ -13,12 +13,47 @@ function formatDate(iso?: string) {
   });
 }
 
+const BLOG_BG_COVERS = [
+  "https://api.builder.io/api/v1/image/assets/TEMP/d0c6a167e3b67a8df3c17f38f723e6096a4640e0?width=1794",
+  "https://api.builder.io/api/v1/image/assets/TEMP/cde7b4b2bea19d4b97c58a10fb6a79baa92c97b6?width=1793",
+  "https://api.builder.io/api/v1/image/assets/TEMP/4f4be15a20691179704b28eb3cb84badb943f00b?width=1793",
+];
+
+function CardCoverPlaceholder({
+  id = 1,
+  index,
+}: {
+  id?: number | string;
+  index?: number;
+}) {
+  const numericId = typeof id === "number" ? id : (id ? id.toString().charCodeAt(0) : 0);
+  const patternIndex =
+    typeof index === "number"
+      ? ((index % 3) + 3) % 3
+      : Math.abs(numericId) % 3;
+
+  const bgUrl = BLOG_BG_COVERS[patternIndex];
+
+  return (
+    <div className="absolute inset-0 overflow-hidden bg-[#0038C7]">
+      <img
+        src={bgUrl}
+        alt=""
+        aria-hidden
+        className="h-full w-full object-cover select-none pointer-events-none"
+      />
+    </div>
+  );
+}
+
 export function BlogCard({
   post,
   variant = "featured",
+  index,
 }: {
   post: BlogPost;
   variant?: "featured" | "grid";
+  index?: number;
 }) {
   const coverUrl = post.coverImage?.url
     ? toAbsoluteMediaUrl(post.coverImage.url)
@@ -38,8 +73,8 @@ export function BlogCard({
         href={`/blogs/${post.slug}`}
         className={
           variant === "featured"
-            ? "relative aspect-[1216/560] w-full overflow-hidden rounded-3xl bg-surface-muted"
-            : "relative h-[240px] w-full shrink-0 self-stretch overflow-hidden rounded-2xl bg-surface-muted"
+            ? "relative aspect-[1216/560] w-full overflow-hidden rounded-3xl shadow-[0_4px_24px_rgba(0,66,187,0.12)]"
+            : "relative h-[240px] w-full shrink-0 self-stretch overflow-hidden rounded-2xl shadow-[0_2px_12px_rgba(0,66,187,0.08)]"
         }
       >
         {coverUrl ? (
@@ -54,7 +89,9 @@ export function BlogCard({
             }
             className="object-cover"
           />
-        ) : null}
+        ) : (
+          <CardCoverPlaceholder id={post.id} index={index} />
+        )}
       </Link>
 
       <div className="flex flex-col items-start gap-6 self-stretch">
@@ -100,7 +137,7 @@ export function BlogCard({
 
         {post.author ? (
           <div className="flex items-center gap-3">
-            <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-pill bg-surface-muted">
+            <span className="relative flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-soft font-semibold text-brand text-caption">
               {avatarUrl ? (
                 <Image
                   src={avatarUrl}
@@ -109,7 +146,9 @@ export function BlogCard({
                   sizes="40px"
                   className="object-cover"
                 />
-              ) : null}
+              ) : (
+                <span>{post.author.name?.charAt(0) || "A"}</span>
+              )}
             </span>
             <div className="flex flex-col items-start">
               <span className="text-body-sm font-semibold text-navy">
