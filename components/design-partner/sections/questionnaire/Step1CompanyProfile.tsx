@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { ALL_COUNTRY_NAMES } from "@/lib/countries";
-import { useRecaptcha } from "@/components/ui/Recaptcha";
-import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
+import { useWafFetch } from "@/components/ui/WafProtection";
 import {
   Field,
   PillRadioGroup,
@@ -148,7 +147,7 @@ function BusinessEmailField({
   onVerifyNow: () => void;
   error?: string;
 }) {
-  const { execute: executeRecaptcha } = useRecaptcha();
+  const wafFetch = useWafFetch();
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
 
@@ -156,12 +155,11 @@ function BusinessEmailField({
     setSendError(null);
     setSending(true);
     try {
-      const res = await fetch("/api/design-partner-application/verify-email/request", {
+      const res = await wafFetch("/api/design-partner-application/verify-email/request", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: value.trim(),
-          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.emailVerification),
         }),
       });
       if (!res.ok) {

@@ -6,7 +6,6 @@ import { layout } from "@/components/ui/type";
 import { BlogCard } from "./BlogCard";
 import { BlogWaitlistCta } from "./BlogWaitlistCta";
 import { NewsletterForm } from "./NewsletterForm";
-import { RecaptchaNotice } from "@/components/ui/Recaptcha";
 import { Pagination } from "./Pagination";
 import type { BlogHeroSection, BlogPost } from "@/lib/cms/types";
 
@@ -55,7 +54,6 @@ export default function BlogsPage({
                 </a>
                 .
               </p>
-              <RecaptchaNotice className="max-w-md text-center" />
             </div>
           </div>
         </section>
