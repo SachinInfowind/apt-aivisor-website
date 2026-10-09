@@ -13,10 +13,12 @@ function parseStatValue(raw: string): {
   target: number;
   suffix: string;
   decimals: number;
+  /** false for plain text such as "Zero": shown as is, with no number in front. */
+  numeric: boolean;
 } {
   const match = raw.trim().match(/^([^0-9.-]*)([0-9]+(?:\.[0-9]+)?)(.*)$/);
   if (!match) {
-    return { prefix: "", target: 0, suffix: raw, decimals: 0 };
+    return { prefix: "", target: 0, suffix: raw, decimals: 0, numeric: false };
   }
   const [, prefix, num, suffix] = match;
   const decimals = num.includes(".") ? num.split(".")[1].length : 0;
@@ -25,6 +27,7 @@ function parseStatValue(raw: string): {
     target: Number(num),
     suffix,
     decimals,
+    numeric: true,
   };
 }
 
@@ -33,7 +36,7 @@ function easeOutCubic(t: number) {
 }
 
 function AnimatedStatValue({ value }: { value: string }) {
-  const { prefix, target, suffix, decimals } = parseStatValue(value);
+  const { prefix, target, suffix, decimals, numeric } = parseStatValue(value);
   // "$0" has no visible count-up (0→0). Count down from a start value instead.
   const from = target === 0 ? 50 : 0;
   const [display, setDisplay] = useState(from);
@@ -92,7 +95,7 @@ function AnimatedStatValue({ value }: { value: string }) {
       className="font-display text-stat-xl leading-none text-brand-accent tabular-nums"
     >
       {prefix}
-      {formatted}
+      {numeric ? formatted : null}
       {suffix}
     </p>
   );

@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { homeSerif } from "../ui/fonts";
 import { layout } from "../ui/type";
 import type { ConfirmationSection } from "@/lib/cms/types";
+import { useThankYouInfo } from "@/lib/thank-you";
 
 /**
  * Thank-you content — Figma "Rectangle 47" (3400:1926) + "Frame 1261154200"
@@ -71,6 +72,12 @@ export function ThankYouContent({
   ctaLabel,
   ctaHref,
 }: ConfirmationSection) {
+  // Right after a form submit we know who it was: "Thank You, <name>!" and the role they applied as.
+  const who = useThankYouInfo();
+  const accent = who ? `${who.name}!` : headingAccent;
+  const lead = who?.role
+    ? `Your application as a ${who.role === "Both" ? "Buyer and Seller" : who.role} has been submitted successfully.`
+    : leadText;
   return (
     <section
       className={`relative flex w-full flex-col items-center bg-brand-soft ${layout.sectionX} pb-16 pt-[clamp(9.5rem,18vw,15rem)] sm:pb-20 md:pb-24`}
@@ -82,14 +89,12 @@ export function ThankYouContent({
           <h1
             className={`${homeSerif.className} text-display-italic leading-none tracking-[-0.02em]`}
           >
-            <span className="text-hero-display">{heading} </span>
-            {headingAccent && (
-              <span className="text-hero-negotiating">{headingAccent}</span>
-            )}
+            <span className="text-hero-display">{who ? "Thank You," : heading} </span>
+            {accent && <span className="text-hero-negotiating">{accent}</span>}
           </h1>
-          {leadText && (
+          {lead && (
             <p className="text-lg font-semibold leading-[1.5] text-ink sm:text-xl sm:leading-[1.875rem]">
-              {leadText}
+              {lead}
             </p>
           )}
           {bodyText && (

@@ -132,6 +132,7 @@ export function TextField({
   error,
   hint,
   type = "text",
+  maxLength,
 }: {
   label: string;
   required?: boolean;
@@ -141,11 +142,13 @@ export function TextField({
   error?: string;
   hint?: string;
   type?: "text" | "email";
+  maxLength?: number;
 }) {
   return (
     <Field label={label} required={required} error={error} hint={hint}>
       <input
         type={type}
+        maxLength={maxLength}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
