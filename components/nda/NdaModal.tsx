@@ -261,7 +261,7 @@ export function NdaModal() {
                 Cancel
               </button>
               <button type="submit" disabled={submitting} className={primaryButton}>
-                {submitting ? "Sending…" : "Send NDA"}
+                {submitting ? "Sending…" : "Request NDA draft"}
               </button>
             </div>
           </form>
