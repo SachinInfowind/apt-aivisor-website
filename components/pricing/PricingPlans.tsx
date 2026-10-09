@@ -8,7 +8,7 @@
 
 export type BillingPeriod = "monthly" | "yearly";
 
-import type { PricingCatalogSection, PricingPlanPrice } from "@/lib/cms/types";
+import type { PricingCatalogSection, PricingHeroSection, PricingPlanPrice } from "@/lib/cms/types";
 import { PlanFeatureIcon } from "./PlanFeatureIcon";
 
 function formatPrice(amount: number) {
@@ -136,13 +136,15 @@ function PlanCard({
       <div className="flex flex-col gap-6 sm:gap-8">
         {(plan.groups ?? []).map((group, groupIndex) => (
           <div key={group.title ?? groupIndex} className="flex flex-col gap-3 sm:gap-4">
-            <p
-              className={`text-xs font-semibold leading-[1.5] ${
-                onBlue ? "text-white" : "text-navy"
-              }`}
-            >
-              {group.title}
-            </p>
+            {group.title ? (
+              <p
+                className={`text-xs font-semibold leading-[1.5] ${
+                  onBlue ? "text-white" : "text-navy"
+                }`}
+              >
+                {group.title}
+              </p>
+            ) : null}
             <ul className="flex flex-col gap-3">
               {group.features.map((item) => {
                 const included = item.included !== false;
@@ -180,15 +182,24 @@ function PlanCard({
 export function PricingPlans({
   className = "",
   billing = "monthly",
+  onBillingChange,
   catalog,
   yearlyDiscountPercent,
+  toggleCopy,
 }: {
   className?: string;
   billing?: BillingPeriod;
+  onBillingChange?: (value: BillingPeriod) => void;
   catalog?: PricingCatalogSection;
   yearlyDiscountPercent: number;
+  /** Toggle copy from the CMS (`sections.pricing-hero`). */
+  toggleCopy?: Pick<
+    PricingHeroSection,
+    "monthlyLabel" | "yearlyLabel" | "saveLabel" | "toggleLabel"
+  >;
 }) {
   const plans = catalog?.plans ?? [];
+  const yearly = billing === "yearly";
 
   return (
     <div
@@ -203,6 +214,47 @@ export function PricingPlans({
           <p className="max-w-[40rem] text-sm leading-6 text-[#446278] sm:text-base">
             {catalog.plansSubhead}
           </p>
+        ) : null}
+
+        {onBillingChange ? (
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            <span
+              className={`text-sm font-medium leading-[1.5] tracking-[-0.02em] ${
+                yearly ? "text-[#446278]" : "text-[#001C2E]"
+              }`}
+            >
+              {toggleCopy?.monthlyLabel}
+            </span>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={yearly}
+              aria-label={toggleCopy?.toggleLabel || undefined}
+              onClick={() => onBillingChange(yearly ? "monthly" : "yearly")}
+              className={`relative h-6 w-11 shrink-0 rounded-pill p-0.5 transition-colors ${
+                yearly ? "bg-brand-strong" : "bg-surface-muted"
+              }`}
+            >
+              <span
+                className={`block h-5 w-5 rounded-pill bg-white shadow-[0_1px_3px_rgba(16,24,40,0.1),0_1px_2px_rgba(16,24,40,0.06)] transition-transform ${
+                  yearly ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
+
+            <span
+              className={`text-sm font-medium leading-[1.5] tracking-[-0.02em] ${
+                yearly ? "text-[#001C2E]" : "text-[#446278]"
+              }`}
+            >
+              {toggleCopy?.yearlyLabel}
+            </span>
+
+            <span className="inline-flex items-center rounded-[32px] bg-[#ABEFC6] px-2.5 py-0.5 text-[13px] font-medium leading-[1.5] tracking-[-0.03em] text-black">
+              {(toggleCopy?.saveLabel ?? "").replace("{percent}", String(yearlyDiscountPercent))}
+            </span>
+          </div>
         ) : null}
       </div>
 

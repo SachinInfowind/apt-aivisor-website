@@ -83,10 +83,10 @@ function Stat({ value, label }: { value?: string; label?: string }) {
         className="h-14 w-px shrink-0 bg-brand-strong sm:h-20"
       />
       <div className="flex min-w-0 flex-col gap-2 sm:gap-4">
-        <p className="font-body text-[1.75rem] font-semibold leading-[1.2] tracking-[-0.02em] text-navy sm:text-[2.75rem] lg:text-[3.75rem]">
+        <p className="whitespace-nowrap font-body text-[1.75rem] font-semibold leading-[1.2] tracking-[-0.02em] text-navy sm:text-[2.75rem] lg:text-[3.75rem]">
           {value}
         </p>
-        <p className="text-sm leading-5 text-ink">{label}</p>
+        <p className="whitespace-nowrap text-sm leading-5 text-ink">{label}</p>
       </div>
     </div>
   );
@@ -164,7 +164,7 @@ export function PlatformRoi({
               {variant.body}
             </p>
 
-            <div className="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:items-start sm:gap-10 lg:gap-[3.1875rem]">
+            <div className="flex flex-col gap-6 sm:flex-row sm:flex-nowrap sm:items-start sm:gap-10 lg:gap-[3.1875rem]">
               {(variant.stats ?? []).map((stat, i) => (
                 <Stat key={i} value={stat.value} label={stat.label} />
               ))}

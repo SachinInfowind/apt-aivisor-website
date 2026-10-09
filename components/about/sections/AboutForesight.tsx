@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 import { homeSerif } from "@/components/ui/fonts";
 import { layout } from "@/components/ui/type";
 import { QuoteMark } from "../QuoteMark";
@@ -9,6 +12,10 @@ import type { AboutForesightSection } from "@/lib/cms/types";
  * "Institutional-grade foresight. For everyone." — Figma "Frame 207" + "Carts"
  * (3335:1543 / 3335:1631): heading row, a fixed quote card, and a card row that
  * bleeds off the right edge of the viewport (native horizontal scroll, snap).
+ *
+ * "Read more" expands `introExpanded` in place (no scroll/navigation) — toggled
+ * by `readMoreLabel` / `readLessLabel`. `readMoreHref` is ignored once
+ * `introExpanded` is set; it's kept for older content that only has a link.
  */
 export function AboutForesight({
   heading,
@@ -16,12 +23,16 @@ export function AboutForesight({
   intro,
   readMoreLabel,
   readMoreHref,
+  introExpanded,
+  readLessLabel,
   quoteBefore,
   quoteAccent,
   quoteAfter,
   quoteLogo,
   items,
 }: AboutForesightSection) {
+  const [expanded, setExpanded] = useState(false);
+
   return (
     <section className={`w-full bg-white/50 py-16 sm:py-20 md:py-section-y ${layout.sectionX}`}>
       <div className={`${layout.inner} flex w-full max-w-container flex-col gap-12`}>
@@ -34,14 +45,36 @@ export function AboutForesight({
               <span className="italic text-brand-accent">{headingAccent}</span>
             ) : null}
           </h2>
-          <p className="w-full max-w-intro text-base leading-7 text-navy sm:text-xl sm:leading-title-sm">
-            {intro}{" "}
-            {readMoreLabel && readMoreHref ? (
-              <a href={readMoreHref} className="text-brand-accent hover:underline">
-                {readMoreLabel}
-              </a>
+          <div className="flex w-full max-w-intro flex-col gap-3 text-base leading-7 text-navy sm:text-xl sm:leading-title-sm">
+            <p>
+              {intro}{" "}
+              {!expanded && readMoreLabel && introExpanded ? (
+                <button
+                  type="button"
+                  onClick={() => setExpanded(true)}
+                  className="text-brand-accent hover:underline"
+                >
+                  {readMoreLabel}
+                </button>
+              ) : !expanded && readMoreLabel && readMoreHref ? (
+                <a href={readMoreHref} className="text-brand-accent hover:underline">
+                  {readMoreLabel}
+                </a>
+              ) : null}
+            </p>
+            {expanded && introExpanded ? (
+              <p>
+                {introExpanded}{" "}
+                <button
+                  type="button"
+                  onClick={() => setExpanded(false)}
+                  className="text-brand-accent hover:underline"
+                >
+                  {readLessLabel || "Less More."}
+                </button>
+              </p>
             ) : null}
-          </p>
+          </div>
         </div>
 
         <div className="flex w-full flex-col gap-6 lg:flex-row">

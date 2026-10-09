@@ -821,6 +821,8 @@ export interface AboutForesightSection {
   intro?: string;
   readMoreLabel?: string;
   readMoreHref?: string;
+  introExpanded?: string;
+  readLessLabel?: string;
   quoteBefore?: string;
   quoteAccent?: string;
   quoteAfter?: string;

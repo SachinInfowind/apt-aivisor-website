@@ -30,26 +30,18 @@ export function PricingBillingSection({
 
   return (
     <>
-      <PricingHero
-        billing={billing}
-        onBillingChange={setBilling}
-        yearlyDiscountPercent={yearlyDiscountPercent}
-        hero={hero}
-      />
+      <PricingHero hero={hero} />
 
-      <div className={`relative ${layout.sectionX} pt-8 sm:pt-10 md:pt-12`}>
-        {/* Fades the hero's white cloud floor into the gradient band below. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white to-transparent"
-        />
+      <div className={`relative ${layout.sectionX}`}>
         <div
           className={`${layout.inner} relative z-[1] flex flex-col gap-8 sm:gap-10 md:gap-[6.25rem]`}
         >
           <PricingPlans
             billing={billing}
+            onBillingChange={setBilling}
             catalog={catalog}
             yearlyDiscountPercent={yearlyDiscountPercent}
+            toggleCopy={hero}
           />
           {enterprise ? <EnterprisePlan {...enterprise} /> : null}
         </div>
