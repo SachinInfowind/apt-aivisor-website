@@ -54,6 +54,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Enter a valid email address" }, { status: 400 });
   }
 
+  // Which page the emailed link returns to (only known pages; default stays /design-partner).
+  const requested = (body as { sourcePath?: unknown })?.sourcePath;
+  const sourcePath = requested === "/waitlist" ? "/waitlist" : "/design-partner";
+
   let res: Response;
   try {
     res = await fetch(`${STRAPI_URL}/api/email-verifications/request`, {
@@ -62,7 +66,7 @@ export async function POST(request: NextRequest) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${STRAPI_EMAIL_VERIFICATION_API_TOKEN}`,
       },
-      body: JSON.stringify({ email: email.trim(), sourcePath: "/design-partner" }),
+      body: JSON.stringify({ email: email.trim(), sourcePath }),
       cache: "no-store",
     });
   } catch (err) {

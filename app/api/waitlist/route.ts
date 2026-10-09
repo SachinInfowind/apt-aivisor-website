@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { waitlistFormSchema } from "@/lib/validation/waitlistForm";
+import { waitlistSubmitSchema } from "@/lib/validation/waitlistApplication";
 
 const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
@@ -49,50 +49,33 @@ export async function POST(request: NextRequest) {
   }
 
 
-  const parsed = waitlistFormSchema.safeParse(body);
+  const parsed = waitlistSubmitSchema.safeParse(body);
   if (!parsed.success) {
     const errors: Record<string, string> = {};
     for (const issue of parsed.error.issues) {
-      const key = issue.path[0];
+      // Answers sit under step1/step2/step3; report the field name.
+      const key = issue.path[issue.path.length - 1];
       if (typeof key === "string" && !errors[key]) errors[key] = issue.message;
     }
     return NextResponse.json({ message: "Invalid submission", errors }, { status: 400 });
   }
 
-  const { companyWebsite, ...clean } = parsed.data;
-
-  // Honeypot tripped — pretend success so bots can't tell it was dropped.
-  if (companyWebsite) {
-    return NextResponse.json({ ok: true }, { status: 200 });
-  }
-
+  // Honeypot tripped — the CMS pretends success so bots can't tell it was dropped.
   let res: Response;
   try {
-    res = await fetch(`${STRAPI_URL}/api/waitlist-signups`, {
+    res = await fetch(`${STRAPI_URL}/api/waitlist-signups/submit`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         ...(STRAPI_API_TOKEN ? { Authorization: `Bearer ${STRAPI_API_TOKEN}` } : {}),
       },
-      body: JSON.stringify({
-        data: {
-          fullName: clean.fullName,
-          email: clean.email,
-          company: clean.company,
-          role: clean.role,
-          interest: clean.interest,
-          spend: clean.spend || undefined,
-          notes: clean.notes,
-          agreedToTerms: clean.agreedToTerms,
-          sourcePath: "/waitlist",
-        },
-      }),
+      body: JSON.stringify({ ...parsed.data, sourcePath: "/waitlist" }),
       cache: "no-store",
     });
   } catch (err) {
     console.warn("[waitlist] Strapi unreachable:", err instanceof Error ? err.message : err);
     return NextResponse.json(
-      { message: "We couldn't reserve your spot right now — please try again shortly." },
+      { message: "We couldn't submit your application right now — please try again shortly." },
       { status: 502 },
     );
   }
@@ -108,10 +91,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: "Invalid submission", errors }, { status: 400 });
     }
     return NextResponse.json(
-      { message: "We couldn't reserve your spot right now — please try again shortly." },
+      { message: "We couldn't submit your application right now — please try again shortly." },
       { status: 502 },
     );
   }
 
-  return NextResponse.json({ ok: true }, { status: 200 });
+  const saved = (await res.json().catch(() => ({}))) as { data?: { firstName?: string; email?: string } };
+  return NextResponse.json(
+    { ok: true, firstName: saved.data?.firstName, email: saved.data?.email },
+    { status: 200 },
+  );
 }

@@ -134,18 +134,23 @@ function VerifiedCheckIcon() {
  * only flips local state to "pending" for now — actually sending the
  * verification email and handling the inbound link click is backend work,
  * not yet wired (see conversation). */
-function BusinessEmailField({
+export function BusinessEmailField({
   value,
   verification,
   onChange,
   onVerifyNow,
   error,
+  label = "Business Email",
+  sourcePath = "/design-partner",
 }: {
   value: string;
   verification: EmailVerificationStatus;
   onChange: (v: string) => void;
   onVerifyNow: () => void;
   error?: string;
+  label?: string;
+  /** Page the emailed link returns to (the CMS only accepts known pages). */
+  sourcePath?: "/design-partner" | "/waitlist";
 }) {
   const wafFetch = useWafFetch();
   const [sending, setSending] = useState(false);
@@ -160,6 +165,7 @@ function BusinessEmailField({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: value.trim(),
+          sourcePath,
         }),
       });
       if (!res.ok) {
@@ -176,7 +182,7 @@ function BusinessEmailField({
   };
 
   return (
-    <Field label="Business Email" required error={error ?? sendError ?? undefined} hint="A verification link will be sent to this email.">
+    <Field label={label} required error={error ?? sendError ?? undefined} hint="A verification link will be sent to this email.">
       <div
         className={`flex w-full items-center gap-2 rounded-lg border bg-white px-3.5 py-2.5 shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] focus-within:border-brand-accent ${
           error || sendError ? "border-red-400" : "border-line-strong"

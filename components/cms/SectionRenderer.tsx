@@ -26,7 +26,7 @@ import { TeamHeroSection } from "@/components/team/sections/TeamHeroSection";
 import { TeamRosterSection } from "@/components/team/sections/TeamRosterSection";
 import { WaitlistHeroSection } from "@/components/waitlist/sections/WaitlistHeroSection";
 import { WaitlistPerksSection } from "@/components/waitlist/sections/WaitlistPerksSection";
-import { WaitlistFormSection } from "@/components/waitlist/sections/WaitlistFormSection";
+import { WaitlistApplication } from "@/components/waitlist/application/WaitlistApplication";
 import { SolutionsHero } from "@/components/solutions/SolutionsHero";
 import { SolutionsFeatures } from "@/components/solutions/SolutionsFeatures";
 import { SolutionsWorkflows } from "@/components/solutions/SolutionsWorkflows";
@@ -121,7 +121,7 @@ export async function SectionRenderer({ sections }: { sections: PageSection[] })
           case "sections.waitlist-perks":
             return <WaitlistPerksSection key={key} {...section} />;
           case "sections.waitlist-form":
-            return <WaitlistFormSection key={key} {...section} />;
+            return <WaitlistApplication key={key} />;
           case "sections.solutions-hero":
             return <SolutionsHero key={key} {...section} />;
           case "sections.solutions-features":
