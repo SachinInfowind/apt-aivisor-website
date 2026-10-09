@@ -79,6 +79,7 @@ export function DesignPartnerQuestionnaire({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [hasRestored, setHasRestored] = useState(false);
   const [hasSavedDraft, setHasSavedDraft] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
   const [showErrors, setShowErrors] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "ok" | "error">(
     "idle",
@@ -94,6 +95,7 @@ export function DesignPartnerQuestionnaire({
   // (which can itself change `currentIndex` to a saved mid-form step) is
   // never treated as a user-driven step change.
   const skipNextScrollRef = useRef(true);
+  const savedConfirmTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Scroll the card back into view on every step change (Continue/Back) —
   // without this, advancing from the bottom of a long step leaves the user
@@ -109,6 +111,12 @@ export function DesignPartnerQuestionnaire({
     }
     cardRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [currentIndex, hasRestored]);
+
+  useEffect(() => {
+    return () => {
+      if (savedConfirmTimeoutRef.current) clearTimeout(savedConfirmTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     // The form only appears once a signed NDA is confirmed for this email (see NdaGate).
@@ -475,7 +483,21 @@ export function DesignPartnerQuestionnaire({
               <span />
             )}
 
-            <div className="flex flex-1 items-center justify-end">
+            <div className="flex flex-1 items-center justify-end gap-3">
+              {!isLastStep ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Already autosaved on every change — this just confirms it visibly.
+                    if (savedConfirmTimeoutRef.current) clearTimeout(savedConfirmTimeoutRef.current);
+                    setJustSaved(true);
+                    savedConfirmTimeoutRef.current = setTimeout(() => setJustSaved(false), 2000);
+                  }}
+                  className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-pill border border-line-strong bg-white px-4.5 py-3 text-base font-semibold leading-6 text-ink shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors hover:bg-surface active:scale-[0.98]"
+                >
+                  {justSaved ? "Saved ✓" : "Save and continue later"}
+                </button>
+              ) : null}
               <button
                 type="button"
                 disabled={submitStatus === "submitting"}

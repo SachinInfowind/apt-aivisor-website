@@ -78,7 +78,7 @@ const VENDOR_CATEGORIES = [
 
 const COMMITMENT_GROUPS: { label: string; options: string[] }[] = [
   {
-    label: "Cloud",
+    label: "Select Cloud",
     options: [
       "AWS EDP / Private Pricing Addendum",
       "Azure MACC",
@@ -88,19 +88,19 @@ const COMMITMENT_GROUPS: { label: string; options: string[] }[] = [
     ],
   },
   {
-    label: "AI (Anthropic / OpenAI / Gemini / Other)",
+    label: "Select AI (Anthropic / OpenAI / Gemini / Other)",
     options: ["AI committed spend", "AI reserved capacity (provisioned throughput)", "AI compute capacity"],
   },
   {
-    label: "Data",
+    label: "Select Data",
     options: ["Snowflake capacity commitment", "Databricks commitment", "Other"],
   },
   {
-    label: "Software",
+    label: "Select Software",
     options: ["Microsoft Enterprise Agreement", "Salesforce ELA", "Other multi-year software (e.g., Oracle, SAP)"],
   },
   {
-    label: "Hardware (Dell, HP, Lenovo, Cisco, etc.)",
+    label: "Select Hardware",
     options: ["Volume purchase agreement", "Multi-year bundle (hardware + software + support)", "Lease or lease-to-own"],
   },
   {
@@ -212,6 +212,8 @@ export function Step2BuyerProfile({
             label="Which vendor categories represent your largest spend? (Pick your top 3)"
             required
             maxSelect={3}
+            variant="checkbox"
+            columns={3}
             value={value.vendorCategories}
             onChange={(v) => set("vendorCategories", v)}
             options={VENDOR_CATEGORIES}
@@ -219,15 +221,16 @@ export function Step2BuyerProfile({
           />
           {value.vendorCategories.includes("Other") ? (
             <TextField
-              label="Manual input (max 15 characters)"
+              label="Enter vendor category"
               value={value.vendorCategoriesOther}
               onChange={(v) => set("vendorCategoriesOther", v.slice(0, 15))}
-              placeholder="Enter category name"
+              placeholder="Enter vendor category"
             />
           ) : null}
           <PillRadioGroup
             label="Do you have any multi-year committed spend agreements currently active?"
             required
+            variant="radio"
             value={value.hasCommitments}
             onChange={(v) => set("hasCommitments", v)}
             options={["Yes", "No", "Not sure"]}
@@ -236,25 +239,29 @@ export function Step2BuyerProfile({
           {value.hasCommitments === "Yes" ? (
             <div className="flex w-full flex-col items-start gap-5">
               <p className="text-sm font-medium leading-5 text-ink">If yes — which platforms? *</p>
-              {COMMITMENT_GROUPS.map((group) => (
-                <div key={group.label} className="flex w-full flex-col items-start gap-5">
-                  <ChipMultiSelect
-                    label={group.label}
-                    labelColor="muted"
-                    value={value.commitmentPlatforms}
-                    onChange={(v) => set("commitmentPlatforms", v)}
-                    options={group.options}
-                  />
-                  {group.label === "Data" && value.commitmentPlatforms.includes("Other") ? (
-                    <TextField
-                      label="Manual input (max 15 characters)"
-                      value={value.commitmentPlatformsOther}
-                      onChange={(v) => set("commitmentPlatformsOther", v.slice(0, 15))}
-                      placeholder="Enter category name"
+              <div className="grid w-full grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-3">
+                {COMMITMENT_GROUPS.map((group) => (
+                  <div key={group.label} className="flex w-full flex-col items-start gap-3">
+                    <ChipMultiSelect
+                      label={group.label}
+                      labelColor="muted"
+                      variant="checkbox"
+                      columns={1}
+                      value={value.commitmentPlatforms}
+                      onChange={(v) => set("commitmentPlatforms", v)}
+                      options={group.options}
                     />
-                  ) : null}
-                </div>
-              ))}
+                    {group.label === "Data" && value.commitmentPlatforms.includes("Other") ? (
+                      <TextField
+                        label="Enter Other Data"
+                        value={value.commitmentPlatformsOther}
+                        onChange={(v) => set("commitmentPlatformsOther", v.slice(0, 15))}
+                        placeholder="Enter Other Data"
+                      />
+                    ) : null}
+                  </div>
+                ))}
+              </div>
               {errChips(value.commitmentPlatforms.length > 0) ? (
                 <p className="text-sm leading-5 text-red-600">Please select at least one platform</p>
               ) : null}
@@ -305,6 +312,8 @@ export function Step2BuyerProfile({
           <ChipMultiSelect
             label="Who owns vendor contract negotiations at your company?"
             required
+            variant="checkbox"
+            columns={4}
             value={value.negotiationOwners}
             onChange={(v) => set("negotiationOwners", v)}
             options={NEGOTIATION_OWNERS}
@@ -338,17 +347,19 @@ export function Step2BuyerProfile({
             label="What are your biggest challenges in technology vendor negotiations today? (Pick maximum of 3)"
             required
             maxSelect={3}
+            variant="checkbox"
+            columns={3}
             value={value.negotiationChallenges}
             onChange={(v) => set("negotiationChallenges", v)}
             options={NEGOTIATION_CHALLENGES}
             error={errChips(value.negotiationChallenges.length > 0)}
           />
           <TextareaField
-            label="Anything else you'd like us to know about your buyer situation? (optional)"
-            hint="Optional (60 words max)· Placeholder: e.g. specific vendors you want benchmarks for, upcoming renewals, key pain points"
+            label="Anything else you'd like us to know about your buyer situation?"
             value={value.buyerNotes}
             onChange={(v) => set("buyerNotes", v)}
-            placeholder="Add a note"
+            placeholder="e.g. specific vendors you want benchmarks for, upcoming renewals, key pain points"
+            maxWords={60}
           />
         </div>
       </div>

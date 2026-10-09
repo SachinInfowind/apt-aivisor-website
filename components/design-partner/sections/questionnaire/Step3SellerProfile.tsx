@@ -97,7 +97,7 @@ const SALES_MOTION = [
 
 const CONTRACT_TYPE_GROUPS: { label: string; options: string[] }[] = [
   {
-    label: "Pricing",
+    label: "Select Pricing",
     options: [
       "Public / self-serve pricing",
       "Pay-as-you-go usage / subscription (incl. per-token)",
@@ -105,7 +105,7 @@ const CONTRACT_TYPE_GROUPS: { label: string; options: string[] }[] = [
     ],
   },
   {
-    label: "Commitments",
+    label: "Select Commitments",
     options: [
       "Committed spend discount (e.g., AWS EDP, Azure MACC, GCP EDP, Other)",
       "Reserved capacity (e.g., CUD, provisioned throughput, storage)",
@@ -114,17 +114,23 @@ const CONTRACT_TYPE_GROUPS: { label: string; options: string[] }[] = [
     ],
   },
   {
-    label: "Subscriptions",
+    label: "Select Subscriptions",
     options: ["Annual subscription", "Multi-year or company-wide license (ELA)", "Per-user fee plus usage credits"],
   },
   {
-    label: "Hardware",
-    options: [
-      "Bundle (hardware + software + support)",
-      "Volume purchase agreement",
-      "Lease or lease-to-own",
-      "Other",
-    ],
+    label: "Select Hardware",
+    options: ["Bundle (hardware + software + support)", "Volume purchase agreement", "Lease or lease-to-own"],
+  },
+  {
+    /** New in the latest Figma (frame 3423:4966) — not in the original PDF spec's
+     * contract-type list. No CMS schema change needed: contractTypes is a loose
+     * JSON array (global::chip-list), not an enum, so new options just work. */
+    label: "Select Channels and services",
+    options: ["Cloud marketplace private offers", "Professional services (SOW)"],
+  },
+  {
+    label: "Other",
+    options: ["Other"],
   },
 ];
 
@@ -307,25 +313,29 @@ export function Step3SellerProfile({
             <p className="text-sm font-medium leading-5 text-ink">
               What type of contracts do you primarily sell? *
             </p>
-            {CONTRACT_TYPE_GROUPS.map((group) => (
-              <ChipMultiSelect
-                key={group.label}
-                label={group.label}
-                labelColor="muted"
-                value={value.contractTypes}
-                onChange={(v) => set("contractTypes", v)}
-                options={group.options}
-              />
-            ))}
+            <div className="grid w-full grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-3">
+              {CONTRACT_TYPE_GROUPS.map((group) => (
+                <ChipMultiSelect
+                  key={group.label}
+                  label={group.label}
+                  labelColor="muted"
+                  variant="checkbox"
+                  columns={1}
+                  value={value.contractTypes}
+                  onChange={(v) => set("contractTypes", v)}
+                  options={group.options}
+                />
+              ))}
+            </div>
             {errChips(value.contractTypes.length > 0) ? (
               <p className="text-sm leading-5 text-red-600">Please select at least one contract type</p>
             ) : null}
             {value.contractTypes.includes("Other") ? (
               <TextField
-                label="Manual input (max 15 characters)"
+                label="Enter Other"
                 value={value.contractTypeOther}
                 onChange={(v) => set("contractTypeOther", v.slice(0, 15))}
-                placeholder="Enter category name"
+                placeholder="Enter Other"
               />
             ) : null}
           </div>
@@ -347,7 +357,7 @@ export function Step3SellerProfile({
           <PillRadioGroup
             label="Do you have deal policy or deal best practices guidelines"
             required
-            variant="card"
+            variant="radio"
             value={value.dealPolicy}
             onChange={(v) => set("dealPolicy", v)}
             options={DEAL_POLICY}
@@ -356,6 +366,8 @@ export function Step3SellerProfile({
           <ChipMultiSelect
             label="Where would you want help? (Select all that apply)"
             required
+            variant="checkbox"
+            columns={3}
             value={value.dealDeskHelp}
             onChange={(v) => set("dealDeskHelp", v)}
             options={DEAL_DESK_HELP}
@@ -382,6 +394,8 @@ export function Step3SellerProfile({
           <ChipMultiSelect
             label="Who is typically involved in deal approval?"
             required
+            variant="checkbox"
+            columns={3}
             value={value.dealApprovalInvolved}
             onChange={(v) => set("dealApprovalInvolved", v)}
             options={DEAL_APPROVAL_INVOLVED}
@@ -424,6 +438,8 @@ export function Step3SellerProfile({
             label="Which terms do buyers push back on most? (Pick up to 3)"
             required
             maxSelect={3}
+            variant="checkbox"
+            columns={4}
             value={value.buyerPushbackTerms}
             onChange={(v) => set("buyerPushbackTerms", v)}
             options={BUYER_PUSHBACK_TERMS}
@@ -431,36 +447,38 @@ export function Step3SellerProfile({
           />
           {value.buyerPushbackTerms.includes("Other") ? (
             <TextField
-              label="Manual input (max 15 characters)"
+              label="Enter Other"
               value={value.buyerPushbackTermsOther}
               onChange={(v) => set("buyerPushbackTermsOther", v.slice(0, 15))}
-              placeholder="Enter category name"
+              placeholder="Enter Other"
             />
           ) : null}
-          <SelectField
-            label="Have you ever lost a deal because internal approvals took too long?"
-            required
-            value={value.lostDealSlowApprovals}
-            onChange={(v) => set("lostDealSlowApprovals", v)}
-            placeholder="Select"
-            options={LOST_DEAL_SLOW_APPROVALS}
-            error={err(Boolean(value.lostDealSlowApprovals))}
-          />
-          <SelectField
-            label="What is your biggest challenge in closing deals faster?"
-            required
-            value={value.biggestChallengeClosing}
-            onChange={(v) => set("biggestChallengeClosing", v)}
-            placeholder="Select"
-            options={BIGGEST_CHALLENGE_CLOSING}
-            error={err(Boolean(value.biggestChallengeClosing))}
-          />
+          <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2">
+            <SelectField
+              label="Have you ever lost a deal because internal approvals took too long?"
+              required
+              value={value.lostDealSlowApprovals}
+              onChange={(v) => set("lostDealSlowApprovals", v)}
+              placeholder="Select"
+              options={LOST_DEAL_SLOW_APPROVALS}
+              error={err(Boolean(value.lostDealSlowApprovals))}
+            />
+            <SelectField
+              label="What is your biggest challenge in closing deals faster?"
+              required
+              value={value.biggestChallengeClosing}
+              onChange={(v) => set("biggestChallengeClosing", v)}
+              placeholder="Select"
+              options={BIGGEST_CHALLENGE_CLOSING}
+              error={err(Boolean(value.biggestChallengeClosing))}
+            />
+          </div>
           <TextareaField
-            label="Anything else you'd like us to know about your seller situation? (optional)"
-            hint="Optional (60 words max)· Placeholder: e.g. deal types you want help with, specific bottlenecks, team size"
+            label="Anything else you'd like us to know about your seller situation?"
             value={value.sellerNotes}
             onChange={(v) => set("sellerNotes", v)}
-            placeholder="Add a note"
+            placeholder="e.g. deal types you want help with, specific bottlenecks, team size"
+            maxWords={60}
           />
         </div>
       </div>

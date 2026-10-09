@@ -133,6 +133,7 @@ export function TextField({
   hint,
   type = "text",
   maxLength,
+  maxWords,
 }: {
   label: string;
   required?: boolean;
@@ -143,7 +144,10 @@ export function TextField({
   hint?: string;
   type?: "text" | "email";
   maxLength?: number;
+  /** Shows a live "N/maxWords Words" counter under the field, bottom-right. */
+  maxWords?: number;
 }) {
+  const wordCount = value.trim() ? value.trim().split(/\s+/).length : 0;
   return (
     <Field label={label} required={required} error={error} hint={hint}>
       <input
@@ -154,27 +158,38 @@ export function TextField({
         placeholder={placeholder}
         className={`${inputClass} ${error ? "border-red-400 focus:border-red-500" : ""}`}
       />
+      {maxWords ? (
+        <p className="w-full text-right text-xs leading-4 text-subtle">
+          {wordCount}/{maxWords} Words
+        </p>
+      ) : null}
     </Field>
   );
 }
 
 export function TextareaField({
   label,
+  required,
   hint,
   value,
   onChange,
   placeholder,
   error,
+  maxWords,
 }: {
   label: string;
+  required?: boolean;
   hint?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
   error?: string;
+  /** Shows a live "N/maxWords Words" counter under the field, bottom-right. */
+  maxWords?: number;
 }) {
+  const wordCount = value.trim() ? value.trim().split(/\s+/).length : 0;
   return (
-    <Field label={label} hint={hint} error={error}>
+    <Field label={label} required={required} hint={hint} error={error}>
       <textarea
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -182,6 +197,11 @@ export function TextareaField({
         rows={3}
         className={`${inputClass} resize-none ${error ? "border-red-400 focus:border-red-500" : ""}`}
       />
+      {maxWords ? (
+        <p className="w-full text-right text-xs leading-4 text-subtle">
+          {wordCount}/{maxWords} Words
+        </p>
+      ) : null}
     </Field>
   );
 }
@@ -193,6 +213,7 @@ export function PillRadioGroup({
   value,
   onChange,
   options,
+  optionLabels,
   variant = "pill",
   error,
 }: {
@@ -201,10 +222,51 @@ export function PillRadioGroup({
   value: string;
   onChange: (value: string) => void;
   options: string[];
-  /** "card" is a roomier auto-height layout for options whose text wraps to multiple lines. */
-  variant?: "pill" | "card";
+  /** Display text per option, when it differs from the stored value. */
+  optionLabels?: Record<string, string>;
+  /** "card" is a roomier auto-height layout for options whose text wraps to multiple
+   * lines. "radio" is plain inline radio circles + label (Figma "I am joining as a"). */
+  variant?: "pill" | "card" | "radio";
   error?: string;
 }) {
+  if (variant === "radio") {
+    return (
+      <div className="flex w-full flex-col items-start gap-1.5">
+        <label className={labelClass}>
+          {label}
+          {required ? " *" : ""}
+        </label>
+        <div role="radiogroup" aria-label={label} className="flex flex-wrap items-center gap-6 sm:gap-8">
+          {options.map((opt) => {
+            const selected = value === opt;
+            return (
+              <button
+                key={opt}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                onClick={() => onChange(opt)}
+                className="flex items-center gap-2"
+              >
+                <span
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${
+                    selected ? "border-brand" : "border-line-strong"
+                  }`}
+                >
+                  {selected ? <span className="h-2.5 w-2.5 rounded-full bg-brand" /> : null}
+                </span>
+                <span className="text-sm font-medium leading-5 text-navy">
+                  {optionLabels?.[opt] ?? opt}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        {error ? <p className="text-sm leading-5 text-red-600">{error}</p> : null}
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full flex-col items-start gap-1.5">
       <label className={labelClass}>
@@ -247,7 +309,7 @@ export function PillRadioGroup({
                     }`
               }
             >
-              {opt}
+              {optionLabels?.[opt] ?? opt}
             </button>
           );
         })}
@@ -268,6 +330,8 @@ export function ChipMultiSelect({
   labelColor,
   maxSelect,
   error,
+  variant = "pill",
+  columns = 3,
 }: {
   label: string;
   required?: boolean;
@@ -280,6 +344,10 @@ export function ChipMultiSelect({
   /** Caps how many chips can be selected at once (e.g. "Pick your top 3"). */
   maxSelect?: number;
   error?: string;
+  /** "checkbox" is a grid of square checkboxes + label (Figma's updated multi-select style). */
+  variant?: "pill" | "checkbox";
+  /** Grid column count, checkbox variant only. */
+  columns?: 1 | 2 | 3 | 4;
 }) {
   const toggle = (opt: string) => {
     if (value.includes(opt)) {
@@ -290,16 +358,66 @@ export function ChipMultiSelect({
     onChange([...value, opt]);
   };
 
+  const labelEl = (
+    <label className={labelColor === "muted" ? "text-sm font-medium leading-5 text-nav" : labelClass}>
+      {label}
+      {required ? " *" : ""}
+    </label>
+  );
+
+  if (variant === "checkbox") {
+    const gridCols = { 1: "sm:grid-cols-1", 2: "sm:grid-cols-2", 3: "sm:grid-cols-3", 4: "sm:grid-cols-4" }[columns];
+    return (
+      <div className="flex w-full flex-col items-start gap-2.5">
+        {labelEl}
+        <div className={`grid w-full grid-cols-1 gap-x-4 gap-y-3 ${gridCols}`}>
+          {options.map((opt) => {
+            const selected = value.includes(opt);
+            const disabled = !selected && !!maxSelect && value.length >= maxSelect;
+            return (
+              <button
+                key={opt}
+                type="button"
+                role="checkbox"
+                aria-checked={selected}
+                disabled={disabled}
+                onClick={() => toggle(opt)}
+                className="flex items-start gap-2 text-left disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <span
+                  className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 ${
+                    selected ? "border-brand bg-brand" : "border-line-strong bg-white"
+                  }`}
+                >
+                  {selected ? (
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                      <path
+                        d="M8.333 2.5L3.75 7.083L1.667 5"
+                        stroke="white"
+                        strokeWidth="1.66667"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : null}
+                </span>
+                <span className="text-sm leading-5 text-nav">{opt}</span>
+              </button>
+            );
+          })}
+        </div>
+        {error ? (
+          <p className="text-sm leading-5 text-red-600">{error}</p>
+        ) : hint ? (
+          <p className="text-sm leading-5 text-nav">{hint}</p>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="flex w-full flex-col items-start gap-1.5">
-      <label
-        className={
-          labelColor === "muted" ? "text-sm font-medium leading-5 text-nav" : labelClass
-        }
-      >
-        {label}
-        {required ? " *" : ""}
-      </label>
+      {labelEl}
       <div className="flex w-full flex-wrap items-start gap-2.5">
         {options.map((opt) => {
           const selected = value.includes(opt);

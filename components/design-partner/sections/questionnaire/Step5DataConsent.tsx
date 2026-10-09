@@ -16,16 +16,20 @@ export const INITIAL_STEP5: Step5State = {
   understandsAdvisoryOnly: false,
 };
 
+/** TODO: destination for "Design Partner NDA terms" — waiting on the client
+ * for where this should link to (not the #nda request-NDA modal; a real
+ * terms document/page per the conversation). Update NDA_TERMS_HREF once known. */
+const NDA_TERMS_HREF = "#";
+
 const CONSENT_ITEMS: { key: keyof Step5State; label: string }[] = [
   {
     key: "consentToContribute",
-    label: "I consent to contribute anonymized deal intelligence to aptAIvisor's benchmark database",
+    label: "I consent to contribute anonymized deal intelligence to aptAIvisor's benchmark database.",
   },
-  { key: "agreedToNda", label: "I have read and agree to the Design Partner NDA terms" },
   {
     key: "understandsAdvisoryOnly",
     label:
-      "I understand that aptAIvisor's outputs are for informational and decision-support purposes only and do not constitute legal or financial advice",
+      "I understand that aptAIvisor's outputs are for informational and decision-support purposes only and do not constitute legal or financial advice.",
   },
 ];
 
@@ -88,21 +92,17 @@ export function Step5DataConsent({
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[#EAECF0] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)]">
           <LockIcon />
         </div>
-        <div className="flex flex-col items-start gap-3">
-          <p className="text-sm font-semibold leading-5 text-ink">
-            Deal intelligence — contributed after NDA is signed
-          </p>
-          <p className="text-sm leading-5 text-nav">
-            aptAIvisor&rsquo;s benchmark intelligence is built from anonymized, aggregated deal
-            data contributed by design partners. Your specific data is never shared — only
-            statistical patterns across a minimum of 5 contributors are ever surfaced. The
-            questions below help us make your benchmark outputs as relevant as possible.
-          </p>
-        </div>
+        <p className="text-sm leading-5 text-nav">
+          aptAIvisor&rsquo;s benchmark intelligence is built from anonymized, aggregated deal data
+          contributed by design partners. Your specific data is never shared — only statistical
+          patterns across a minimum of 5 contributors are ever surfaced. The questions below help
+          us make your benchmark outputs as relevant as possible.
+        </p>
       </div>
 
       <div className="flex w-full flex-col items-start gap-4">
-        {CONSENT_ITEMS.map(({ key, label }) => {
+        {(() => {
+          const { key, label } = CONSENT_ITEMS[0];
           const checked = value[key];
           return (
             <button
@@ -111,21 +111,101 @@ export function Step5DataConsent({
               role="checkbox"
               aria-checked={checked}
               onClick={() => toggle(key)}
-              className={`flex w-full items-center gap-4 rounded-lg border-2 bg-white p-4 text-left transition-colors ${
-                checked ? "border-brand-accent" : "border-line-strong"
-              }`}
+              className="flex w-full items-start gap-2.5 text-left"
             >
               <span
-                className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-[0.375rem] border transition-colors ${
-                  checked ? "border-brand bg-brand" : "border-line-strong bg-surface"
+                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 ${
+                  checked ? "border-brand bg-brand" : "border-line-strong bg-white"
                 }`}
               >
-                {checked ? <CheckIcon /> : null}
+                {checked ? (
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                    <path
+                      d="M8.333 2.5L3.75 7.083L1.667 5"
+                      stroke="white"
+                      strokeWidth="1.66667"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : null}
               </span>
               <span className="text-base leading-6 text-nav">{label}</span>
             </button>
           );
-        })}
+        })()}
+
+        <button
+          type="button"
+          role="checkbox"
+          aria-checked={value.agreedToNda}
+          onClick={() => toggle("agreedToNda")}
+          className="flex w-full items-start gap-2.5 text-left"
+        >
+          <span
+            className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 ${
+              value.agreedToNda ? "border-brand bg-brand" : "border-line-strong bg-white"
+            }`}
+          >
+            {value.agreedToNda ? (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                <path
+                  d="M8.333 2.5L3.75 7.083L1.667 5"
+                  stroke="white"
+                  strokeWidth="1.66667"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ) : null}
+          </span>
+          <span className="text-base leading-6 text-nav">
+            I have read and agree to the{" "}
+            <a
+              href={NDA_TERMS_HREF}
+              onClick={(e) => e.stopPropagation()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-accent underline hover:text-brand-deep"
+            >
+              Design Partner NDA terms.
+            </a>
+          </span>
+        </button>
+
+        {(() => {
+          const { key, label } = CONSENT_ITEMS[1];
+          const checked = value[key];
+          return (
+            <button
+              key={key}
+              type="button"
+              role="checkbox"
+              aria-checked={checked}
+              onClick={() => toggle(key)}
+              className="flex w-full items-start gap-2.5 text-left"
+            >
+              <span
+                className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded border-2 ${
+                  checked ? "border-brand bg-brand" : "border-line-strong bg-white"
+                }`}
+              >
+                {checked ? (
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
+                    <path
+                      d="M8.333 2.5L3.75 7.083L1.667 5"
+                      stroke="white"
+                      strokeWidth="1.66667"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ) : null}
+              </span>
+              <span className="text-base leading-6 text-nav">{label}</span>
+            </button>
+          );
+        })()}
       </div>
     </div>
   );

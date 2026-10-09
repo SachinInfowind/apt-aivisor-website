@@ -114,6 +114,8 @@ export function Step4PlatformPreferences({
         <ChipMultiSelect
           label="Which aptAIvisor modules are you most excited to use?"
           required
+          variant="checkbox"
+          columns={3}
           value={value.excitedModules}
           onChange={(v) => set("excitedModules", v)}
           options={EXCITED_MODULES}
@@ -123,6 +125,8 @@ export function Step4PlatformPreferences({
         <ChipMultiSelect
           label="If you want aptAIvisor to advise or build your deal desk function, what are your key company/business priorities?"
           required
+          variant="checkbox"
+          columns={3}
           value={value.dealDeskPriorities}
           onChange={(v) => set("dealDeskPriorities", v)}
           options={DEAL_DESK_PRIORITIES}
@@ -132,6 +136,8 @@ export function Step4PlatformPreferences({
         <ChipMultiSelect
           label="How do you currently manage contracts and vendor data?"
           required
+          variant="checkbox"
+          columns={3}
           value={value.currentManagement}
           onChange={(v) => set("currentManagement", v)}
           options={CURRENT_MANAGEMENT}
@@ -139,10 +145,10 @@ export function Step4PlatformPreferences({
         />
         {value.currentManagement.includes("Other") ? (
           <TextField
-            label="Manual input (max 15 characters)"
+            label="Enter Other"
             value={value.currentManagementOther}
             onChange={(v) => set("currentManagementOther", v.slice(0, 15))}
-            placeholder="Enter category name"
+            placeholder="Enter Other"
           />
         ) : null}
 
@@ -158,11 +164,12 @@ export function Step4PlatformPreferences({
 
         <TextareaField
           label="How would you define success for your design partner experience after 90 days?"
-          hint="Required (60 words max) · Placeholder: e.g. benchmark our AWS renewal, or cut redline cycle from 2 weeks to 3 days"
+          required
           value={value.successDefinition}
           onChange={(v) => set("successDefinition", v)}
-          placeholder="Describe what success looks like"
+          placeholder="e.g. benchmark our AWS renewal, or cut redline cycle from 2 weeks to 3 days"
           error={err(Boolean(value.successDefinition.trim()))}
+          maxWords={60}
         />
 
         <SelectField
@@ -180,8 +187,11 @@ export function Step4PlatformPreferences({
             label="If referred — who referred you?"
             value={value.referrerName}
             onChange={(v) => set("referrerName", v)}
+            // Figma's own placeholder here says "Enter company name" — almost
+            // certainly copy-pasted from Step 1's company-name field, since
+            // this asks for a referrer's name. Keeping the sensible text.
             placeholder="Enter referrer name"
-            hint="Optional (10 words max) · short text"
+            maxWords={10}
           />
         ) : null}
       </div>

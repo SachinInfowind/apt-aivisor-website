@@ -82,6 +82,13 @@ const EMPLOYEE_OPTIONS = [
 ];
 
 const ROLE_OPTIONS: Role[] = ["Buyer", "Seller", "Buyer + Seller"];
+/** Display labels only — stored value stays "Buyer"/"Seller"/"Buyer + Seller"
+ * so routing logic, CMS schema and seed data don't need to change. */
+const ROLE_OPTION_LABELS: Record<string, string> = {
+  Buyer: "Technology Buyer",
+  Seller: "Technology Seller",
+  "Buyer + Seller": "Both Buyer & Seller",
+};
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -218,18 +225,18 @@ export function BusinessEmailField({
   );
 }
 
-/** Updated Step 1 Figma (node 3395:6074) reverts to the original asterisk
- * pattern — only 6 of 10 fields are marked required (industry, ownership,
- * employee count, and HQ country are optional). This matches the Figma
- * exactly, but conflicts with the CMS schema / zod validation built earlier,
- * which marked all of these as required per the PDF's blanket rule — flagged
- * to the client, not yet reconciled. */
+/** Latest Step 1 Figma (frame 3423:4690) marks all 10 fields required,
+ * matching the PDF spec's blanket rule — confirmed with the client. */
 export function isStep1Valid(v: Step1State): boolean {
   return Boolean(
     v.companyName.trim() &&
       v.nameAndTitle.trim() &&
       EMAIL_PATTERN.test(v.workEmail.trim()) &&
       v.companyWebsite.trim() &&
+      v.industry.trim() &&
+      v.ownership.trim() &&
+      v.employeeCount.trim() &&
+      v.hqCountry.trim() &&
       v.hqRegion.trim() &&
       v.role,
   );
@@ -313,38 +320,46 @@ export function Step1CompanyProfile({
 
         <SelectField
           label="Industry"
+          required
           value={value.industry}
           onChange={(v) => set("industry", v)}
           placeholder="Select"
           options={INDUSTRY_OPTIONS}
+          error={err(Boolean(value.industry.trim()))}
         />
         <SelectField
           label="Company's ownership"
+          required
           value={value.ownership}
           onChange={(v) => set("ownership", v)}
           placeholder="Select company stage"
           options={OWNERSHIP_OPTIONS}
+          error={err(Boolean(value.ownership.trim()))}
         />
         <SelectField
           label="Number of employees"
+          required
           value={value.employeeCount}
           onChange={(v) => set("employeeCount", v)}
           placeholder="Select number of employees"
           options={EMPLOYEE_OPTIONS}
+          error={err(Boolean(value.employeeCount.trim()))}
         />
         <SelectField
           label="Headquarters country"
+          required
           value={value.hqCountry}
           onChange={(v) => set("hqCountry", v)}
           placeholder="Select"
           options={ALL_COUNTRY_NAMES}
+          error={err(Boolean(value.hqCountry.trim()))}
         />
         <TextField
           label="Headquarters state / region"
           required
           value={value.hqRegion}
           onChange={(v) => set("hqRegion", v)}
-          placeholder="Enter state / region"
+          placeholder="Enter State/ region"
           error={err(Boolean(value.hqRegion.trim()))}
         />
 
@@ -355,6 +370,8 @@ export function Step1CompanyProfile({
             value={value.role}
             onChange={(v) => set("role", v as Role)}
             options={ROLE_OPTIONS}
+            optionLabels={ROLE_OPTION_LABELS}
+            variant="radio"
             error={err(Boolean(value.role))}
           />
           {value.role ? (
