@@ -75,14 +75,14 @@ export function AboutForesight({
                 key={card.title}
                 className="flex h-feature w-feature shrink-0 snap-start flex-col rounded-3xl shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card-lg"
               >
-                <div className="relative h-feature-media shrink-0 overflow-hidden rounded-t-3xl bg-linear-to-b from-brand-vivid to-brand-fade">
+                <div className="relative h-feature-media shrink-0 overflow-hidden rounded-t-3xl">
                   {card.icon?.url ? (
                     <Image
                       src={toAbsoluteMediaUrl(card.icon.url)}
                       alt={card.icon.alternativeText ?? ""}
-                      width={card.icon.width ?? 233}
-                      height={card.icon.height ?? 186}
-                      className="absolute left-1/2 top-13 h-auto w-[77.7%] -translate-x-1/2"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 320px"
+                      className="object-cover"
                     />
                   ) : null}
                 </div>

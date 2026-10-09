@@ -100,7 +100,7 @@ export function SolutionsFeatures({
           <div />
         )}
 
-        <div className="flex flex-col items-start gap-10 sm:gap-12">
+        <div className="flex h-full flex-col items-start justify-between gap-10 sm:gap-12">
           <ul className="flex w-full flex-col gap-6">
             {items.map((point, index) => {
               const selected = index === selectedIndex;
@@ -133,11 +133,11 @@ export function SolutionsFeatures({
             })}
           </ul>
 
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex flex-wrap items-center gap-4 pt-2">
             {primaryLabel && primaryHref ? (
               <a
                 href={primaryHref}
-                className="inline-flex items-center justify-center rounded-pill border border-brand bg-brand px-[1.375rem] py-4 text-body-md font-semibold text-white shadow-[0_1px_2px_0_rgba(16,24,40,0.05)]"
+                className="inline-flex items-center justify-center rounded-pill border border-brand bg-brand px-[1.375rem] py-4 text-body-md font-semibold text-white shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-all hover:bg-brand-accent hover:border-brand-accent"
               >
                 {primaryLabel}
               </a>
@@ -145,7 +145,7 @@ export function SolutionsFeatures({
             {secondaryLabel && secondaryHref ? (
               <a
                 href={secondaryHref}
-                className="inline-flex items-center justify-center rounded-pill border border-brand-accent bg-white px-[1.375rem] py-4 text-body-md font-semibold text-brand-deep shadow-[0_1px_2px_0_rgba(16,24,40,0.05)]"
+                className="inline-flex items-center justify-center rounded-pill border border-brand-accent bg-white px-[1.375rem] py-4 text-body-md font-semibold text-brand-deep shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-all hover:bg-brand-soft"
               >
                 {secondaryLabel}
               </a>
@@ -154,15 +154,22 @@ export function SolutionsFeatures({
         </div>
 
         {imageUrl ? (
-        <div className="relative flex w-full items-center justify-center overflow-hidden rounded-3xl bg-[linear-gradient(180deg,var(--color-brand-soft)_0%,var(--color-platform-to)_100%)] px-[1.9375rem] py-16 lg:min-h-[33.9375rem]">
-          <Image
-            src={imageUrl}
-            alt={imageAlt || image?.alternativeText || ""}
-            width={image?.width || 634}
-            height={image?.height || 422}
-            className="h-auto w-full rounded-2xl shadow-[0_12px_16px_-4px_rgba(16,24,40,0.08),0_4px_6px_-2px_rgba(16,24,40,0.03)]"
-          />
-        </div>
+          <div
+            className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-2xl p-4 sm:p-6 lg:p-8 transition-transform duration-300 hover:scale-[1.01] ${
+              surface === "blue"
+                ? "bg-white border border-brand-veil shadow-card-lg"
+                : "bg-brand-soft border border-brand-edge/40 shadow-soft"
+            }`}
+          >
+            <Image
+              src={imageUrl}
+              alt={imageAlt || image?.alternativeText || ""}
+              width={image?.width || 634}
+              height={image?.height || 422}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 634px"
+              className="h-auto max-h-full w-full max-w-full object-contain"
+            />
+          </div>
         ) : (
           <div />
         )}
