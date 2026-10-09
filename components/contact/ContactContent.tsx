@@ -1,47 +1,58 @@
 "use client";
 
+import type { ReactNode } from "react";
+import Image from "next/image";
 import { CmsImage } from "../ui/CmsImage";
 import { HeroGlowAccent } from "../ui/HeroGlowAccent";
 import { homeSerif } from "../ui/fonts";
 import { layout } from "../ui/type";
-import type { ContactHeroSection, StrapiImage } from "@/lib/cms/types";
+import type { ContactHeroSection } from "@/lib/cms/types";
 
 /**
  * Contact Us content — Figma 24641:106432 (1440×2012).
  * Hero + vector map + Support / Sales / Phone columns.
  */
 
-function MapMarker({ flag }: { flag?: StrapiImage | null }) {
+const INDIA_FLAG = (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden>
+    <circle cx="10" cy="10" r="10" fill="#F0F0F0" />
+    <path d="M10 0C6.035 0 2.61 2.307.992 5.651h18.016C17.39 2.307 13.965 0 10 0Z" fill="#FF9811" />
+    <path d="M10 20c3.965 0 7.39-2.307 9.008-5.652H.992C2.61 17.693 6.035 20 10 20Z" fill="#6DA544" />
+    <circle cx="10" cy="10" r="3.48" fill="#0052B4" />
+    <circle cx="10" cy="10" r="2.17" fill="#F0F0F0" />
+  </svg>
+);
+
+/** Office pin — Figma "_Map location marker" (State=Hover). Position is a % of the 1024×488 map. */
+function MapMarker({
+  left,
+  top,
+  flag,
+  title,
+  subtitle,
+}: {
+  left: string;
+  top: string;
+  flag: ReactNode;
+  title: string;
+  subtitle: string;
+}) {
   return (
     <div
-      className="absolute left-[19.5%] top-[40.4%] z-[1] -translate-x-1/2 -translate-y-1/2"
+      className="absolute z-[1] -translate-x-1/2 -translate-y-1/2"
+      style={{ left, top }}
       aria-hidden
     >
-      {/* Tooltip — Figma State=Hover */}
-      <div className="absolute bottom-[calc(100%+0.5rem)] left-1/2 flex w-max max-w-[16rem] -translate-x-1/2 flex-col items-center">
-        <div className="flex items-start gap-1.5 rounded-lg bg-white px-3 py-2 shadow-[0_4px_8px_-2px_rgba(16,24,40,0.1),0_2px_4px_-2px_rgba(16,24,40,0.06)]">
-          <CmsImage
-            image={flag}
-            width={20}
-            height={20}
-            className="mt-0.5 h-5 w-5 shrink-0"
-          />
-          <div className="flex flex-col items-start gap-0.5 text-left">
-            <p className="text-xs font-semibold leading-[1.125rem] text-heading">
-              Austin, Texas, United States
-            </p>
-            <p className="text-xs font-normal leading-[1.125rem] text-nav">
-              Austin, Texas Metropolitan Area
-            </p>
+      {/* Tooltip */}
+      <div className="absolute bottom-[calc(100%+0.25rem)] left-1/2 flex w-max max-w-[14rem] -translate-x-1/2 flex-col items-center drop-shadow-[0_12px_16px_rgba(16,24,40,0.08)]">
+        <div className="flex flex-col items-center gap-2 rounded-lg bg-white px-4 py-3">
+          {flag}
+          <div className="flex flex-col items-center gap-1 text-center">
+            <p className="text-xs font-semibold leading-[1.125rem] text-heading">{title}</p>
+            <p className="text-xs font-normal leading-[1.125rem] text-nav">{subtitle}</p>
           </div>
         </div>
-        <svg
-          width="16"
-          height="6"
-          viewBox="0 0 16 6"
-          fill="none"
-          className="-mt-px drop-shadow-sm"
-        >
+        <svg width="16" height="6" viewBox="0 0 16 6" fill="none" className="-mt-px">
           <path
             d="M14.0711 -2.51471C14.962 -2.51471 15.4081 -1.43757 14.7782 -0.807603L8.70711 5.26347C8.31658 5.654 7.68342 5.654 7.29289 5.26347L1.22183 -0.807603C0.591867 -1.43757 1.03803 -2.51471 1.92894 -2.51471L14.0711 -2.51471Z"
             fill="white"
@@ -65,17 +76,22 @@ export function ContactContent({
   headingAccent,
   subhead,
   contactMethods,
-  mapImage,
   flagImage,
 }: ContactHeroSection) {
   return (
     <>
-      {/* Hero band — mesh + cloud edge, same treatment as the other page heroes */}
-      <section
-        className={`relative flex w-full flex-col items-center overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(6rem,20vw,16rem)] pt-[clamp(9.5rem,18vw,15rem)]`}
-      >
+      {/* Hero + map share one surface (Figma "Contact page header"): the blue wash fades to
+          white behind the map instead of ending in a hard edge. */}
+      <section className="relative w-full overflow-hidden bg-white">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[min(46rem,85%)] bg-[linear-gradient(180deg,#C4DCFF_0%,#E4EFFF_45%,#FFFFFF_100%)]"
+        />
         <HeroGlowAccent />
-        <div className={`${layout.inner} relative z-[1] flex max-w-[80rem] flex-col items-center`}>
+        <div className={`relative z-[1] ${layout.sectionX} pb-16 pt-[clamp(9.5rem,18vw,15rem)] sm:pb-20 md:pb-24`}>
+        <div
+          className={`${layout.inner} flex max-w-[80rem] flex-col items-center gap-12 sm:gap-16 md:gap-20`}
+        >
         <div className="flex w-full max-w-[56.5625rem] flex-col items-center gap-6 text-center sm:gap-8 md:gap-9">
           {badgeLabel && (
             <div className="inline-flex items-center gap-1.5 rounded-lg border border-line-strong bg-white px-2.5 py-1 text-[0.875rem] font-medium leading-5 text-ink shadow-sm">
@@ -104,25 +120,33 @@ export function ContactContent({
           </div>
         </div>
 
-        </div>
-      </section>
-
-      <section className={`relative w-full bg-white ${layout.sectionX} pb-16 sm:pb-20 md:pb-24`}>
-        <div
-          className={`${layout.inner} flex max-w-[80rem] flex-col items-center gap-12 sm:gap-16 md:gap-20`}
-        >
         {/* Map + contact methods */}
         <div className="flex w-full flex-col items-center gap-10 sm:gap-12 md:gap-16">
-          <div className="relative w-full max-w-[64rem]">
-            <CmsImage
-              image={mapImage}
-              alt={mapImage?.alternativeText || "World map showing aptAI office locations"}
-              width={mapImage?.width ?? 1025}
-              height={mapImage?.height ?? 484}
-              className="h-auto w-full"
+          <div className="relative aspect-[1024/488] w-full max-w-[64rem]">
+            <Image
+              src="/assets/contact/world-map.png"
+              alt="World map showing aptAI office locations in Austin, United States and Indore, India"
+              fill
+              sizes="(min-width: 1024px) 1024px, 100vw"
+              className="object-contain"
               priority
             />
-            <MapMarker flag={flagImage} />
+            <MapMarker
+              left="21.48%"
+              top="44.47%"
+              flag={
+                <CmsImage image={flagImage} width={20} height={20} className="h-5 w-5 shrink-0" />
+              }
+              title="Austin, Texas, United States"
+              subtitle="Austin, Texas Metropolitan Area"
+            />
+            <MapMarker
+              left="69.43%"
+              top="50%"
+              flag={INDIA_FLAG}
+              title="Indore, Madhya Pradesh, India"
+              subtitle="New Palasia Area"
+            />
           </div>
 
           <ul className="grid w-full grid-cols-1 gap-8 sm:grid-cols-3 sm:gap-10 md:gap-16">
@@ -148,6 +172,7 @@ export function ContactContent({
               </li>
             ))}
           </ul>
+        </div>
         </div>
         </div>
       </section>

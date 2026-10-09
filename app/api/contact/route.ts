@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { contactFormSchema } from "@/lib/validation/contactForm";
+import { UploadError, uploadPrivateDocument } from "@/lib/server/privateUpload";
 
 const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
+// Only used when a document is attached: the token that may presign private uploads.
+const STRAPI_CAREER_API_TOKEN = process.env.STRAPI_CAREER_API_TOKEN;
 
 // Lightweight per-IP rate limit: blunts naive bots without adding infra.
 // In-memory, so it resets on redeploy/restart and isn't shared across
@@ -41,9 +44,23 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Plain JSON normally; multipart when a document is attached.
   let body: unknown;
+  let documentFile: File | null = null;
   try {
-    body = await request.json();
+    if ((request.headers.get("content-type") ?? "").includes("multipart/form-data")) {
+      const form = await request.formData();
+      const fields: Record<string, unknown> = {};
+      for (const [name, value] of form.entries()) {
+        if (typeof value === "string") fields[name] = value;
+      }
+      fields.agreedToPrivacyPolicy = fields.agreedToPrivacyPolicy === "true";
+      const doc = form.get("document");
+      documentFile = doc instanceof File && doc.size > 0 ? doc : null;
+      body = fields;
+    } else {
+      body = await request.json();
+    }
   } catch {
     return NextResponse.json({ message: "Invalid request body" }, { status: 400 });
   }
@@ -66,6 +83,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true }, { status: 200 });
   }
 
+  let attachment: { key: string; fileName: string } | null = null;
+  if (documentFile) {
+    if (!STRAPI_CAREER_API_TOKEN) {
+      console.error("[contact] STRAPI_CAREER_API_TOKEN is not set — cannot upload the attached document.");
+      return NextResponse.json(
+        { message: "We couldn't upload your document right now — please try again shortly." },
+        { status: 503 },
+      );
+    }
+    try {
+      attachment = await uploadPrivateDocument(documentFile, STRAPI_CAREER_API_TOKEN);
+    } catch (err) {
+      if (err instanceof UploadError) {
+        return NextResponse.json(
+          err.errors ? { message: err.message, errors: err.errors } : { message: err.message },
+          { status: err.status },
+        );
+      }
+      throw err;
+    }
+  }
+
   let res: Response;
   try {
     res = await fetch(`${STRAPI_URL}/api/contact-submissions`, {
@@ -84,6 +123,9 @@ export async function POST(request: NextRequest) {
           message: clean.message,
           agreedToPrivacyPolicy: clean.agreedToPrivacyPolicy,
           sourcePath: "/contact",
+          ...(attachment
+            ? { attachmentKey: attachment.key, attachmentFileName: attachment.fileName }
+            : {}),
         },
       }),
       cache: "no-store",
@@ -102,7 +144,8 @@ export async function POST(request: NextRequest) {
     if (fieldErrors) {
       const errors: Record<string, string> = {};
       for (const [field, messages] of Object.entries(fieldErrors)) {
-        if (messages?.[0]) errors[field] = messages[0];
+        // The CMS names the file field "attachment"; the form calls it "document".
+        if (messages?.[0]) errors[field === "attachment" ? "document" : field] = messages[0];
       }
       return NextResponse.json({ message: "Invalid submission", errors }, { status: 400 });
     }

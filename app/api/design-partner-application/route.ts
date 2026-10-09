@@ -96,7 +96,9 @@ export async function POST(request: NextRequest) {
       for (const [field, messages] of Object.entries(fieldErrors)) {
         if (messages?.[0]) errors[field] = messages[0];
       }
-      return NextResponse.json({ message: "Invalid submission", errors }, { status: 400 });
+      // The CMS refuses emails without a signed NDA — say so plainly.
+      const ndaMessage = payload.error?.message?.startsWith("A signed NDA is required") ? payload.error.message : null;
+      return NextResponse.json({ message: ndaMessage ?? "Invalid submission", errors }, { status: 400 });
     }
     return NextResponse.json(
       { message: "We couldn't submit your application right now — please try again shortly." },

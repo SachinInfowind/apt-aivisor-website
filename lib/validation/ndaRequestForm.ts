@@ -25,6 +25,11 @@ export const ndaRequestFormSchema = z.object({
 export type NdaRequestFormValues = z.infer<typeof ndaRequestFormSchema>;
 export type NdaRequestFormErrors = Partial<Record<keyof NdaRequestFormValues, string>>;
 
+/** "Already signed NDA": just the email. Mirrors the CMS's ndaCheckInputSchema. */
+export const ndaCheckFormSchema = z.object({
+  email: z.email({ error: "Enter a valid email address" }).max(254),
+});
+
 /** Signed NDA upload (the link in the NDA email). */
 export const NDA_UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
 export const ndaUploadTokenSchema = z.string().regex(/^[0-9a-f]{64}$/);
