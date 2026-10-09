@@ -8,8 +8,7 @@ import {
   validateNewsletterForm,
   type NewsletterFormErrors,
 } from "@/lib/validation/newsletterForm";
-import { RecaptchaNotice, useRecaptcha } from "@/components/ui/Recaptcha";
-import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
+import { useWafFetch } from "@/components/ui/WafProtection";
 
 /**
  * Newsletter CTA — Figma "Newsletter CTA section" (26281:26980).
@@ -26,7 +25,7 @@ export function NewsletterCtaSection() {
   );
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const { execute: executeRecaptcha } = useRecaptcha();
+  const wafFetch = useWafFetch();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
@@ -39,12 +38,11 @@ export function NewsletterCtaSection() {
 
     setStatus("submitting");
     try {
-      const res = await fetch("/api/newsletter", {
+      const res = await wafFetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...result.data,
-          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.newsletter),
         }),
       });
 
@@ -157,7 +155,6 @@ export function NewsletterCtaSection() {
                 You&apos;re subscribed — thanks!
               </p>
             ) : null}
-            <RecaptchaNotice />
           </form>
         </div>
       </div>

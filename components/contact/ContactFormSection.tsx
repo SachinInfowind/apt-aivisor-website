@@ -12,8 +12,7 @@ import {
   validateContactForm,
   type ContactFormErrors,
 } from "@/lib/validation/contactForm";
-import { RecaptchaNotice, useRecaptcha } from "@/components/ui/Recaptcha";
-import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
+import { useWafFetch } from "@/components/ui/WafProtection";
 
 const inputClass =
   "w-full rounded-lg border border-line-strong bg-white px-3.5 py-2.5 text-base leading-6 text-heading shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none placeholder:text-subtle transition-shadow focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,66,187,0.12)]";
@@ -83,7 +82,7 @@ export function ContactFormSection() {
     setPhoneInputKey((k) => k + 1);
   }, []);
 
-  const { execute: executeRecaptcha } = useRecaptcha();
+  const wafFetch = useWafFetch();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
@@ -96,12 +95,11 @@ export function ContactFormSection() {
 
     setStatus("submitting");
     try {
-      const res = await fetch("/api/contact", {
+      const res = await wafFetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...result.data,
-          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.contact),
         }),
       });
 
@@ -315,7 +313,6 @@ export function ContactFormSection() {
           >
             {status === "submitting" ? "Sending…" : "Send message"}
           </button>
-          <RecaptchaNotice />
         </form>
       </div>
     </section>

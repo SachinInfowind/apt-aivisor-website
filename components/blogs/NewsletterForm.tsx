@@ -2,8 +2,7 @@
 
 import { FormEvent, useState } from "react";
 
-import { useRecaptcha } from "@/components/ui/Recaptcha";
-import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
+import { useWafFetch } from "@/components/ui/WafProtection";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -16,7 +15,7 @@ export function NewsletterForm({
 }) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>("idle");
-  const { execute: executeRecaptcha } = useRecaptcha();
+  const wafFetch = useWafFetch();
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,16 +23,15 @@ export function NewsletterForm({
 
     setStatus("submitting");
     try {
-      // Goes through our own API route (not straight to the CMS) so the reCAPTCHA token can be
-      // verified server-side. The route treats an already-subscribed address as success too.
-      const res = await fetch("/api/newsletter", {
+      // Goes through our own API route (not straight to the CMS) so the server can validate and
+      // rate-limit it (AWS WAF protects the route at the edge). The route treats an already-subscribed address as success too.
+      const res = await wafFetch("/api/newsletter", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: email.trim(),
           companyWebsite: "",
           sourcePath: "/blogs",
-          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.newsletter),
         }),
       });
 

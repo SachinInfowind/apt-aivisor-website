@@ -86,31 +86,29 @@ tokens if you use authenticated API / preview / revalidate).
 ---
 Happy coding!
 
-## reCAPTCHA v3 (form protection)
+## AWS WAF (form bot protection)
 
-All six forms (contact, waitlist, newsletter — both the Contact page and the blog — design-partner
-application, demo "notify me", and the Career "Express interest" modal) are protected by Google
-reCAPTCHA v3. It is shared code, so a new form only needs three steps:
+All forms (contact, waitlist, newsletter — both the Contact page and the blog — design-partner
+application and its email verification, demo "notify me", and the Career "Express interest" modal) are
+protected by **AWS WAF**, not by code in this app. A WAF rule with the `Challenge` action (silent, like
+reCAPTCHA v3) or `CAPTCHA` action on the form endpoints (`/api/contact`, `/api/newsletter`,
+`/api/waitlist`, `/api/career-application`, `/api/design-partner-application*`, `/api/demo-notify`)
+makes WAF reject requests that lack a valid `aws-waf-token` before they reach Next.js, so the API
+routes verify nothing themselves (they keep their honeypot + per-IP rate limits).
 
-1. **Client** — in the form component: `const { execute } = useRecaptcha();` (from
-   `components/ui/Recaptcha.tsx`), then send `recaptchaToken: await execute(RECAPTCHA_ACTIONS.<name>)`
-   with the submission (JSON field, or `form.set("recaptchaToken", …)` for multipart).
-2. **Server** — in the API route, right after parsing the request:
-   `verifyRecaptcha({ token: recaptchaTokenFrom(body), action: RECAPTCHA_ACTIONS.<name>, request })`
-   from `lib/recaptcha.ts`; return `{ message }` with the returned status when `!captcha.ok`.
-3. **Action name** — add it to `lib/recaptcha-actions.ts` (the server checks the token was issued for that exact action).
+The browser side is shared code: `useWafFetch()` in `components/ui/WafProtection.tsx` returns a
+`fetch` that attaches the token through the AWS JS SDK. A new form only needs
+`const wafFetch = useWafFetch();` and `wafFetch("/api/…", init)` instead of `fetch`.
 
-Env (`.env.local`; see `.env.example`):
+Env (build time; see `.env.example`):
 
 | Variable | Purpose |
 |---|---|
-| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | public site key (sent to the browser) |
-| `RECAPTCHA_SECRET_KEY` | secret key — server only, never commit it |
-| `RECAPTCHA_MIN_SCORE` | optional, default `0.5` — requests scoring below it are rejected |
-| `RECAPTCHA_ALLOWED_HOSTNAMES` | optional, comma-separated hostname allow-list |
+| `NEXT_PUBLIC_ENABLE_AWS_WAF` | `true` on the deployed site behind WAF; anything else (default) = off, plain `fetch`, no SDK loaded |
+| `NEXT_PUBLIC_AWS_WAF_INTEGRATION_URL` | the JavaScript SDK URL from WAF console → Web ACLs → \<acl\> → Application integration |
 
-Behaviour: without the secret key, **production rejects** submissions (503) and development skips the
-check with a console warning. Create keys at google.com/recaptcha/admin (type: score based v3) — use a
-separate key pair per environment and add each environment's domain (`localhost` for dev).
-Rejections are logged as `[recaptcha] rejected action=… : reason` (score, action mismatch, …), which is
-how to tune the threshold.
+Local development: leave it off — WAF only exists in front of a deployed (HTTPS) site, so nothing can
+be tested on `localhost`. Rollout: attach the web ACL, set the rules to `Count` first and review WAF's
+sampled requests/logs, then switch them to `Challenge`/`CAPTCHA`. If the flag is on but the SDK URL is
+missing or blocked, forms fall back to plain `fetch` and WAF decides at the edge (the user sees the
+form's normal error).

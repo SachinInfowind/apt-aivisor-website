@@ -16,8 +16,7 @@ import { createPortal } from "react-dom";
 import { homeSans } from "@/components/ui/fonts";
 import { toAbsoluteMediaUrl } from "@/lib/cms/media";
 import type { DemoModalCopy } from "@/lib/cms/types";
-import { RecaptchaNotice, useRecaptcha } from "@/components/ui/Recaptcha";
-import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
+import { useWafFetch } from "@/components/ui/WafProtection";
 
 type Step = "intro" | "email" | "thanks";
 
@@ -195,20 +194,19 @@ export function DemoModal({ copy }: { copy: DemoModalCopy | null }) {
     if (open && step !== "intro") panelRef.current?.focus();
   }, [step, open]);
 
-  const { execute: executeRecaptcha } = useRecaptcha();
+  const wafFetch = useWafFetch();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
     try {
-      const res = await fetch("/api/demo-notify", {
+      const res = await wafFetch("/api/demo-notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
           companyWebsite: honeypot,
           sourcePath: pathname,
-          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.demoNotify),
         }),
       });
       if (!res.ok) {
@@ -344,7 +342,6 @@ export function DemoModal({ copy }: { copy: DemoModalCopy | null }) {
                 {submitting ? copy.submittingLabel : copy.submitLabel}
               </button>
             </div>
-            <RecaptchaNotice />
           </form>
         ) : null}
 

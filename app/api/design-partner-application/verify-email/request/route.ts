@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { RECAPTCHA_ACTIONS } from "@/lib/recaptcha-actions";
-import { recaptchaTokenFrom, verifyRecaptcha } from "@/lib/recaptcha";
 
 const STRAPI_URL = process.env.STRAPI_URL ?? "http://localhost:1337";
 // Dedicated token — scoped to request + status only (see
@@ -50,14 +48,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: "Invalid request body" }, { status: 400 });
   }
 
-  const captcha = await verifyRecaptcha({
-    token: recaptchaTokenFrom(body),
-    action: RECAPTCHA_ACTIONS.emailVerification,
-    request,
-  });
-  if (!captcha.ok) {
-    return NextResponse.json({ message: captcha.message }, { status: captcha.status });
-  }
 
   const email = typeof (body as { email?: unknown })?.email === "string" ? (body as { email: string }).email : "";
   if (!EMAIL_PATTERN.test(email.trim())) {

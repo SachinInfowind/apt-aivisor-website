@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { homeSerif } from "@/components/ui/fonts";
-import { useRecaptcha } from "@/components/ui/Recaptcha";
-import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
+import { useWafFetch } from "@/components/ui/WafProtection";
 import { validateDesignPartnerForm } from "@/lib/validation/designPartnerForm";
 import {
   Step1CompanyProfile,
@@ -84,7 +83,7 @@ export function DesignPartnerQuestionnaire({
     "idle",
   );
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const { execute: executeRecaptcha } = useRecaptcha();
+  const wafFetch = useWafFetch();
   const router = useRouter();
   const cardRef = useRef<HTMLDivElement>(null);
   // Last draft JSON this tab either wrote to localStorage or applied from
@@ -273,12 +272,11 @@ export function DesignPartnerQuestionnaire({
 
     setSubmitStatus("submitting");
     try {
-      const res = await fetch("/api/design-partner-application", {
+      const res = await wafFetch("/api/design-partner-application", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...result.data,
-          [RECAPTCHA_FIELD]: await executeRecaptcha(RECAPTCHA_ACTIONS.designPartner),
         }),
       });
 

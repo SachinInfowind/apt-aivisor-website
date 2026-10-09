@@ -11,8 +11,7 @@ import {
   validateResumeFile,
   type CareerApplicationErrors,
 } from "@/lib/validation/careerApplication";
-import { RecaptchaNotice, useRecaptcha } from "@/components/ui/Recaptcha";
-import { RECAPTCHA_ACTIONS, RECAPTCHA_FIELD } from "@/lib/recaptcha-actions";
+import { useWafFetch } from "@/components/ui/WafProtection";
 
 const inputClass =
   "w-full rounded-lg border border-[#D0D5DD] bg-white px-3.5 py-2.5 text-base leading-6 text-[#101828] shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none placeholder:text-[#667085] transition-shadow focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,66,187,0.12)]";
@@ -148,7 +147,7 @@ export function ExpressInterestModal({
     }
   };
 
-  const { execute: executeRecaptcha } = useRecaptcha();
+  const wafFetch = useWafFetch();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setServerError(null);
@@ -179,12 +178,8 @@ export function ExpressInterestModal({
       form.set("message", result.data.message);
       form.set("companyName", result.data.companyName);
       form.set("resume", resumeFile as File);
-      form.set(
-        RECAPTCHA_FIELD,
-        (await executeRecaptcha(RECAPTCHA_ACTIONS.careerApplication)) ?? "",
-      );
 
-      const res = await fetch("/api/career-application", {
+      const res = await wafFetch("/api/career-application", {
         method: "POST",
         body: form,
       });
@@ -545,7 +540,6 @@ export function ExpressInterestModal({
                       opportunities.
                     </p>
                   </div>
-                  <RecaptchaNotice />
                 </form>
               )}
             </div>
