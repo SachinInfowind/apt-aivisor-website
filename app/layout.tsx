@@ -4,6 +4,7 @@ import "./globals.css";
 import StoreProvider from "../store/StoreProvider";
 import { PreviewBanner } from "@/components/cms/PreviewBanner";
 import { DemoModalRoot } from "@/components/demo/DemoModalRoot";
+import { NdaModal } from "@/components/nda/NdaModal";
 import { CloudsProvider } from "@/components/ui/CloudsContext";
 import { SmoothAnchors } from "@/components/ui/SmoothAnchors";
 import { getGlobal } from "@/lib/cms/queries";
@@ -42,6 +43,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <PreviewBanner />
             {children}
             <DemoModalRoot />
+            <NdaModal />
           </CloudsProvider>
         </StoreProvider>
       </body>
