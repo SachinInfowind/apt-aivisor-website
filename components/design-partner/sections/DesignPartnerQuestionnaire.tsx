@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { homeSerif } from "@/components/ui/fonts";
 import { useWafFetch } from "@/components/ui/WafProtection";
+import { readUnlockedEmail } from "@/lib/nda-unlock";
 import { validateDesignPartnerForm } from "@/lib/validation/designPartnerForm";
 import {
   Step1CompanyProfile,
@@ -110,17 +111,26 @@ export function DesignPartnerQuestionnaire({
   }, [currentIndex, hasRestored]);
 
   useEffect(() => {
+    // The form only appears once a signed NDA is confirmed for this email (see NdaGate).
+    const ndaEmail = readUnlockedEmail();
     try {
       const raw = window.localStorage.getItem(DRAFT_STORAGE_KEY);
       if (raw) {
         const draft = JSON.parse(raw) as Partial<QuestionnaireDraft>;
-        if (draft.step1) setStep1(draft.step1);
-        if (draft.step2) setStep2(draft.step2);
-        if (draft.step3) setStep3(draft.step3);
-        if (draft.step4) setStep4(draft.step4);
-        if (draft.step5) setStep5(draft.step5);
-        if (typeof draft.currentIndex === "number") setCurrentIndex(draft.currentIndex);
-        setHasSavedDraft(true);
+        const draftEmail = draft.step1?.workEmail?.trim().toLowerCase();
+        // Earlier answers come back only for the SAME person (the draft's email is the one the NDA is
+        // signed for) — never someone else's leftovers from a shared browser or an earlier test. And
+        // the form always starts on step 1, wherever the draft was saved.
+        if (!ndaEmail || draftEmail === ndaEmail) {
+          if (draft.step1) setStep1(draft.step1);
+          if (draft.step2) setStep2(draft.step2);
+          if (draft.step3) setStep3(draft.step3);
+          if (draft.step4) setStep4(draft.step4);
+          if (draft.step5) setStep5(draft.step5);
+          setHasSavedDraft(true);
+        } else {
+          window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+        }
       }
     } catch {
       // Corrupt or inaccessible storage — proceed with a blank form.
@@ -134,6 +144,16 @@ export function DesignPartnerQuestionnaire({
     const type = new URLSearchParams(window.location.search).get("type")?.toLowerCase();
     if (type === "buyer") setStep1((prev) => ({ ...prev, role: "Buyer" }));
     else if (type === "seller") setStep1((prev) => ({ ...prev, role: "Seller" }));
+
+    // Pre-fill the NDA email. (A restored draft with a different email is replaced — the CMS only
+    // accepts the email the signed NDA is on file for.)
+    if (ndaEmail) {
+      setStep1((prev) =>
+        prev.workEmail.trim().toLowerCase() === ndaEmail
+          ? prev
+          : { ...prev, workEmail: ndaEmail, emailVerification: "unverified" },
+      );
+    }
 
     setHasRestored(true);
   }, []);
@@ -371,7 +391,7 @@ export function DesignPartnerQuestionnaire({
           {hasSavedDraft ? (
             <div className="flex w-full items-center justify-between gap-4 border-b border-[#F1F5F9] bg-brand-soft/50 px-6 py-2.5 sm:px-10">
               <span className="text-sm leading-5 text-nav">
-                Resumed from where you left off on this device.
+                Your earlier answers on this device were restored.
               </span>
               <button
                 type="button"

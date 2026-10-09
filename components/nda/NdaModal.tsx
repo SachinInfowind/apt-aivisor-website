@@ -5,9 +5,11 @@ import { type FormEvent, useCallback, useEffect, useId, useRef, useState } from 
 import { createPortal } from "react-dom";
 import { homeSans } from "@/components/ui/fonts";
 import { useWafFetch } from "@/components/ui/WafProtection";
+import { unlockDealForm } from "@/lib/nda-unlock";
 import {
   type NdaRequestFormErrors,
   type NdaRequestFormValues,
+  ndaCheckFormSchema,
   ndaRequestFormSchema,
 } from "@/lib/validation/ndaRequestForm";
 
@@ -35,12 +37,22 @@ const FIELDS: { name: keyof Fields; label: string; type: string; autoComplete: s
  * "Request NDA draft" modal (Design Partner page).
  *
  * Opens from any link to `#nda` (the CMS-managed NDA panel button), the `open-nda-modal`
- * window event, or a `#nda` URL. The CMS fills the Mutual NDA in with these details and
- * emails it as a PDF, with a personal link to upload the signed copy (/nda/upload).
+ * window event, or a `#nda` URL. Two modes:
+ *
+ *  - request: the CMS fills the Mutual NDA in with these details and emails it as a PDF, with a
+ *    personal link to upload the signed copy (/nda/upload).
+ *  - check ("Already signed NDA"): just an email. If a signed NDA is on file for it, the deal
+ *    intelligence form unlocks (email pre-filled); if not, back to "request" with a short message.
  */
+type Mode = "request" | "check";
 export function NdaModal() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<Mode>("request");
+  const [notice, setNotice] = useState<string | null>(null);
+  const [checkEmail, setCheckEmail] = useState("");
+  const [checkError, setCheckError] = useState<string | null>(null);
+  const [checking, setChecking] = useState(false);
   const [sent, setSent] = useState(false);
   const [values, setValues] = useState<Fields>(EMPTY);
   const [errors, setErrors] = useState<NdaRequestFormErrors>({});
@@ -56,6 +68,9 @@ export function NdaModal() {
   const openModal = useCallback(() => {
     returnFocusRef.current = document.activeElement as HTMLElement | null;
     setSent(false);
+    setMode("request");
+    setNotice(null);
+    setCheckError(null);
     setErrors({});
     setFormError(null);
     setOpen(true);
@@ -159,6 +174,43 @@ export function NdaModal() {
     }
   };
 
+  const onCheck = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setCheckError(null);
+    const parsed = ndaCheckFormSchema.safeParse({ email: checkEmail });
+    if (!parsed.success) {
+      setCheckError(parsed.error.issues[0]?.message ?? "Enter a valid email address");
+      return;
+    }
+    setChecking(true);
+    try {
+      const res = await wafFetch("/api/nda-request/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: parsed.data.email }),
+      });
+      const payload = (await res.json().catch(() => ({}))) as { signed?: boolean; message?: string };
+      if (!res.ok) {
+        setCheckError(payload.message ?? "Something went wrong — please try again.");
+        return;
+      }
+      if (payload.signed) {
+        // Signed NDA on file: unlock the form (it scrolls into view with the email pre-filled).
+        setOpen(false);
+        unlockDealForm(parsed.data.email);
+        return;
+      }
+      // Not found: back to the request form, email carried over, with a short explanation.
+      setValues((v) => ({ ...v, signerEmail: parsed.data.email }));
+      setNotice("We couldn't find a signed NDA for this email. Request the NDA below, sign it and upload it with the link we email you.");
+      setMode("request");
+    } catch {
+      setCheckError("Something went wrong — please try again.");
+    } finally {
+      setChecking(false);
+    }
+  };
+
   if (!open) return null;
 
   return createPortal(
@@ -179,12 +231,14 @@ export function NdaModal() {
       >
         <div className="flex flex-col gap-1 px-6 pt-6 pr-16">
           <h2 id={titleId} className="text-lg font-semibold leading-7 text-heading">
-            {sent ? "Check your inbox" : "Request the Mutual NDA"}
+            {sent ? "Check your inbox" : mode === "check" ? "Already signed the NDA?" : "Request the Mutual NDA"}
           </h2>
           <p id={bodyId} className="text-sm leading-5 text-nav">
             {sent
               ? "We've emailed you the Mutual NDA, pre-filled with your details. Sign it and send it back using the upload link in the email — or simply reply with the signed PDF."
-              : "We'll email you the Design Partner Mutual NDA, pre-filled with these details, ready to sign."}
+              : mode === "check"
+                ? "Enter the email you used to request the NDA. If we have your signed copy, the application form opens."
+                : "We'll email you the Design Partner Mutual NDA, pre-filled with these details, ready to sign."}
           </p>
         </div>
 
@@ -205,8 +259,58 @@ export function NdaModal() {
               Done
             </button>
           </div>
+        ) : mode === "check" ? (
+          <form onSubmit={onCheck} noValidate className="relative">
+            <div className="flex flex-col gap-1.5 px-6 pt-5">
+              <label htmlFor={`${titleId}-check-email`} className="text-sm font-medium leading-5 text-ink">
+                Work email
+              </label>
+              <input
+                id={`${titleId}-check-email`}
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                required
+                autoFocus
+                value={checkEmail}
+                onChange={(e) => {
+                  setCheckEmail(e.target.value);
+                  setCheckError(null);
+                }}
+                placeholder="jane@company.com"
+                aria-invalid={checkError ? true : undefined}
+                aria-describedby={checkError ? `${titleId}-check-error` : undefined}
+                className={inputClass}
+              />
+              {checkError ? (
+                <p id={`${titleId}-check-error`} role="alert" className="text-sm leading-5 text-danger-solid">
+                  {checkError}
+                </p>
+              ) : null}
+            </div>
+            <div className="flex gap-3 px-6 pb-6 pt-8">
+              <button
+                type="button"
+                onClick={() => {
+                  setCheckError(null);
+                  setMode("request");
+                }}
+                className={secondaryButton}
+              >
+                Back
+              </button>
+              <button type="submit" disabled={checking} className={primaryButton}>
+                {checking ? "Checking…" : "Submit"}
+              </button>
+            </div>
+          </form>
         ) : (
           <form onSubmit={onSubmit} noValidate className="relative">
+            {notice ? (
+              <p role="status" className="mx-6 mt-5 rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-sm leading-5 text-ink">
+                {notice}
+              </p>
+            ) : null}
             <div className="flex flex-col gap-4 px-6 pt-5">
               {FIELDS.map((f) => {
                 const id = `${titleId}-${f.name}`;
@@ -261,9 +365,22 @@ export function NdaModal() {
                 Cancel
               </button>
               <button type="submit" disabled={submitting} className={primaryButton}>
-                {submitting ? "Sending…" : "Send NDA"}
+                {submitting ? "Sending…" : "Request NDA draft"}
               </button>
             </div>
+            <p className="px-6 pb-5 text-center">
+              <button
+                type="button"
+                onClick={() => {
+                  setNotice(null);
+                  setCheckEmail(values.signerEmail);
+                  setMode("check");
+                }}
+                className="text-xs text-nav underline underline-offset-2 transition-colors hover:text-ink"
+              >
+                Already signed NDA
+              </button>
+            </p>
           </form>
         )}
       </div>

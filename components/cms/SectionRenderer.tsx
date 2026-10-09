@@ -47,6 +47,7 @@ import { DesignPartnerCardsSection } from "@/components/design-partner/sections/
 import { ChecklistSection } from "@/components/design-partner/sections/ChecklistSection";
 import { TimelineSection } from "@/components/design-partner/sections/TimelineSection";
 import { DesignPartnerQuestionnaire } from "@/components/design-partner/sections/DesignPartnerQuestionnaire";
+import { NdaGate } from "@/components/nda/NdaGate";
 import { getGlobal } from "@/lib/cms/queries";
 import type { PageSection } from "@/lib/cms/types";
 
@@ -161,12 +162,13 @@ export async function SectionRenderer({ sections }: { sections: PageSection[] })
             return <TimelineSection key={key} {...section} />;
           case "sections.design-partner-form":
             return (
-              <DesignPartnerQuestionnaire
-                key={key}
-                badgeLabel={section.badgeLabel}
-                heading={section.heading}
-                subhead={section.subhead}
-              />
+              <NdaGate key={key}>
+                <DesignPartnerQuestionnaire
+                  badgeLabel={section.badgeLabel}
+                  heading={section.heading}
+                  subhead={section.subhead}
+                />
+              </NdaGate>
             );
           case "sections.contact-hero":
             return (

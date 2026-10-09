@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/HeaderCms";
 import { NdaUploadForm } from "@/components/nda/NdaUploadForm";
 import { homeSans, homeSerif } from "@/components/ui/fonts";
 import { layout } from "@/components/ui/type";
@@ -38,7 +36,8 @@ async function getLinkInfo(token: string | undefined): Promise<LinkInfo> {
 
 /**
  * /nda/upload?token=… — the personal link in the NDA email, where the Design Partner uploads
- * their signed copy. The token is checked server-side; the CMS records the upload.
+ * their signed copy. The token is checked server-side; the CMS records the upload and refuses
+ * a second upload for the same link. Standalone page: no site header or footer.
  */
 export default async function Page({ searchParams }: { searchParams: Promise<{ token?: string }> }) {
   const { token } = await searchParams;
@@ -65,16 +64,19 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
       body = `The Mutual NDA between aptAI and ${info.companyName} has been signed by both parties. There's nothing more to upload.`;
       break;
     default:
-      canUpload = true;
-      body = info.alreadyUploaded
-        ? `We already have a signed copy for ${info.companyName}. Upload again only if you need to replace it.`
-        : `Hi ${info.signerName} — sign page 7 of the NDA for ${info.companyName} and upload the signed PDF here. aptAI will countersign and send you the fully executed agreement.`;
+      if (info.alreadyUploaded || info.status === "signed_by_partner") {
+        // One signed copy per link: once it is in, this link can't be used to upload again.
+        heading = "Signed NDA already received";
+        body = `We've already received the signed NDA for ${info.companyName}. aptAI will countersign it and email you the fully executed agreement. If you need to change anything, just reply to your NDA email.`;
+      } else {
+        canUpload = true;
+        body = `Hi ${info.signerName} — sign page 7 of the NDA for ${info.companyName} and upload the signed PDF here. aptAI will countersign and send you the fully executed agreement.`;
+      }
   }
 
   return (
     <div className={`${homeSans.variable} ${homeSerif.variable} ${homeSans.className}`}>
       <div className="relative min-h-screen w-full overflow-x-clip bg-white font-body antialiased">
-        <Header />
         <main className="w-full">
           <section
             className={`relative flex w-full flex-col items-center bg-brand-soft ${layout.sectionX} pb-16 pt-[clamp(9.5rem,18vw,13rem)] sm:pb-20 md:pb-24`}
@@ -90,7 +92,6 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
             </div>
           </section>
         </main>
-        <Footer />
       </div>
     </div>
   );

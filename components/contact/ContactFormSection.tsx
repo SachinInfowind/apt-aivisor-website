@@ -13,6 +13,8 @@ import {
   type ContactFormErrors,
 } from "@/lib/validation/contactForm";
 import { useWafFetch } from "@/components/ui/WafProtection";
+import { validateResumeFile } from "@/lib/validation/careerApplication";
+import { DocumentDropzone } from "./DocumentDropzone";
 
 const inputClass =
   "w-full rounded-lg border border-line-strong bg-white px-3.5 py-2.5 text-base leading-6 text-heading shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none placeholder:text-subtle transition-shadow focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,66,187,0.12)]";
@@ -59,6 +61,8 @@ export function ContactFormSection() {
     "idle",
   );
   const [serverError, setServerError] = useState<string | null>(null);
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [documentError, setDocumentError] = useState<string | undefined>();
   /** Remounts `PhoneInputInput` after submit or country change (uncontrolled). */
   const [phoneInputKey, setPhoneInputKey] = useState(0);
 
@@ -88,27 +92,41 @@ export function ContactFormSection() {
     setServerError(null);
 
     const result = validateContactForm(values);
-    if (!result.success) {
-      setErrors(result.errors);
+    const fileError = documentFile ? validateResumeFile(documentFile) : null;
+    setDocumentError(fileError ?? undefined);
+    if (!result.success || fileError) {
+      setErrors(result.success ? {} : result.errors);
       return;
     }
 
     setStatus("submitting");
     try {
-      const res = await wafFetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...result.data,
-        }),
-      });
+      // With a document attached the form goes as multipart; otherwise it stays plain JSON.
+      let request: RequestInit;
+      if (documentFile) {
+        const form = new FormData();
+        for (const [key, value] of Object.entries(result.data)) form.append(key, String(value));
+        form.append("document", documentFile);
+        request = { method: "POST", body: form };
+      } else {
+        request = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...result.data }),
+        };
+      }
+      const res = await wafFetch("/api/contact", request);
 
       if (!res.ok) {
         const payload = (await res.json().catch(() => ({}))) as {
           message?: string;
           errors?: ContactFormErrors;
         };
-        if (payload.errors) setErrors(payload.errors);
+        if (payload.errors) {
+          const { document, ...rest } = payload.errors as ContactFormErrors & { document?: string };
+          setErrors(rest);
+          setDocumentError(document);
+        }
         setServerError(
           payload.message ??
             "We couldn't send your message right now — please try again shortly.",
@@ -256,6 +274,15 @@ export function ContactFormSection() {
                 <span className={errorClass}>{errors.message}</span>
               ) : null}
             </label>
+
+            <DocumentDropzone
+              file={documentFile}
+              error={documentError}
+              onChange={(f) => {
+                setDocumentFile(f);
+                setDocumentError(undefined);
+              }}
+            />
 
             {/* Honeypot — hidden from real users via CSS, not `display:none`
                 (some bots skip fields that are display:none/hidden). */}
