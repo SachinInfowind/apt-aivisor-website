@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { homeSerif } from "@/components/ui/fonts";
 import { layout } from "@/components/ui/type";
 import type { CtaSection as CtaSectionData } from "@/lib/cms/types";
@@ -41,12 +40,12 @@ export function CtaSection({
             ) : null}
           </div>
           {ctaLabel && ctaHref ? (
-            <Link
+            <a
               href={ctaHref}
               className="inline-flex items-center justify-center rounded-full border border-brand bg-brand px-5.5 py-4 text-lg font-semibold leading-7 text-white shadow-field transition-colors hover:bg-brand-deep active:scale-98"
             >
               {ctaLabel}
-            </Link>
+            </a>
           ) : null}
         </div>
       </section>
@@ -65,12 +64,12 @@ export function CtaSection({
           </p>
         )}
         {ctaLabel && ctaHref && (
-          <Link
+          <a
             href={ctaHref}
             className="mt-2 inline-flex items-center justify-center rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
           >
             {ctaLabel}
-          </Link>
+          </a>
         )}
       </div>
     </section>
