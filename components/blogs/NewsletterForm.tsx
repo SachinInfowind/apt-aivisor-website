@@ -80,7 +80,7 @@ export function NewsletterForm({
     <form
       onSubmit={onSubmit}
       noValidate
-      className="flex w-full max-w-[480px] flex-col items-stretch gap-3"
+      className="flex w-full max-w-form flex-col items-stretch gap-3"
     >
       <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-start">
         <div className="flex-1">
@@ -96,30 +96,30 @@ export function NewsletterForm({
               setEmail(e.target.value);
               if (errorMessage) setErrorMessage(null);
             }}
-            className={`w-full rounded-full border bg-white px-4 py-3 text-base leading-6 text-heading shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] outline-none placeholder:text-[#667085] transition-all ${
+            className={`w-full rounded-pill border bg-white px-4 py-3 text-body leading-6 text-heading shadow-field outline-none placeholder:text-subtle transition-all ${
               errorMessage
-                ? "border-red-500 focus:border-red-500 focus:shadow-[0_0_0_4px_rgba(239,68,68,0.15)]"
-                : "border-[#D0D5DD] focus:border-brand focus:shadow-[0_0_0_4px_rgba(0,66,187,0.12)]"
+                ? "border-danger focus:border-danger focus:shadow-none"
+                : "border-line-strong focus:border-brand focus:shadow-cta"
             }`}
           />
         </div>
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="inline-flex h-12 shrink-0 items-center justify-center rounded-full bg-[#0042BB] px-[18px] text-base font-semibold leading-6 text-white shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors hover:bg-brand-hover active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex h-12 shrink-0 items-center justify-center rounded-pill bg-brand px-4.5 text-body font-semibold leading-6 text-white shadow-field transition-colors hover:bg-brand-hover active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {status === "submitting" ? "Subscribing…" : subscribeLabel || "Subscribe"}
         </button>
       </div>
 
       {errorMessage ? (
-        <p className="text-left text-xs font-medium text-red-600 sm:text-sm">
+        <p className="text-left text-caption font-medium text-danger sm:text-body-sm">
           {errorMessage}
         </p>
       ) : null}
 
       {status === "error" ? (
-        <p className="text-left text-xs font-medium text-red-600 sm:text-sm">
+        <p className="text-left text-caption font-medium text-danger sm:text-body-sm">
           Something went wrong. Please try again.
         </p>
       ) : null}

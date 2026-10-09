@@ -56,7 +56,7 @@ export function ShareRow({ title }: { title: string }) {
       <button
         type="button"
         onClick={onCopy}
-        className="inline-flex items-center gap-2 rounded-pill border border-line-strong bg-white px-3.5 py-2.5 text-body-sm font-semibold text-ink shadow-[0_1px_2px_0_rgba(16,24,40,0.05)] transition-colors hover:border-brand hover:text-brand"
+        className="inline-flex items-center gap-2 rounded-pill border border-line-strong bg-white px-3.5 py-2.5 text-body-sm font-semibold text-ink shadow-field transition-colors hover:border-brand hover:text-brand"
       >
         <CopyIcon />
         {copied ? "Copied!" : "Copy link"}

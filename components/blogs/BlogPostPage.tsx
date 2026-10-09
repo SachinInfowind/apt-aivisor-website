@@ -51,7 +51,7 @@ export default function BlogPostPage({
       <main className="w-full">
         <header className={`relative overflow-hidden ${layout.sectionX} pb-12 pt-32 sm:pt-40`}>
           <HeroGlowAccent />
-          <div className="relative mx-auto flex w-full max-w-[54rem] flex-col items-center gap-9 text-center">
+          <div className="relative mx-auto flex w-full max-w-4xl flex-col items-center gap-9 text-center">
             <div className="flex flex-wrap items-center justify-center gap-2">
               {meta.map((item, i) => (
                 <span key={item} className="flex items-center gap-2">
@@ -66,7 +66,7 @@ export default function BlogPostPage({
             </div>
 
             <h1
-              className={`${homeSerif.className} text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.1] tracking-[-0.02em] text-navy`}
+              className={`${homeSerif.className} text-stat-xl tracking-heading text-navy`}
             >
               {post.title}
             </h1>
@@ -99,7 +99,7 @@ export default function BlogPostPage({
 
         {coverUrl ? (
           <div className={`${layout.sectionX} pb-16`}>
-            <div className={`${layout.inner} mx-auto max-w-[76rem]`}>
+            <div className={`${layout.inner} mx-auto max-w-6xl`}>
               <span className="relative block aspect-[1216/610] w-full overflow-hidden rounded-3xl">
                 <Image
                   src={coverUrl}
@@ -115,7 +115,7 @@ export default function BlogPostPage({
         ) : null}
 
         <article className={`${layout.sectionX} pb-24`}>
-          <div className="mx-auto flex w-full max-w-[45rem] flex-col gap-10">
+          <div className="mx-auto flex w-full max-w-prose flex-col gap-10">
             {post.content?.length ? (
               <BlocksRenderer content={post.content} />
             ) : (
@@ -132,11 +132,11 @@ export default function BlogPostPage({
           <section className={`${layout.sectionX} pb-24`}>
             <div className={`${layout.inner} flex flex-col items-center gap-8`}>
               <h2
-                className={`${homeSerif.className} w-full max-w-[76rem] text-h2 text-navy`}
+                className={`${homeSerif.className} w-full max-w-6xl text-h2 text-navy`}
               >
                 Read More Blogs
               </h2>
-              <div className="grid w-full max-w-[76rem] grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid w-full max-w-6xl grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
                 {relatedPosts.map((related) => (
                   <BlogCard key={related.id} post={related} variant="grid" />
                 ))}

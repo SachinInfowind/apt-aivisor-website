@@ -35,7 +35,7 @@ export default function BlogsPage({
       <Header />
       <main className="w-full">
         <section
-          className={`relative overflow-hidden bg-hero-mesh ${layout.sectionX} pb-[clamp(9rem,22vw,16rem)] pt-[clamp(8rem,16svh,14rem)] sm:pt-[clamp(9rem,18svh,15rem)]`}
+          className={`relative overflow-hidden bg-hero-mesh ${layout.sectionX} pb-36 sm:pb-48 lg:pb-60 pt-32 sm:pt-40`}
         >
           <HeroGlow />
           <div
@@ -43,12 +43,12 @@ export default function BlogsPage({
           >
             <div className="flex flex-col items-center gap-6 sm:gap-9">
               <h1
-                className={`${homeSerif.className} text-[clamp(3rem,6.94vw,6.25rem)] leading-[1] tracking-[-0.02em] text-navy`}
+                className={`${homeSerif.className} text-display tracking-heading text-navy`}
               >
                 <span>{heading}</span>{" "}
                 <span className="italic text-brand">{headingAccent}</span>
               </h1>
-              <p className="max-w-[48rem] text-base text-[#344054] sm:text-[1.25rem] sm:leading-[1.875rem]">
+              <p className="max-w-3xl text-body-lg text-ink">
                 {subhead}
               </p>
             </div>
@@ -58,11 +58,11 @@ export default function BlogsPage({
                 placeholder={hero?.emailPlaceholder || "Enter your email"}
                 subscribeLabel={hero?.subscribeLabel || "Subscribe"}
               />
-              <p className="text-[14px] leading-5 text-[#475467]">
+              <p className="text-body-sm text-nav">
                 {hero?.privacyPrefix || "We care about your data in our"}{" "}
                 <a
                   href={hero?.privacyLinkHref || "/privacy"}
-                  className="text-[#0042BB] underline underline-offset-2 hover:opacity-80"
+                  className="text-brand underline underline-offset-2 hover:opacity-80"
                 >
                   {hero?.privacyLinkLabel || "privacy policy"}
                 </a>
@@ -76,19 +76,18 @@ export default function BlogsPage({
         <section className={`${layout.sectionX} pb-24`}>
           <div className={`${layout.inner} flex flex-col items-center gap-16`}>
             {posts.length > 0 ? (
-              <div className="flex w-full max-w-[76rem] flex-col items-center gap-16">
+              <div className="flex w-full max-w-6xl flex-col items-center gap-16">
                 {page === 1 ? (
-                  <BlogCard post={posts[0]!} variant="featured" index={0} />
+                  <BlogCard post={posts[0]!} variant="featured" />
                 ) : null}
 
                 {(page === 1 ? posts.slice(1) : posts).length > 0 ? (
                   <div className="grid w-full grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-                    {(page === 1 ? posts.slice(1) : posts).map((post, idx) => (
+                    {(page === 1 ? posts.slice(1) : posts).map((post) => (
                       <BlogCard
                         key={post.id}
                         post={post}
                         variant="grid"
-                        index={idx}
                       />
                     ))}
                   </div>
@@ -100,7 +99,7 @@ export default function BlogsPage({
               </p>
             )}
 
-            <div className="w-full max-w-[76rem]">
+            <div className="w-full max-w-6xl">
               <Pagination page={page} pageCount={pageCount} />
             </div>
           </div>

@@ -29,7 +29,7 @@ function renderInline(node: BlockNode, key: number): ReactNode {
  */
 export function BlocksRenderer({ content }: { content: BlockNode[] }) {
   return (
-    <div className="flex flex-col gap-6 text-body-lg leading-[1.7] text-nav">
+    <div className="flex flex-col gap-6 text-body-lg leading-relaxed text-nav">
       {content.map((node, i) => {
         const children = node.children?.map((child, ci) => renderInline(child, ci));
 
@@ -94,14 +94,14 @@ export function BlocksRenderer({ content }: { content: BlockNode[] }) {
             return (
               <figure key={i} className="flex flex-col gap-4">
                 <span
-                  className="relative block max-h-[52.5rem] w-full overflow-hidden rounded-xl"
+                  className="relative block max-h-screen w-full overflow-hidden rounded-xl"
                   style={{ aspectRatio }}
                 >
                   <Image
                     src={toAbsoluteMediaUrl(node.image.url)}
                     alt={node.image.alternativeText || ""}
                     fill
-                    sizes="(min-width: 1024px) 45rem, 100vw"
+                    sizes="(min-width: 1024px) 720px, 100vw"
                     className="object-cover"
                   />
                 </span>

@@ -13,35 +13,23 @@ function formatDate(iso?: string) {
   });
 }
 
-const BLOG_BG_COVERS = [
-  "https://api.builder.io/api/v1/image/assets/TEMP/d0c6a167e3b67a8df3c17f38f723e6096a4640e0?width=1794",
-  "https://api.builder.io/api/v1/image/assets/TEMP/cde7b4b2bea19d4b97c58a10fb6a79baa92c97b6?width=1793",
-  "https://api.builder.io/api/v1/image/assets/TEMP/4f4be15a20691179704b28eb3cb84badb943f00b?width=1793",
-];
-
-function CardCoverPlaceholder({
-  id = 1,
-  index,
-}: {
-  id?: number | string;
-  index?: number;
-}) {
-  const numericId = typeof id === "number" ? id : (id ? id.toString().charCodeAt(0) : 0);
-  const patternIndex =
-    typeof index === "number"
-      ? ((index % 3) + 3) % 3
-      : Math.abs(numericId) % 3;
-
-  const bgUrl = BLOG_BG_COVERS[patternIndex];
-
+function CardCoverPlaceholder() {
   return (
-    <div className="absolute inset-0 overflow-hidden bg-[#0038C7]">
-      <img
-        src={bgUrl}
-        alt=""
+    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-soft to-brand-veil/30 text-brand">
+      <svg
+        className="h-12 w-12 opacity-40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
         aria-hidden
-        className="h-full w-full object-cover select-none pointer-events-none"
-      />
+      >
+        <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+        <circle cx="9" cy="9" r="2" />
+        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
+      </svg>
     </div>
   );
 }
@@ -49,7 +37,6 @@ function CardCoverPlaceholder({
 export function BlogCard({
   post,
   variant = "featured",
-  index,
 }: {
   post: BlogPost;
   variant?: "featured" | "grid";
@@ -73,8 +60,8 @@ export function BlogCard({
         href={`/blogs/${post.slug}`}
         className={
           variant === "featured"
-            ? "relative aspect-[1216/560] w-full overflow-hidden rounded-3xl shadow-[0_4px_24px_rgba(0,66,187,0.12)]"
-            : "relative h-[240px] w-full shrink-0 self-stretch overflow-hidden rounded-2xl shadow-[0_2px_12px_rgba(0,66,187,0.08)]"
+            ? "relative aspect-[1216/560] w-full overflow-hidden rounded-3xl bg-brand-soft shadow-card-lg"
+            : "relative h-60 w-full shrink-0 self-stretch overflow-hidden rounded-card bg-brand-soft shadow-soft"
         }
       >
         {coverUrl ? (
@@ -90,7 +77,7 @@ export function BlogCard({
             className="object-cover"
           />
         ) : (
-          <CardCoverPlaceholder id={post.id} index={index} />
+          <CardCoverPlaceholder />
         )}
       </Link>
 

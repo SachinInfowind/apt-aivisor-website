@@ -29,12 +29,12 @@ export function Pagination({ page = 1, pageCount = 1 }: { page: number; pageCoun
   return (
     <nav
       aria-label="Blog pagination"
-      className="flex w-full items-center justify-between border-t border-[#EAECF0] pt-5"
+      className="flex w-full items-center justify-between border-t border-line-muted pt-5"
     >
       <Link
         href={pageHref(Math.max(1, page - 1))}
         aria-disabled={isFirstPage}
-        className={`inline-flex items-center gap-2 text-sm font-semibold text-[#475467] transition-colors hover:text-brand ${
+        className={`inline-flex items-center gap-2 text-body-sm font-semibold text-nav transition-colors hover:text-brand ${
           isFirstPage ? "pointer-events-none opacity-40 cursor-not-allowed" : ""
         }`}
       >
@@ -55,7 +55,7 @@ export function Pagination({ page = 1, pageCount = 1 }: { page: number; pageCoun
           p === "..." ? (
             <span
               key={`ellipsis-${i}`}
-              className="grid h-10 w-10 place-items-center text-sm font-medium text-[#475467]"
+              className="grid h-10 w-10 place-items-center text-body-sm font-medium text-nav"
             >
               ...
             </span>
@@ -64,10 +64,10 @@ export function Pagination({ page = 1, pageCount = 1 }: { page: number; pageCoun
               key={p}
               href={pageHref(p)}
               aria-current={p === page ? "page" : undefined}
-              className={`grid h-10 w-10 place-items-center rounded-lg text-sm font-medium transition-colors ${
+              className={`grid h-10 w-10 place-items-center rounded-lg text-body-sm font-medium transition-colors ${
                 p === page
-                  ? "bg-[#F9FAFB] text-[#182230] font-semibold shadow-xs"
-                  : "text-[#475467] hover:bg-[#F9FAFB] hover:text-[#182230]"
+                  ? "bg-surface text-navy font-semibold shadow-soft"
+                  : "text-nav hover:bg-surface hover:text-navy"
               }`}
             >
               {p}
@@ -79,7 +79,7 @@ export function Pagination({ page = 1, pageCount = 1 }: { page: number; pageCoun
       <Link
         href={pageHref(Math.min(total, page + 1))}
         aria-disabled={isLastPage}
-        className={`inline-flex items-center gap-2 text-sm font-semibold text-[#475467] transition-colors hover:text-brand ${
+        className={`inline-flex items-center gap-2 text-body-sm font-semibold text-nav transition-colors hover:text-brand ${
           isLastPage ? "pointer-events-none opacity-40 cursor-not-allowed" : ""
         }`}
       >
